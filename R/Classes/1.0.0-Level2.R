@@ -1,0 +1,330 @@
+########################################################################################################################
+setClass(Class = "Level2",
+    slots = c(
+        Name = "character",
+        LocalDirectory = "character",
+        Plots = "list")
+)
+
+setMethod("initialize", signature = "Level2", definition = function(.Object, local_directory) {
+        .Object@Name <- "Level2"
+        .Object@LocalDirectory <- local_directory
+        .Object
+    }
+)
+
+
+########################################################################################################################
+setMethod("createAndAddPlot", signature = "Level2", definition = function(
+        .Object,
+        plot_name,
+        corrected.aggregate.path) {
+        
+        plot_directory <- file.path(getLocalDirectory(.Object), plot_name)
+		.Plot <- new("Plot",
+            name = plot_name,
+            uri = new("URI", plot_name),
+            local_directory = plot_directory,
+            corrected.aggregate.path = corrected.aggregate.path)
+        .Object <- addPlot(.Object, .Plot)
+        .Object
+    }
+)
+
+setMethod("addPlot", signature = "Level2", definition = function(.Object, .Plot) {
+        if (!is.Plot(.Plot))
+            stop("Can only add objects of class 'Plot' to class 'Level2'!")
+        plot_directory <- file.path(getLocalDirectory(.Object), getName(.Plot))
+        .Plot <- setLocalDirectory(.Plot, plot_directory)
+        .Object@Plots[[getName(.Plot)]] <- .Plot
+        .Object
+    }
+)
+
+setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = function(.Object,
+        .PlotURI,
+        sub_plot_names) {
+        
+        .TargetPlot <- getPlot(.Object, .PlotURI)
+        .TargetPlot <- createAndAddMultipleSubPlots(.TargetPlot, sub_plot_names = sub_plot_names)
+        .Object <- replaceObjectByURI(.Object, .TargetPlot)
+		
+        .Object
+    }
+)
+
+setMethod("createAndAddSubPlot", signature = "Level2", definition = function(.Object, sub_plot_name, .URI) {
+		sub_plot_directory <- file.path(getLocalDirectory(.Object), sub_plot_name)
+        .SubPlot <- new("SubPlot",
+            name = sub_plot_name,
+            uri = .URI,
+            local_directory = sub_plot_directory)
+        
+        .Object <- addSubPlot(.Object, .SubPlot, .URI = .URI)
+        .Object
+    }
+)
+
+setMethod("addSubPlot", signature = "Level2", definition = function(.Object, .SubPlot, .URI) {
+        if (!is.SubPlot(.SubPlot)) {
+            stop("This method can only add objects of class 'SubPlot' to class 'Level2'!")
+        }
+        plot <- getPlotName(.URI)
+        plot_directory <- file.path(getLocalDirectory(.Object), plot, getName(.SubPlot))
+        .SubPlot <- setLocalDirectory(.SubPlot, plot_directory)
+        
+        .Object <- applyToList(.Object,
+            apply_function = addSubPlot,
+            .SubPlot = .SubPlot,
+            subset_names = plot)
+        .Object
+    }
+)
+
+setMethod("createAndAddLogger", signature = "Level2", definition = function(
+        .Object,
+        logger_type,
+        source_paths,
+        .URI,
+        unique_logger_name) {
+        
+        logger_name = if_else(is.na(unique_logger_name), true = logger_type, false = as.character(unique_logger_name))
+        logger_directory <- file.path(getLocalDirectory(.Object), getPlotName(.URI), getSubPlotName(.URI), logger_name)
+        .Logger = new(logger_type,
+            unique_name = logger_name,
+            uri = .URI,
+            local_directory = logger_directory,
+            paths = source_paths)
+
+        .Object <- addDataStructure(.Object, .DataStructure = .Logger, .URI)
+        .Object
+    }
+)
+
+setMethod("createAndAddAccessDBObject", signature = "Level2", definition = function(.Object,
+        source_paths,
+        .URI,
+        table_name,
+        date_column,
+        unique_logger_name = NA) {
+        
+        object_name <- if_else(condition = is.na(unique_logger_name),
+            true = "AccessDB",
+            false = as.character(unique_logger_name))
+        local_directory <- file.path(getLocalDirectory(.Object), getPlotName(.URI), getSubPlotName(.URI), object_name)
+        .AccessDB <- new("AccessDB",
+            unique_name = object_name,
+            uri = .URI,
+            local_directory = local_directory,
+            paths = source_paths,
+            table.name = table_name,
+            date.col = date_column)
+        
+        .Object <- addDataStructure(.Object, .AccessDB, .URI)
+        .Object
+    }
+)
+
+setMethod("addDataStructure", signature = "Level2", definition = function(.Object, .DataStructure, .URI) {
+        if (!is.DataStructure(.DataStructure)) {
+            stop("Passed paramter .DataStructure is not of class Logger")
+        }
+        .SubPlot <- getSubPlot(.Object, .URI)
+        .SubPlot <- addDataStructure(.SubPlot, .DataStructure = .DataStructure, .URI = .URI)
+        .Object <- replaceObjectByURI(.Object, .SubPlot)
+        .Object
+    }
+)
+
+setMethod("addSensorMapping", signature = "Level2", definition = function(.Object,
+        pattern,
+        replacement,
+        origin.date,
+        .URI) {
+        
+        if (getURI_Depth(.URI) < 3) {
+            stop("URI needs to contain a DataStructure to add a Sensor Mapping to")
+        }
+        .DataStructure <- getDataStructure(.Object, .URI)
+        .DataStructure <- addSensorMapping(.DataStructure, pattern = pattern, replacement = replacement)
+        
+        .Object <- replaceObjectByURI(.Object, .DataStructure)
+        .Object
+    }
+)
+
+setMethod("replaceObjectByURI", signature = "Level2", definition = function(.Object, .ReplacementObject) {
+		.TargetURI <- getURI(.ReplacementObject)
+        target_uri_level <- getURI_Depth(.TargetURI)
+        if (target_uri_level == 0) {
+            stop("Replacing Level2 by itself is not implemented yet")
+        } else if (target_uri_level == 1) {
+            # Replacement target is a Plot which is immediate part of Level2
+            .ChangedPlot <- .ReplacementObject
+        } else {
+            # Replacement target is deeper within the hierarchy
+            .ChangedPlot <- getPlot(.Object, .TargetURI)
+            .ChangedPlot <- replaceObjectByURI(.ChangedPlot, .ReplacementObject)
+        }
+        .Object <- replaceListObject(.Object, .ChangedPlot)
+        .Object
+    }
+)
+
+setMethod("replaceListObject", signature = "Level2", definition = function(.Object, .ListObject) {
+        if (!is.Plot(.ListObject)) {
+            stop(".ListObject has to be of class 'Plot'!")
+        }
+        existing_plot_names <- names(getPlotList(.Object))
+        replacement_plot_name <- getName(.ListObject)
+        if (!(replacement_plot_name %in% existing_plot_names)) {
+            stop("Can't replace Plot with name ", replacement_plot_name, " because it is missing.")
+        }
+        .Object@Plots[[replacement_plot_name]] <- .ListObject
+        .Object
+    }
+)
+
+########################################################################################################################
+setMethod("getName", signature = "Level2", definition = function(.Object) {
+        .Object@Name
+    }
+)
+
+setMethod("getPlot", signature = "Level2", definition = function(.Object, .URI) {
+        plot_name <- getPlotName(.URI)
+        .Plot <- getPlotList(.Object)[[plot_name]]
+        .Plot
+    }
+)
+
+setMethod("getPlotList", signature = "Level2", definition = function(.Object) {
+        return(.Object@Plots)
+    }
+)
+
+setMethod("getSubPlot", signature = "Level2", definition = function(.Object, .URI) {
+        .Plot <- getPlot(.Object, .URI)
+        .SubPlot <- getSubPlot(.Plot, .URI)
+        .SubPlot
+    }
+)
+
+setMethod("getDataStructure", signature = "Level2", definition = function(.Object, .URI) {
+        Plots <- getPlotList(.Object)
+        plot = getPlotName(.URI)
+        if (!plot %in% names(Plots))
+            stop(sprintf("Plot '%s' is not contained within the Level2 Object", plot))
+        data <- getDataStructure(Plots[[plot]], .URI = .URI)
+        return(data)
+    }
+)
+
+setMethod("getLocalDirectory", signature = "Level2", definition = function(.Object) {
+        return(.Object@LocalDirectory)
+    }
+)
+
+setMethod("getOutputFile", signature = "Level2", definition = function(.Object) {
+        return(paste0(getName(.Object), ".rds"))
+    }
+)
+
+
+########################################################################################################################
+setMethod("getData", signature = "Level2", definition = function(
+        .Object,
+        start.date,
+        end.date,
+        plot,
+        sub.plot,
+        logger.name,
+        as.wide.table) {
+        Plots <- getPlotList(.Object)
+        if (length(Plots) > 0) {
+            list <- list()
+            if (!is.null(plot)) {
+                Plots <- Plots[plot]
+            }
+            for (.Plot in Plots) {
+                list[[getName(.Plot)]] <- getData(
+                    .Object = .Plot,
+                    start.date = start.date,
+                    end.date = end.date,
+                    sub.plot = sub.plot,
+                    logger.name = logger.name)
+            }
+            data <- rbindlist(list)
+            rm(list)
+            setkey(data, Plot, SubPlot, Logger, variable, Datum)
+            if (as.wide.table) {
+                data <- dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
+            }
+            return(data)
+        } else {
+            return(NULL)
+        }
+    }
+)
+
+setMethod("updateFilePaths", signature = "Level2", definition = function(.Object) {
+        .Object <- applyToList(.Object, updateFilePaths)
+        .Object
+    }
+)
+
+setMethod("updateData", signature = "Level2", definition = function(.Object, plot, sub.plot) {
+        .Plots <- getPlotList(.Object)
+        if (is.null(plot)) {
+            plot.names = names(.Plots)
+        } else {
+            plot.names = plot
+        }
+        for(plot.name in plot.names) {
+            .Plots[[plot.name]] <- updateData(.Object@Plots[[plot.name]], sub.plot)
+        }
+        .Object
+    }
+)
+
+setMethod("resetToInitialization", signature = "Level2", definition = function(.Object) {
+        .Plots <- getPlotList(.Object)
+        .Object <- applyToList(.Object, resetToInitialization)
+        .Object
+    }
+)
+
+setMethod("applyToList", signature = "Level2", definition = function(.Object, apply_function, ..., subset_names) {
+        Plots <- getPlotList(.Object)
+        if (!is.null(subset_names)) {
+            subset_vector <- names(Plots) %in% subset_names
+            Plots <- Plots[subset_vector]
+            if (length(subset_names) != length(Plots)) {
+                stop("Some subset_names have not been found in Plots")
+            }
+        }
+        for (.Plot in Plots) {
+            .Updated_Plot <- apply_function(.Plot, ...)
+            .Object <- replaceListObject(.Object, .Updated_Plot)
+        }
+        .Object
+    }
+)
+
+setMethod("saveL2Object", signature = "Level2", definition = function(.Object) {
+        createDirectoryStructure(.Object)
+        
+        plot.dir <- getLocalDirectory(.Object)
+        file.name <- getOutputFile(.Object)
+        saveRDS(.Object, file = file.path(plot.dir, file.name))
+        cat("Object '", file.name, "' created in '", plot.dir, "'\n", sep = "")
+    }
+)
+
+setMethod("createDirectoryStructure", signature = "Level2", definition = function(.Object) {
+        plot.dir <- getLocalDirectory(.Object)
+        dir.create(plot.dir, showWarnings = FALSE)
+        applyToList(.Object, createDirectoryStructure)
+        invisible(return(.Object))
+    }
+)

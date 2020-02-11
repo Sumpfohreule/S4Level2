@@ -1,0 +1,25 @@
+########################################################################################################################
+readTinyTag <- function(txt.path) {
+    tt.table <- as.data.table(read.delim(txt.path,
+            header = FALSE,
+            skip = 5))[, -1]
+    comma.col <- unlist(lapply(tt.table, function(x) TRUE %in% str_detect(x, pattern = ",")))
+    if (TRUE %in% comma.col) {
+        column <- names(comma.col)[comma.col]
+        tt.table[, (column) := as.numeric(str_replace(get(column), pattern = ",", replacement = "."))]
+    }
+    if (ncol(tt.table) == 2) {
+        setnames(tt.table, c("Datum", "RegenX"))
+    } else {
+        num.col <- names(tt.table)[unlist(lapply(tt.table, is.numeric))]
+        tt.table <- tt.table[, .(Datum = paste(V2, V3), RegenX = get(num.col))]
+    }
+    date.format <- guessDateFormat(tt.table[1, Datum])
+    tt.table[, Datum := as.POSIXctFixed(Datum,
+            tz = "UTC",
+            format = date.format)]
+    tt.table[, Datum := roundPOSIXct(Datum, in.seconds = 5 * 60)]
+    tt.table[, RegenX := as.numeric(str_match(RegenX, pattern = "^[0-9]+(?:\\.[0-9]+$)?"))]
+    setkey(tt.table, Datum)
+    return(tt.table)
+}
