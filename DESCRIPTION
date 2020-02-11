@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9012
+Version: 0.0.0.9017
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -13,3 +13,54 @@ License: What license it uses
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
+Collate: 
+    'createDirectoryStructure.R'
+    'saveL2Object.R'
+    'applyToList.R'
+    'resetToInitialization.R'
+    'updateData.R'
+    'updateFilePaths.R'
+    'getData.R'
+    'getOutputFile.R'
+    'getLocalDirectory.R'
+    'getDataStructure.R'
+    'getSubPlot.R'
+    'getPlotList.R'
+    'getPlot.R'
+    'getName.R'
+    'replaceListObject.R'
+    'replaceObjectByURI.R'
+    'addSensorMapping.R'
+    'addDataStructure.R'
+    'createAndAddAccessDBObject.R'
+    'createAndAddLogger.R'
+    'addSubPlot.R'
+    'createAndAddSubPlot.R'
+    'createAndAddMultipleSubPlots.R'
+    'addPlot.R'
+    'createAndAddPlot.R'
+    '1.0.0-Level2.R'
+    'accumulateMMFiles.R'
+    'addToWorkbookWithTemplate.R'
+    'aggregateClimateData.R'
+    'calculateDendroSum.R'
+    'calculateDendrometerTable.R'
+    'calculatePFTable.R'
+    'calculatePRTable.R'
+    'createMMFiles.R'
+    'getEuPlotId.R'
+    'importAggregateData.R'
+    'initialSourceFilesTable.R'
+    'initializeSensorMappings.R'
+    'is.DataStructure.R'
+    'is.Logger.R'
+    'is.Plot.R'
+    'is.SubPlot.R'
+    'is.URI.R'
+    'loadDeltaTFullYear.R'
+    'loadL2Object.R'
+    'readADLM.R'
+    'readDeltaT.R'
+    'readEnvilog.R'
+    'readTinyTag.R'
+    'readTrase.R'
