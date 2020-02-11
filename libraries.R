@@ -1,0 +1,10 @@
+########################################################################################################################
+suppressWarnings(library("data.table"))
+suppressWarnings(library("stringr"))
+suppressWarnings(library("openxlsx"))
+suppressWarnings(library("RODBC"))
+suppressWarnings(library("XML"))
+suppressWarnings(library("tidyverse"))
+source("O:/TRANSP/IsenbergLars/Projekte/loadOrInstallCustomPackage.R")
+loadOrInstallCustomPackage("MyUtilities")
+loadOrInstallCustomPackage("DendrometerFVA")
