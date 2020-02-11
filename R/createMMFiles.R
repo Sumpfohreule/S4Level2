@@ -236,8 +236,9 @@ createMMFiles <- function(xlsx.file) {
         by = c("plot", "instrument_seq_nr"))
 
     # Replacing location information (Coordinates, height slope etc.) with updated data for all years
+    corrected_coordinate_file <- system.file("extdata", "Koordinaten_Stand_2019_05.csv")
     new_location_data <- read_csv2(
-        file = file.path("Data/structure/_sources/Koordinaten_Stand_2019_05.csv"),
+        file = file.path(corrected_coordinate_file),
         col_types = cols_only(
             plot = col_character(),
             latitude = col_character(),
