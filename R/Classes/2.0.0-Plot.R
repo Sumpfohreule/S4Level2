@@ -14,7 +14,7 @@ setMethod("initialize", signature = "Plot", definition = function(
         uri,
         local_directory,
         corrected.aggregate.path) {
-        
+
         .Object@Name <- name
         .Object@LocalDirectory = local_directory
         .Object@URI = new("URI", getPlotName(uri))
@@ -58,10 +58,10 @@ setMethod("addSubPlot", signature = "Plot", definition = function(.Object, .SubP
         if (class(.SubPlot) != "SubPlot") {
             stop("'.SubPlot' needs to be of type SubPlot, however is of type: ", class(.SubPlot))
         }
-        
+
         sub_plot_directory <- file.path(getLocalDirectory(.Object), getName(.SubPlot))
         .SubPlot <- setLocalDirectory(.SubPlot, sub_plot_directory)
-        
+
         .Object@SubPlots[[getName(.SubPlot)]] <- .SubPlot
         .Object
     }
@@ -272,7 +272,7 @@ setMethod("updateData", signature = "Plot", definition = function(.Object, sub.p
 setMethod("createDirectoryStructure", signature = "Plot", definition = function(.Object) {
         plot.dir <- getLocalDirectory(.Object)
         dir.create(plot.dir, showWarnings = FALSE)
-        
+
         applyToList(.Object, createDirectoryStructure)
         invisible(return(.Object))
     }
@@ -306,12 +306,12 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         year,
         round.times,
         empty.column.table) {
-        
+
         out.file <- paste0(getName(.Object), "_Gesamt_", year, ".xlsx")
         if (file.exists(paste0(getOutputDirectory(), "/~$", out.file)))
             stop(sprintf("Achtung die Datei '%s' ist bereits geöffnet und muss vorher geschlossen werden.",
                     out.file))
-        
+
         # Overproviding data first as in one case it was cutting of from the target year
         start.date <- paste0(year - 1, "-12-01")
         end.date <- paste0(year + 1, "-02-01")
@@ -329,8 +329,9 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         additional.table.list[["original"]] <- data
         full.table <- rbindlist(additional.table.list, use.names = TRUE)
         rm(data, additional.table.list)
-        
-        template.file <- paste0(getLocalDirectory(.Object), "/_", getName(.Object), "_Gesamt_Template.xlsx")
+
+        template_file_name <- paste0("/_", getName(.Object), "_Gesamt_Template.xlsx")
+        template.file <- system.file("extdata", template_file_name, package = "S4Level2", mustWork = TRUE)
         template.workbook <- loadWorkbook(template.file)
         for (sheet.name in full.table[, unique(SubPlot)]) {
             sub.plot.table <- dcast(full.table[SubPlot == sheet.name], Datum ~ variable)
@@ -341,7 +342,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
             dates <- addYearStartEnd(dates)
             dates <- fillDateGaps(dates)
             out.table <- merge(data.table(Datum = dates), sub.plot.table, all.x = TRUE, by = "Datum")
-            
+
             template.workbook <- addToWorkbookWithTemplate(
                 out.table = out.table,
                 workbook = template.workbook,
