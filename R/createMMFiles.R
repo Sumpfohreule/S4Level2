@@ -39,7 +39,10 @@ createMMFiles <- function(xlsx.file) {
     rm(mem.table, mem.bu.table, mem.fi.table)
 
     # Import template for consistent instrument numbers
-    template_file <- system.file("extdata", "042013_template.PLM")
+    template_file <- system.file("extdata",
+                                 "042013_template.PLM",
+                                 package = "S4Level2",
+                                 mustWork = TRUE)
     instrument.template <- as.data.table(
         read_fwf(template_file,
             col_positions = fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
@@ -236,7 +239,10 @@ createMMFiles <- function(xlsx.file) {
         by = c("plot", "instrument_seq_nr"))
 
     # Replacing location information (Coordinates, height slope etc.) with updated data for all years
-    corrected_coordinate_file <- system.file("extdata", "Koordinaten_Stand_2019_05.csv")
+    corrected_coordinate_file <- system.file("extdata",
+                                             "Koordinaten_Stand_2019_05.csv",
+                                             package = "S4Level2",
+                                             mustWork = TRUE)
     new_location_data <- read_csv2(
         file = file.path(corrected_coordinate_file),
         col_types = cols_only(

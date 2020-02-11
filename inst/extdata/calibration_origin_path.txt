@@ -1,0 +1,3 @@
+O:\TRANSP\Geraete\Potensiometrische Wegaufnehmer (Dendrometer)\Kalibrierung
+Die letzten drei Ziffern der Inventarnummer dienen der Identifizierung der Sensoren am Logger (z.B 223.000.880 -> Sensor "SE880")
+Die zugehörige Seriennummer dient der Identifizierung der Kalibrierung (In den Originaldateien).
