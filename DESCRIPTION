@@ -1,0 +1,15 @@
+Package: S4Level2
+Title: Aggregates FVA Level2 Raw Data
+Version: 0.0.0.9012
+Authors@R: 
+    person(given = "Lars",
+           family = "Isenberg",
+           role = c("aut", "cre"),
+           email = "lars.isenberg@forst.bwl.de")
+Description: This package was created to better find new raw data files and aggregate the data.
+Imports: 
+Depends:
+License: What license it uses
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
