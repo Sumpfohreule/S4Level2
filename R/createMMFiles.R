@@ -3,7 +3,7 @@ createMMFiles <- function(xlsx.file) {
     # Import "Gesamt" tables for all sub plots
     full.table <- importAggregateData(xlsx.file)
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
-    meo.table <- full.table[str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"), 
+    meo.table <- full.table[str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"),
         separate(.SD,
             col = "variable",
             into = c("vertical_position", "variable", "profile_pit"),
@@ -20,10 +20,10 @@ createMMFiles <- function(xlsx.file) {
                 pattern = pattern.index,
                 replacement = replacement)]
     }
-    
+
     # Converting hPa to kPa
     meo.table[variable == "MP", value := value / 10]
-    
+
     plot.name <- str_match(basename(xlsx.file), pattern = "^[[:alpha:]]*(?=_)")
     buche.id <- getEuPlotId(plot.name, "Buche")
     fichte.id <- getEuPlotId(plot.name, "Fichte")
@@ -37,15 +37,16 @@ createMMFiles <- function(xlsx.file) {
     mem.bu.table[, plot := factor(buche.id)]
     mem.double.table <- rbindlist(list(mem.bu.table, mem.fi.table))
     rm(mem.table, mem.bu.table, mem.fi.table)
-    
+
     # Import template for consistent instrument numbers
+    template_file <- system.file("extdata", "042013_template.PLM")
     instrument.template <- as.data.table(
-        read_fwf("Data/structure/_sources/042013_template.PLM",
+        read_fwf(template_file,
             col_positions = fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
             col_types = cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
             skip = 1))
     template.col.names <- unlist(
-        read_delim("Data/structure/_sources/042013_template.PLM",
+        read_delim(template_file,
             delim = ",",
             col_names = FALSE,
             col_types = cols(),
@@ -59,7 +60,7 @@ createMMFiles <- function(xlsx.file) {
     instrument.template[, ":=" (
             SW_pit = profile_pit,
             profile_pit = str_match(profile_pit, pattern = "[XYZ]$"))]
-    
+
     # Join data with instrument id tables
     full.meo.join <- merge(
         x = meo.table,
@@ -72,7 +73,7 @@ createMMFiles <- function(xlsx.file) {
     final.full.join <- rbindlist(list(full.meo.join, full.mem.join), use.names = TRUE, fill = TRUE)
     rm(instrument.template, full.meo.join, full.mem.join)
     setkey(final.full.join, SubPlot, variable, vertical_position, profile_pit)
-    
+
     # Base table with all columns for mem and plm accumulated with completeness calculation of values
     base.table <- final.full.join[, .(
             Sequence = as.numeric(NA),
@@ -103,7 +104,7 @@ createMMFiles <- function(xlsx.file) {
             instrument_seq_nr,
             plot,
             date_observation = as.Date(Datum))]
-    
+
     mem.fields <- c(
         "Sequence",
         "plot",
@@ -120,13 +121,13 @@ createMMFiles <- function(xlsx.file) {
     non.value.mem.fields <- setdiff(mem.fields, c("mean_sum", "min", "max"))
     # Create "base" table with static information and calculated completeness
     mem.base.table <- base.table[, ..non.value.mem.fields]
-    
+
     # Create sensor specific mean, sum, min and max tables
     inst.mean <- c("AT", "RH", "WS", "SR", "UR", "ST", "MP", "WC")
     mem.mean.table <- final.full.join[variable %in% inst.mean, .(
             mean_sum = round(mean(value, na.rm = TRUE), digits = 2)),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
-    
+
     inst.sum <- c("PR" , "TF" , "SF")
     mem.sum.table <- final.full.join[variable %in% inst.sum, .(
             mean_sum = round(sum(value, na.rm = TRUE), digits = 2)),
@@ -134,19 +135,19 @@ createMMFiles <- function(xlsx.file) {
     mean.sum.table <- rbindlist(list(mem.mean.table, mem.sum.table), use.names = TRUE, fill = FALSE)
     mean.sum.table[is.nan(mean_sum), mean_sum := NA]
     rm(mem.mean.table, mem.sum.table)
-    
+
     inst.min <- c("AT", "RH", "ST", "MP", "WC")
     mem.min.table <- final.full.join[variable %in% inst.min, .(
             min = suppressWarnings(round(min(value, na.rm = TRUE), digits = 2))),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
     mem.min.table[is.infinite(min), min := NA]
-    
+
     inst.max <- c("AT", "RH", "WS", "ST", "MP", "WC")
     mem.max.table <- final.full.join[variable %in% inst.max, .(
             max = suppressWarnings(round(max(value, na.rm = TRUE), digits = 2))),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
     mem.max.table[is.infinite(max), max := NA]
-    
+
     mm.key.columns <- c("plot", "instrument_seq_nr", "date_observation")
     min.max.table <- merge(
         x = mem.min.table,
@@ -154,7 +155,7 @@ createMMFiles <- function(xlsx.file) {
         all = TRUE,
         by = mm.key.columns)
     rm(mem.min.table, mem.max.table)
-    
+
     mem.final.table <- merge(
         x = merge(
             x = mem.base.table,
@@ -171,8 +172,8 @@ createMMFiles <- function(xlsx.file) {
             max = NA,
             origin = 9,
             status = 9)]
-    
-    empty.instruments <- mem.final.table[, 
+
+    empty.instruments <- mem.final.table[,
         .(empty = sum(completeness) == 0),
         by = .(instrument_seq_nr)][empty == TRUE, instrument_seq_nr]
     mem.final.table <- mem.final.table[!instrument_seq_nr %in% empty.instruments]
@@ -184,13 +185,13 @@ createMMFiles <- function(xlsx.file) {
             date_monitoring_last = max(date_observation, na.rm = TRUE)),
         by = c("plot", "instrument_seq_nr")]
     plm.date.table[, measuring_days := as.numeric(date_monitoring_last - date_monitoring_first + 1)]
-    
+
     mem.final.table[, date_observation := format(date_observation, "%d%m%y")]
     mem.final.table[, Sequence := 1:.N]
     setnames(mem.final.table,
         old = "Sequence",
         new = "!Sequence")
-    
+
     output.file.path <- file.path("Data", "output", plot.name)
     dir.create(output.file.path, showWarnings = FALSE)
     mem.file <- file.path(output.file.path, paste0(plot.name, "_", data.year, ".MEM"))
@@ -203,7 +204,7 @@ createMMFiles <- function(xlsx.file) {
         na = "",
         fileEncoding = "UTF-8")
     print(paste0("Created ", mem.file))
-    
+
     plm.fields <- c(
         "Sequence",
         "country",
@@ -233,7 +234,7 @@ createMMFiles <- function(xlsx.file) {
         y = plm.date.table,
         all.x = TRUE,
         by = c("plot", "instrument_seq_nr"))
-    
+
     # Replacing location information (Coordinates, height slope etc.) with updated data for all years
     new_location_data <- read_csv2(
         file = file.path("Data/structure/_sources/Koordinaten_Stand_2019_05.csv"),
@@ -249,10 +250,10 @@ createMMFiles <- function(xlsx.file) {
         y = new_location_data,
         all.x = TRUE,
         by = c("plot"))
-    
+
     setkey(plm_fixed_location_final, plot, instrument_seq_nr)
     setcolorder(plm_fixed_location_final, plm.fields)
-    
+
     # Removing plm sensors if no (correct) value was measured the whole year
     plm_fixed_location_final <- plm_fixed_location_final[!is.na(date_monitoring_first)]
     plm_fixed_location_final[, ":=" (
