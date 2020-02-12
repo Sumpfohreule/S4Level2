@@ -1,11 +1,8 @@
 ########################################################################################################################
-setwd("O:/TRANSP/IsenbergLars/Projekte/S4Level2")
-rm(list = ls(all.names = TRUE))
-source("init.R")
+devtools::load_all()
 
-
-########################################################################################################################
-full_test_suite <- RUnit::defineTestSuite("Full test suite", dirs = "RUnitTests")
+test_dir <- system.file("RUnitTests", package = "S4Level2")
+full_test_suite <- RUnit::defineTestSuite("Full test suite", dirs = test_dir)
 RUnit::isValidTestSuite(full_test_suite)
 runit <- RUnit::runTestSuite(full_test_suite)
 RUnit::printTextProtocol(runit)
