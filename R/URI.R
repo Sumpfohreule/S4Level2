@@ -1,5 +1,6 @@
 ########################################################################################################################
-setClass(Class = "URI", slots = c(
+#' @export URI
+URI <- setClass(Class = "URI", slots = c(
         URI_Split = "character",
         Depth = "numeric"
     )
