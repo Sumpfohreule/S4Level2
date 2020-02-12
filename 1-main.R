@@ -9,6 +9,7 @@ source("init.R")
 .Level2 <- updateData(.Level2)
 saveL2Object(.Level2)
 
+# FIXME: Include MyUtilities package in inst?
 
 # FIXME: change Name attribute for all classes to more informative names!
 # FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
