@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass("AccessDB", contains = "DataStructure", slots = c(
         DB_Table_Name = "character",
         Date_Column = "character",
@@ -11,13 +12,13 @@ setMethod("initialize", signature = "AccessDB", definition = function(.Object,
         paths,
         table.name,
         date.col) {
-        
+
       .Object <- callNextMethod(.Object,
           unique_name = unique_name,
           uri = uri,
           local_directory = local_directory,
           paths = paths)
-      
+
       .Object@DB_Table_Name = table.name
       .Object@Date_Column = date.col
       .Object <- setLastImportDate(.Object, as.POSIXct(NA))
@@ -27,6 +28,7 @@ setMethod("initialize", signature = "AccessDB", definition = function(.Object,
 
 
 ########################################################################################################################
+#' @include setLastImportDate.R
 setMethod("setLastImportDate", signature = "AccessDB", definition = function(.Object, posixct_date) {
         if (!is.POSIXct(posixct_date)) {
             stop("posixct_date is not of class POSIXct")
@@ -38,6 +40,7 @@ setMethod("setLastImportDate", signature = "AccessDB", definition = function(.Ob
 
 
 ########################################################################################################################
+#' @include getData.R
 setMethod("getData", signature = "AccessDB", definition = function(.Object, start.date, end.date) {
         directory <- getLocalDirectory(.Object)
         file.name <- getOutputFile(.Object)
@@ -52,12 +55,14 @@ setMethod("getData", signature = "AccessDB", definition = function(.Object, star
 
 
 ########################################################################################################################
+#' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "AccessDB", definition = function(.Object) {
         # "Empty" method as data is already contained in a single dabase
         .Object
     }
 )
 
+#' @include updateData.R
 setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
         db.path <- getSourcePaths(.Object)
         if (length(db.path) > 1)
@@ -88,13 +93,14 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
         setkeyv(access.long, key.columns)
         setnames(access.long, date.column, "Datum")
         access.long <- remapSensorNames(.Object, long.l2.table = access.long)
-        
+
         saveRDS(access.long, file.path(out.dir, file.name))
         cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
         .Object
     }
 )
 
+#' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "AccessDB", definition = function(.Object) {
         .Object <- callNextMethod(.Object)
         .Object <- setLastImportDate(.Object, as.POSIXct(NA))

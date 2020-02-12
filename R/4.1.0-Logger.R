@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "Logger", slots = c(
         SourceFilePattern = "character",
         SourceFiles = "data.frame"),
@@ -12,7 +13,7 @@ setMethod("initialize", signature = "Logger", definition = function(
         local_directory,
         paths,
         pattern) {
-        
+
       .Object <- callNextMethod(.Object,
           unique_name = unique_name,
           uri = uri,
@@ -26,17 +27,20 @@ setMethod("initialize", signature = "Logger", definition = function(
 
 
 ########################################################################################################################
+#' @include getSourceFilePattern.R
 setMethod("getSourceFilePattern", signature = "Logger", definition = function(.Object) {
         return(.Object@SourceFilePattern)
     }
 )
 
+#' @include getSourceFileTable.R
 setMethod("getSourceFileTable", signature = "Logger", definition = function(.Object) {
         return(.Object@SourceFiles)
     }
 )
 
 ########################################################################################################################
+#' @include saveData.R
 setMethod("saveData", signature = "Logger", definition = function(.Object, data) {
         out.dir <- getLocalDirectory(.Object)
         dir.create(out.dir, showWarnings = FALSE)
@@ -46,6 +50,7 @@ setMethod("saveData", signature = "Logger", definition = function(.Object, data)
     }
 )
 
+#' @include getData.R
 setMethod("getData", signature = "Logger", definition = function(.Object, start.date, end.date) {
         data <- loadData(.Object)
         if (!is.null(data)) {
@@ -56,6 +61,7 @@ setMethod("getData", signature = "Logger", definition = function(.Object, start.
     }
 )
 
+#' @include loadData.R
 setMethod("loadData", signature = "Logger", definition = function(.Object) {
         path <- getLocalDirectory(.Object)
         file.name <- getOutputFile(.Object)
@@ -71,6 +77,7 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
     }
 )
 
+#' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
         all.files <- dir(getSourcePaths(.Object), full.names = TRUE, recursive = TRUE)
         select.files <- all.files[str_detect(basename(all.files), pattern = getSourceFilePattern(.Object))]
@@ -86,6 +93,7 @@ setMethod("updateFilePaths", signature = "Logger", definition = function(.Object
     }
 )
 
+#' @include updateData.R
 setMethod("updateData", signature = "Logger", definition = function(.Object) {
         source.files <- getSourceFileTable(.Object)
         # only use import files which are new to reduce processing time
@@ -133,16 +141,16 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
                 )
                 # Skip files for which there is no mapping of columns to sensors yet
             }
-            
+
             new.data.table <- rbindlist(new.data.list, use.names = TRUE, fill = FALSE)
             rm(new.data.list)
-            
+
             if (nrow(new.data.table) > 0) {
                 new.data.table <- remapSensorNames(.Object, long.l2.table = new.data.table)
                 complete.table <- rbindlist(list(loadData(.Object), new.data.table), use.names = TRUE, fill = FALSE)
                 setcolorder(complete.table, c("Plot", "SubPlot", "Logger", "variable"))
                 setkey(complete.table, Plot, SubPlot, Logger, variable, Datum)
-                
+
                 # Drops duplicated rows (same Date and variable but maybe different value!)
                 complete.table <- unique(complete.table, by = c("Datum", "variable"))
                 saveData(.Object, data = complete.table)
@@ -152,6 +160,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
     }
 )
 
+#' resetToInitialization.R
 setMethod("resetToInitialization", signature = "Logger", definition = function(.Object) {
         .Object <- callNextMethod(.Object)
         .Object@SourceFiles <- initialSourceFilesTable()

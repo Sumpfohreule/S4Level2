@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "TinyTag", contains = "Logger")
 
 setMethod("initialize", signature = "TinyTag",
@@ -9,7 +10,7 @@ setMethod("initialize", signature = "TinyTag",
         local_directory,
         paths,
         pattern = "\\.txt") {
-        
+
         callNextMethod(.Object,
             unique_name = unique_name,
             uri = uri,
@@ -21,6 +22,7 @@ setMethod("initialize", signature = "TinyTag",
 
 
 ########################################################################################################################
+#' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "TinyTag", definition = function(.Object, path) {
         data <- readTinyTag(path)
         long.table <- melt(data, id.vars = "Datum")

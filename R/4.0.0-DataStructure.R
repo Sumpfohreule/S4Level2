@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass("DataStructure", slots = c(
         UniqueName = "character",
         URI = "URI",
@@ -24,12 +25,14 @@ setMethod("initialize", signature = "DataStructure", definition = function(
 
 
 ########################################################################################################################
+#' @include setLocalDirectory.R
 setMethod("setLocalDirectory", signature = "DataStructure", definition = function(.Object, local_directory) {
 		.Object@LocalDirectory <- local_directory
         .Object
     }
 )
 
+#' @include setSourcePaths.R
 setMethod("setSourcePaths", signature = "DataStructure", definition = function(.Object, paths) {
         for (path in paths) {
             if (!file.exists(path)) {
@@ -41,12 +44,13 @@ setMethod("setSourcePaths", signature = "DataStructure", definition = function(.
     }
 )
 
+#' @include addSensorMapping.R
 setMethod("addSensorMapping", signature = "DataStructure", definition = function(
         .Object,
         pattern,
         replacement,
         origin.date) {
-        
+
         str_replace("", pattern, replacement) # Early testing of for syntax errors
         new_sensor_mapping <- list(pattern, replacement, as.POSIXct(origin.date, tz = "UTC"))
         combined_sensor_mapping <- rbindlist(list(getSensorMappings(.Object), new_sensor_mapping))
@@ -55,6 +59,7 @@ setMethod("addSensorMapping", signature = "DataStructure", definition = function
     }
 )
 
+#' @include setSensorMappings.R
 setMethod("setSensorMappings", signature = "DataStructure", definition = function(.Object, sensor_mapping_table) {
         .Object@SensorMappings <- sensor_mapping_table
         return(.Object)
@@ -62,41 +67,49 @@ setMethod("setSensorMappings", signature = "DataStructure", definition = functio
 )
 
 ########################################################################################################################
+#' @include getName.R
 setMethod("getName", signature = "DataStructure", definition = function(.Object) {
         .Object@UniqueName
     }
 )
 
+#' @include getPlotName.R
 setMethod("getPlotName", signature = "DataStructure", definition = function(.Object) {
         return(getPlotName(.Object@URI))
     }
 )
 
+#' @include getURI.R
 setMethod("getURI", signature = "DataStructure", definition = function(.Object) {
         .Object@URI
     }
 )
 
+#' @include getSourcePaths.R
 setMethod("getSourcePaths", signature = "DataStructure", definition = function(.Object) {
         return(.Object@SourcePaths)
     }
 )
 
+#' @include getSubPlotName.R
 setMethod("getSubPlotName", signature = "DataStructure", definition = function(.Object) {
         return(getSubPlotName(.Object@URI))
     }
 )
 
+#' @include getSensorMappings.R
 setMethod("getSensorMappings", signature = "DataStructure", definition = function(.Object) {
         return(.Object@SensorMappings)
     }
 )
 
+#' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "DataStructure", definition = function(.Object) {
         return(.Object@LocalDirectory)
     }
 )
 
+#' @include getOutputFile.R
 setMethod("getOutputFile", signature = "DataStructure", definition = function(.Object) {
         return(paste0(getName(.Object), ".rds"))
     }
@@ -104,14 +117,16 @@ setMethod("getOutputFile", signature = "DataStructure", definition = function(.O
 
 
 ########################################################################################################################
+#' @include createDirectoryStructure.R
 setMethod("createDirectoryStructure", signature = "DataStructure", definition = function(.Object) {
         data_structure_directory <- getLocalDirectory(.Object)
         dir.create(data_structure_directory, showWarnings = FALSE)
-        
+
         invisible(return(.Object))
     }
 )
 
+#' @include remapSensorNames.R
 setMethod("remapSensorNames", signature = "DataStructure", definition = function(.Object, long.l2.table) {
         mappings <- getSensorMappings(.Object)
         if (nrow(mappings) > 0) {
@@ -135,6 +150,7 @@ setMethod("remapSensorNames", signature = "DataStructure", definition = function
     }
 )
 
+#' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "DataStructure", definition = function(.Object) {
         out.dir <- getLocalDirectory(.Object)
         file.name <- getOutputFile(.Object)

@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass("SubPlot", slots = c(
         Name = "character",
         URI = "URI",
@@ -12,7 +13,7 @@ setMethod("initialize", signature = "SubPlot", definition = function(
         name,
         uri,
         local_directory) {
-        
+
         .Object@Name <- name
         .Object@URI = new("URI", getPlotName(uri), getSubPlotName(uri))
         .Object@LocalDirectory <- local_directory
@@ -22,11 +23,12 @@ setMethod("initialize", signature = "SubPlot", definition = function(
 
 
 ########################################################################################################################
+#' @include addDataStructure.R
 setMethod("addDataStructure", signature = "SubPlot", definition = function(.Object, .DataStructure) {
         if (!is.DataStructure(.DataStructure)) {
             "Parameter .DataStructure is not of class Logger"
         }
-        
+
         already.included <- FALSE
         for (.ExistingLogger in .Object@Loggers) {
             already.included <- getName(.ExistingLogger) == getName(.DataStructure)
@@ -34,21 +36,23 @@ setMethod("addDataStructure", signature = "SubPlot", definition = function(.Obje
                 stop("Logger to be added has the same name as an existing one in specified subplot")
             }
         }
-        
+
         data_structure_directory <- file.path(getLocalDirectory(.Object), getName(.DataStructure))
         .DataStructure <- setLocalDirectory(.DataStructure, data_structure_directory)
-        
+
         .Object@Loggers[[getName(.DataStructure)]] <- .DataStructure
         .Object
     }
 )
 
+#' @include setLocalDirectory.R
 setMethod("setLocalDirectory", signature = "SubPlot", definition = function(.Object, local_directory) {
 		.Object@LocalDirectory <- local_directory
         .Object
     }
 )
 
+#' @include replaceListObject.R
 setMethod("replaceListObject", signature = "SubPlot", definition = function(.Object, .ListObject) {
         if (!is.DataStructure(.ListObject)) {
             stop(".ListObject has to be of class 'DataStructure'!")
@@ -63,6 +67,7 @@ setMethod("replaceListObject", signature = "SubPlot", definition = function(.Obj
     }
 )
 
+#' @include replaceObjectByURI.R
 setMethod("replaceObjectByURI", signature = "SubPlot", definition = function(.Object, .ReplacementObject) {
         .TargetURI <- getURI(.ReplacementObject)
         target_uri_level <- getURI_Depth(.TargetURI)
@@ -78,26 +83,31 @@ setMethod("replaceObjectByURI", signature = "SubPlot", definition = function(.Ob
 )
 
 ########################################################################################################################
+#' @include getName.R
 setMethod("getName", signature = "SubPlot", definition = function(.Object) {
         .Object@Name
     }
 )
 
+#' @include getURI.R
 setMethod("getURI", signature = "SubPlot", definition = function(.Object) {
         .Object@URI
     }
 )
 
+#' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "SubPlot", definition = function(.Object) {
 		return(.Object@LocalDirectory)
     }
 )
 
+#' @include getDataStructureList.R
 setMethod("getDataStructureList", signature = "SubPlot", definition = function(.Object) {
 	    return(.Object@Loggers)
     }
 )
 
+#' @include getDataStructure.R
 setMethod("getDataStructure", signature = "SubPlot", definition = function(.Object, .URI) {
         logger = getDataStructureName(.URI)
         if (!logger %in% names(.Object@Loggers))
@@ -107,13 +117,14 @@ setMethod("getDataStructure", signature = "SubPlot", definition = function(.Obje
     }
 )
 
+#' @include getSourceFileTable.R
 setMethod("getSourceFileTable", signature = "SubPlot", definition = function(.Object) {
         list <- list()
         for (.Logger in .Object@Loggers) {
             logger.name <- getName(.Logger)
             source.table <- getSourceFileTable(.Logger)
             source.table[, logger := as.factor(logger.name)]
-            list[[logger.name]] <- source.table 
+            list[[logger.name]] <- source.table
         }
         return(rbindlist(list))
     }
@@ -121,15 +132,17 @@ setMethod("getSourceFileTable", signature = "SubPlot", definition = function(.Ob
 
 
 ########################################################################################################################
+#' @include createDirectoryStructure.R
 setMethod("createDirectoryStructure", signature = "SubPlot", definition = function(.Object) {
         sub_plot_directory <- getLocalDirectory(.Object)
         dir.create(sub_plot_directory, showWarnings = FALSE)
-        
+
         applyToList(.Object, createDirectoryStructure)
         invisible(return(.Object))
     }
 )
 
+#' @include getData.R
 setMethod("getData", signature = "SubPlot", definition = function(.Object, start.date, end.date, logger.name) {
         if (length(.Object@Loggers) > 0) {
             list <- list()
@@ -154,6 +167,7 @@ setMethod("getData", signature = "SubPlot", definition = function(.Object, start
     }
 )
 
+#' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "SubPlot", definition = function(.Object) {
         for(logger.name in names(.Object@Loggers)) {
             .Object@Loggers[[logger.name]] <- updateFilePaths(.Object@Loggers[[logger.name]])
@@ -162,6 +176,7 @@ setMethod("updateFilePaths", signature = "SubPlot", definition = function(.Objec
     }
 )
 
+#' @include updateData.R
 setMethod("updateData", signature = "SubPlot", definition = function(.Object) {
         for(logger.name in names(.Object@Loggers)) {
             .Object@Loggers[[logger.name]] <- updateData(.Object@Loggers[[logger.name]])
@@ -170,6 +185,7 @@ setMethod("updateData", signature = "SubPlot", definition = function(.Object) {
     }
 )
 
+#' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "SubPlot", definition = function(.Object) {
         for(logger.name in names(.Object@Loggers)) {
             .Object@Loggers[[logger.name]] <- resetToInitialization(.Object@Loggers[[logger.name]])
@@ -178,6 +194,7 @@ setMethod("resetToInitialization", signature = "SubPlot", definition = function(
     }
 )
 
+#' @include applyToList.R
 setMethod("applyToList", signature = "SubPlot", definition = function(.Object, apply_function, ..., subset_names) {
         DataStructureList <- getDataStructureList(.Object)
         if (!is.null(subset_names)) {

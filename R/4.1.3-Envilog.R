@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "Envilog", contains = "Logger")
 
 setMethod("initialize", signature = "Envilog",
@@ -9,7 +10,7 @@ setMethod("initialize", signature = "Envilog",
         local_directory,
         paths,
         pattern = "\\.csv") {
-        
+
         callNextMethod(.Object,
             unique_name = unique_name,
             uri = uri,
@@ -21,6 +22,7 @@ setMethod("initialize", signature = "Envilog",
 
 
 ########################################################################################################################
+#' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "Envilog", definition = function(.Object, path) {
         data <- readEnvilog(path)
         long.table <- melt(data, id.vars = "Datum")

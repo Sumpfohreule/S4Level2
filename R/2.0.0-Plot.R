@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "Plot", slots = c(
         Name = "character",
         URI = "URI",
@@ -26,6 +27,7 @@ setMethod("initialize", signature = "Plot", definition = function(
 
 
 ########################################################################################################################
+#' @include setCorrectedAggregatePath.R
 setMethod("setCorrectedAggregatePath", signature = "Plot", definition = function(.Object, corrected.aggregate.path) {
         if (!dir.exists(corrected.aggregate.path))
             stop("Provided path for aggregated and corrected output data does not exist\n'",
@@ -35,12 +37,14 @@ setMethod("setCorrectedAggregatePath", signature = "Plot", definition = function
     }
 )
 
+#' @include setLocalDirectory.R
 setMethod("setLocalDirectory", signature = "Plot", definition = function(.Object, local_directory) {
 		.Object@LocalDirectory <- local_directory
         .Object
     }
 )
 
+#' @include createAndAddMultipleSubPlots.R
 setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = function(.Object, sub_plot_names) {
         plot_name <- getPlotName(getURI(.Object))
         plot_directory <- getLocalDirectory(.Object)
@@ -54,6 +58,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = funct
     }
 )
 
+#' @include addSubPlot.R
 setMethod("addSubPlot", signature = "Plot", definition = function(.Object, .SubPlot) {
         if (class(.SubPlot) != "SubPlot") {
             stop("'.SubPlot' needs to be of type SubPlot, however is of type: ", class(.SubPlot))
@@ -67,6 +72,7 @@ setMethod("addSubPlot", signature = "Plot", definition = function(.Object, .SubP
     }
 )
 
+#' @include replaceObjectByURI.R
 setMethod("replaceObjectByURI", signature = "Plot", definition = function(.Object, .ReplacementObject) {
         .TargetURI <- getURI(.ReplacementObject)
         target_uri_level <- getURI_Depth(.TargetURI)
@@ -85,6 +91,7 @@ setMethod("replaceObjectByURI", signature = "Plot", definition = function(.Objec
     }
 )
 
+#' @include replaceListObject.R
 setMethod("replaceListObject", signature = "Plot", definition = function(.Object, .ListObject) {
         if (!is.SubPlot(.ListObject)) {
             stop(".ListObject has to be of class 'SubPlot'!")
@@ -99,6 +106,7 @@ setMethod("replaceListObject", signature = "Plot", definition = function(.Object
     }
 )
 
+#' @include addDataStructure.R
 setMethod("addDataStructure", signature = "Plot", definition = function(.Object, .DataStructure, .URI) {
         if (!is.DataStructure(.DataStructure)) {
             stop("Paramter .DataStructure is not of class DataStructure")
@@ -114,16 +122,19 @@ setMethod("addDataStructure", signature = "Plot", definition = function(.Object,
 
 
 ########################################################################################################################
+#' @include getName.R
 setMethod("getName", signature = "Plot", definition = function(.Object) {
         .Object@Name
     }
 )
 
+#' @include getURI.R
 setMethod("getURI", signature = "Plot", definition = function(.Object) {
         .Object@URI
     }
 )
 
+#' @include getSubPlot.R
 setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI) {
         sub_plot_name <- getSubPlotName(.URI)
         .SubPlot <- getSubPlotList(.Object)[[sub_plot_name]]
@@ -131,6 +142,7 @@ setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI)
     }
 )
 
+#' @include getDataStructure.R
 setMethod("getDataStructure", signature = "Plot", definition = function(.Object, .URI) {
         sub.plot = getSubPlotName(.URI)
         if (!sub.plot %in% names(.Object@SubPlots))
@@ -140,28 +152,33 @@ setMethod("getDataStructure", signature = "Plot", definition = function(.Object,
     }
 )
 
+#' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object) {
         saved_local_directory <- .Object@LocalDirectory
         return(saved_local_directory)
     }
 )
 
+#' @include getOutputDirectory.R
 setMethod("getOutputDirectory", signature = "Plot", definition = function(.Object) {
         return(file.path(.S4Level2.PATH, "Data/output", getName(.Object)))
     }
 )
 
+#' @include getCorrectedAggregatePath.R
 setMethod("getCorrectedAggregatePath", signature = "Plot", definition = function(.Object) {
         .Object@CorrectedAggregatePath
     }
 )
 
+#' @include getSubPlotList.R
 setMethod("getSubPlotList", signature = "Plot", definition = function(.Object) {
         .Object@SubPlots
     }
 )
 
 ########################################################################################################################
+#' @include getData.R
 setMethod("getData", signature = "Plot", definition = function(
         .Object,
         start.date,
@@ -195,6 +212,7 @@ setMethod("getData", signature = "Plot", definition = function(
     }
 )
 
+#' @include loadCorrectedData.R
 setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet.name, years) {
         data.path <- getCorrectedAggregatePath(.Object)
         year.folders <- dir(data.path)
@@ -248,6 +266,7 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
     }
 )
 
+#' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Plot", definition = function(.Object) {
         for(sub.plot.name in names(.Object@SubPlots)) {
             .Object@SubPlots[[sub.plot.name]] <- updateFilePaths(.Object@SubPlots[[sub.plot.name]])
@@ -256,6 +275,7 @@ setMethod("updateFilePaths", signature = "Plot", definition = function(.Object) 
     }
 )
 
+#' @include updateData.R
 setMethod("updateData", signature = "Plot", definition = function(.Object, sub.plot) {
         if (is.null(sub.plot)) {
             sub.plot.names <- names(.Object@SubPlots)
@@ -269,6 +289,7 @@ setMethod("updateData", signature = "Plot", definition = function(.Object, sub.p
     }
 )
 
+#' @include createDirectoryStructure.R
 setMethod("createDirectoryStructure", signature = "Plot", definition = function(.Object) {
         plot.dir <- getLocalDirectory(.Object)
         dir.create(plot.dir, showWarnings = FALSE)
@@ -278,12 +299,14 @@ setMethod("createDirectoryStructure", signature = "Plot", definition = function(
     }
 )
 
+#' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "Plot", definition = function(.Object) {
         .Object <- applyToList(.Object, apply_function = resetToInitialization)
         .Object
     }
 )
 
+#' @include applyToList.R
 setMethod("applyToList", signature = "Plot", definition = function(.Object, apply_function, ..., subset_names) {
         SubPlots <- getSubPlotList(.Object)
         if (!is.null(subset_names)) {
@@ -301,6 +324,7 @@ setMethod("applyToList", signature = "Plot", definition = function(.Object, appl
     }
 )
 
+#' @include createAggregateExcel.R
 setMethod("createAggregateExcel", signature = "Plot", definition = function(
         .Object,
         year,
@@ -354,6 +378,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
     }
 )
 
+#' @include getSourceFileTable.R
 setMethod("getSourceFileTable", signature = "Plot", definition = function(.Object) {
         list <- list()
         for (.SubPlot in .Object@SubPlots) {

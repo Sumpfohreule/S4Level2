@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "ADLM", contains = "Logger")
 
 setMethod("initialize", signature = "ADLM",
@@ -9,7 +10,7 @@ setMethod("initialize", signature = "ADLM",
         local_directory,
         paths,
         pattern = "^[^~]((?!ed).)*\\.xlsx$") {
-        
+
         callNextMethod(.Object,
             unique_name = unique_name,
             uri = uri,
@@ -21,6 +22,7 @@ setMethod("initialize", signature = "ADLM",
 
 
 ########################################################################################################################
+#' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "ADLM", definition = function(.Object, path) {
         data <- readADLM(path)
         long.table <- melt(data, id.vars = "Datum")

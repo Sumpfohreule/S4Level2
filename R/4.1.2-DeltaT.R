@@ -1,4 +1,5 @@
 ########################################################################################################################
+#' @include URI.R
 setClass(Class = "DeltaT", contains = "Logger")
 
 setMethod("initialize", signature = "DeltaT",
@@ -9,7 +10,7 @@ setMethod("initialize", signature = "DeltaT",
         local_directory,
         paths,
         pattern = "\\.dat") {
-        
+
         callNextMethod(
             .Object,
             unique_name = unique_name,
@@ -22,6 +23,7 @@ setMethod("initialize", signature = "DeltaT",
 
 
 ########################################################################################################################
+#' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "DeltaT", definition = function(.Object, path) {
         data <- readDeltaT(path)
         data <- as.data.table(data)

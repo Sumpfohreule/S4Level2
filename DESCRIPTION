@@ -1,13 +1,13 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9017
+Version: 0.0.0.9022
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
            role = c("aut", "cre"),
            email = "lars.isenberg@forst.bwl.de")
 Description: This package was created to better find new raw data files and aggregate the data.
-Imports: 
+Imports: data.table
 Depends:
 License: What license it uses
 Encoding: UTF-8
@@ -40,6 +40,41 @@ Collate:
     'addPlot.R'
     'createAndAddPlot.R'
     '1.0.0-Level2.R'
+    'getSourceFileTable.R'
+    'createAggregateExcel.R'
+    'loadCorrectedData.R'
+    'getSubPlotList.R'
+    'getCorrectedAggregatePath.R'
+    'getOutputDirectory.R'
+    'getURI.R'
+    'setLocalDirectory.R'
+    'setCorrectedAggregatePath.R'
+    'getURIString.R'
+    'getDataStructureName.R'
+    'getSubPlotName.R'
+    'getPlotName.R'
+    'getURI_Depth.R'
+    'URI.R'
+    '2.0.0-Plot.R'
+    'getDataStructureList.R'
+    '3.0.0-SubPlot.R'
+    'remapSensorNames.R'
+    'getSensorMappings.R'
+    'getSourcePaths.R'
+    'setSensorMappings.R'
+    'setSourcePaths.R'
+    '4.0.0-DataStructure.R'
+    'loadData.R'
+    'saveData.R'
+    'getSourceFilePattern.R'
+    '4.1.0-Logger.R'
+    'importRawLoggerFile.R'
+    '4.1.1-ADLM.R'
+    '4.1.2-DeltaT.R'
+    '4.1.3-Envilog.R'
+    '4.1.4-TinyTag.R'
+    'setLastImportDate.R'
+    '4.2.0-AccessDB.R'
     'accumulateMMFiles.R'
     'addToWorkbookWithTemplate.R'
     'aggregateClimateData.R'
