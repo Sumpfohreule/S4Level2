@@ -22,7 +22,7 @@ importAggregateData <- function(xlsx.file) {
                 full.data.list[[sub.plot.type]] <- long.sub.plot.table
             }, error = function(e) {
                 message <- geterrmessage()
-                if (!str_detect(message, "Cannot find sheet named"))
+                if (!stringr::str_detect(message, "Cannot find sheet named"))
                     stop(e)
             }
         )

@@ -24,7 +24,7 @@ setMethod("createAndAddPlot", signature = "Level2", definition = function(
         plot_directory <- file.path(getLocalDirectory(.Object), plot_name)
 		.Plot <- new("Plot",
             name = plot_name,
-            uri = new("URI", plot_name),
+            uri = URI(plot_name),
             local_directory = plot_directory,
             corrected.aggregate.path = corrected.aggregate.path)
         .Object <- addPlot(.Object, .Plot)

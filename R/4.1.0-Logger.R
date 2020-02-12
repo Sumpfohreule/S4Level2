@@ -80,7 +80,7 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
         all.files <- dir(getSourcePaths(.Object), full.names = TRUE, recursive = TRUE)
-        select.files <- all.files[str_detect(basename(all.files), pattern = getSourceFilePattern(.Object))]
+        select.files <- all.files[stringr::str_detect(basename(all.files), pattern = getSourceFilePattern(.Object))]
         file.table <- data.table(
             file = basename(select.files),
             path = as.factor(dirname(select.files)))
@@ -122,7 +122,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
                             source.files[index, ":=" (
                                     imported = TRUE,
                                     comment = appendString(comment, "Duplicate dates within file removed!"))]
-                        } else if (str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
+                        } else if (stringr::str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
                             source.files[index, skip := TRUE]
                         } else {
                             new.data.list[[source.files[index, file]]] <- new.data

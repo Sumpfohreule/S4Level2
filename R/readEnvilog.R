@@ -7,30 +7,30 @@ readEnvilog <- function(path) {
     data[, No := NULL]
     data <- data[Time != ""]
     col.names <- names(data)
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = "KK|K[^(R|L)]",
         replacement = "_X")
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = "KR",
         replacement = "_Y")
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = "KL|[.]L[.]",
         replacement = "_Z")
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = "C",
         replacement = "_T_PF")
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = "pF",
         replacement = "_MP")
-    col.names <- str_replace(col.names,
+    col.names <- stringr::str_replace(col.names,
         pattern = ".*((?<!T_)MP|T_PF).*([XYZ]).*([0-9]{2}).*",
         replacement = "\\3_\\1_\\2")
     col.names[1] <- "Datum"
     setnames(data, col.names)
     data[, Datum := as.POSIXctFixed(Datum, format = "%d.%m.%Y %H:%M", tz = "UTC")]
     for (col.name in names(data)[-1]) {
-        data[, (col.name) := str_replace(get(col.name), "^\\D+$", "")]
-        data[, (col.name) := str_replace(get(col.name), ",", ".")]
+        data[, (col.name) := stringr::str_replace(get(col.name), "^\\D+$", "")]
+        data[, (col.name) := stringr::str_replace(get(col.name), ",", ".")]
         data[, (col.name) := as.numeric(get(col.name))]
     }
     five.minutes = 5 * 60 # = 300 seconds for rounding times to

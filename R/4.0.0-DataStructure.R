@@ -52,7 +52,7 @@ setMethod("addSensorMapping", signature = "DataStructure", definition = function
         replacement,
         origin.date) {
 
-        str_replace("", pattern, replacement) # Early testing of for syntax errors
+        stringr::str_replace("", pattern, replacement) # Early testing of for syntax errors
         new_sensor_mapping <- list(pattern, replacement, as.POSIXct(origin.date, tz = "UTC"))
         combined_sensor_mapping <- rbindlist(list(getSensorMappings(.Object), new_sensor_mapping))
         .Object <- setSensorMappings(.Object, unique(combined_sensor_mapping))

@@ -7,14 +7,14 @@ testAddSensorMapping <- function() {
     .Data_Structure <- .getDefaultDataStructure()
     .Data_Structure <- addSensorMapping(.Data_Structure, "a1", "a2")
     .Data_Structure <- addSensorMapping(.Data_Structure, "b1", "b2")
-    
+
     mapping_table <- getSensorMappings(.Data_Structure)
     is_data_table <- is.data.table(mapping_table)
     RUnit::checkTrue(is_data_table)
-    
-    has_two_items <- nrow(mapping_table) == 2 
+
+    has_two_items <- nrow(mapping_table) == 2
     RUnit::checkTrue(has_two_items)
-    
+
     RUnit::checkIdentical(c("a1", "b1"), mapping_table[, patterns])
     RUnit::checkIdentical(c("a2", "b2"), mapping_table[, replacements])
 }
@@ -42,7 +42,7 @@ testDontAddDuplicateMapping <- function() {
 .getDefaultDataStructure <- function() {
     return(new("DataStructure",
             unique_name = "TestName",
-            uri = new("URI", ""),
+            uri = URI(""),
             local_directory = tempdir(),
             paths = tempdir()))
 }
@@ -51,6 +51,6 @@ testDontAddDuplicateMapping <- function() {
     empty_sensor_mapping_table <- data.table(
         patterns = character(),
         replacements = character(),
-        origin.date = POSIXct())
+        origin.date = MyUtilities::POSIXct())
     return(empty_sensor_mapping_table)
 }

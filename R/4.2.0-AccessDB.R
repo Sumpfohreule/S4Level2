@@ -78,7 +78,7 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
             out.file = file.path(out.dir, file.name))
         access.data <- readRDS(file.path(out.dir, file.name))
         access.data[, Proto_Dat := NULL]
-        flag.cols <- na.omit(str_match(names(access.data), "^x_.*"))
+        flag.cols <- na.omit(stringr::str_match(names(access.data), "^x_.*"))
         value.cols <- setdiff(names(access.data), c(date.column, flag.cols))
         access.long <- melt(access.data,
             id.vars = date.column,

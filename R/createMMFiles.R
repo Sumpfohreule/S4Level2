@@ -3,7 +3,7 @@ createMMFiles <- function(xlsx.file) {
     # Import "Gesamt" tables for all sub plots
     full.table <- importAggregateData(xlsx.file)
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
-    meo.table <- full.table[str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"),
+    meo.table <- full.table[stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"),
         separate(.SD,
             col = "variable",
             into = c("vertical_position", "variable", "profile_pit"),
@@ -24,7 +24,7 @@ createMMFiles <- function(xlsx.file) {
     # Converting hPa to kPa
     meo.table[variable == "MP", value := value / 10]
 
-    plot.name <- str_match(basename(xlsx.file), pattern = "^[[:alpha:]]*(?=_)")
+    plot.name <- stringr::str_match(basename(xlsx.file), pattern = "^[[:alpha:]]*(?=_)")
     buche.id <- getEuPlotId(plot.name, "Buche")
     fichte.id <- getEuPlotId(plot.name, "Fichte")
     meo.table[SubPlot == "Fichte", plot := factor(fichte.id)]
@@ -62,7 +62,7 @@ createMMFiles <- function(xlsx.file) {
         new = c("Sequence", "instrument_seq_nr"))
     instrument.template[, ":=" (
             SW_pit = profile_pit,
-            profile_pit = str_match(profile_pit, pattern = "[XYZ]$"))]
+            profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))]
 
     # Join data with instrument id tables
     full.meo.join <- merge(

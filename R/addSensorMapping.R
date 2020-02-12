@@ -4,8 +4,8 @@ setGeneric("addSensorMapping", def = function(
         pattern,
         replacement,
         origin.date = as.POSIXct("1900-01-01", tz = "UTC"),
-        .URI = new("URI", "")) {
-        
+        .URI = URI("")) {
+
         standardGeneric("addSensorMapping")
     }
 )

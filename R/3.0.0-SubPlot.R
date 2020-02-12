@@ -15,7 +15,7 @@ setMethod("initialize", signature = "SubPlot", definition = function(
         local_directory) {
 
         .Object@Name <- name
-        .Object@URI = new("URI", getPlotName(uri), getSubPlotName(uri))
+        .Object@URI = URI(getPlotName(uri), getSubPlotName(uri))
         .Object@LocalDirectory <- local_directory
         .Object
     }

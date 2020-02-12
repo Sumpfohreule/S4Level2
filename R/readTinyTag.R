@@ -3,10 +3,10 @@ readTinyTag <- function(txt.path) {
     tt.table <- as.data.table(read.delim(txt.path,
             header = FALSE,
             skip = 5))[, -1]
-    comma.col <- unlist(lapply(tt.table, function(x) TRUE %in% str_detect(x, pattern = ",")))
+    comma.col <- unlist(lapply(tt.table, function(x) TRUE %in% stringr::str_detect(x, pattern = ",")))
     if (TRUE %in% comma.col) {
         column <- names(comma.col)[comma.col]
-        tt.table[, (column) := as.numeric(str_replace(get(column), pattern = ",", replacement = "."))]
+        tt.table[, (column) := as.numeric(stringr::str_replace(get(column), pattern = ",", replacement = "."))]
     }
     if (ncol(tt.table) == 2) {
         setnames(tt.table, c("Datum", "RegenX"))
@@ -19,7 +19,7 @@ readTinyTag <- function(txt.path) {
             tz = "UTC",
             format = date.format)]
     tt.table[, Datum := roundPOSIXct(Datum, in.seconds = 5 * 60)]
-    tt.table[, RegenX := as.numeric(str_match(RegenX, pattern = "^[0-9]+(?:\\.[0-9]+$)?"))]
+    tt.table[, RegenX := as.numeric(stringr::str_match(RegenX, pattern = "^[0-9]+(?:\\.[0-9]+$)?"))]
     setkey(tt.table, Datum)
     return(tt.table)
 }

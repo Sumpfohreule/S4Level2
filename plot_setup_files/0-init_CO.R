@@ -9,12 +9,12 @@ level2 <- createAndAddPlot(level2,
     plot_name = plot_name,
     corrected.aggregate.path =  "O:/PROJEKT/NIEDER/LOGGER/Convent/Conventwald_gesamt_Korrektur")
 
-plot_uri <- new("URI", file.path(plot_name))
+plot_uri <- URI(file.path(plot_name))
 level2 <- createAndAddMultipleSubPlots(level2,
     .PlotURI = plot_uri)
 
 # CO Buche
-co_bu_accessDB_uri <- new("URI", plot_name, "Buche", "AccessDB")
+co_bu_accessDB_uri <- URI(plot_name, "Buche", "AccessDB")
 level2 <- createAndAddAccessDBObject(level2,
     source_paths = "O:/PROJEKT/CONVENT/LOGDATEN/DBDAT/Conventwald.mdb",
     .URI = co_bu_accessDB_uri,
@@ -55,7 +55,7 @@ level2 <- addSensorMapping(level2,
     .URI = co_bu_accessDB_uri)
 
 # CO Fichte
-co_fi_envi_uri <- new("URI", "Conventwald/Fichte/Envilog")
+co_fi_envi_uri <- URI("Conventwald/Fichte/Envilog")
 co_fi_envi_paths <- c(
     "O:/PROJEKT/CONVENT/LOGDATEN/ROHDAT/DL4-WFI4/wfi4_pF_meter_csv",
     "O:/PROJEKT/NIEDER/LOGGER/Convent/Co_Fi_envilog/Rohdata")
@@ -64,7 +64,7 @@ level2 <- createAndAddLogger(level2,
     source_paths = co_fi_envi_paths,
     .URI = co_fi_envi_uri)
 
-co_fi_adlm_uri <- new("URI", "Conventwald/Fichte/ADLM")
+co_fi_adlm_uri <- URI("Conventwald/Fichte/ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/Convent/Convent_Fi_ADLM/csv",
@@ -93,7 +93,7 @@ level2 <- addSensorMapping(level2,
 
 
 # CO Freiland
-co_frei_adlm_uri <- new("URI", "Conventwald/Freiland/ADLM")
+co_frei_adlm_uri <- URI("Conventwald/Freiland/ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/Convent/Convent_ADLM_Turm/csv",

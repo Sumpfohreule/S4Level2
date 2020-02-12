@@ -18,7 +18,7 @@ setMethod("initialize", signature = "Plot", definition = function(
 
         .Object@Name <- name
         .Object@LocalDirectory = local_directory
-        .Object@URI = new("URI", getPlotName(uri))
+        .Object@URI = URI(getPlotName(uri))
         .Object <- setCorrectedAggregatePath(.Object, corrected.aggregate.path)
 
         .Object
@@ -49,7 +49,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = funct
         plot_name <- getPlotName(getURI(.Object))
         plot_directory <- getLocalDirectory(.Object)
 		for (sub_plot_name in sub_plot_names) {
-            sub_plot_uri <- new("URI", file.path(plot_name, sub_plot_name))
+            sub_plot_uri <- URI(file.path(plot_name, sub_plot_name))
             sub_plot_directory = file.path(plot_directory, sub_plot_name)
             .SubPlot <- new("SubPlot", name = sub_plot_name, uri = sub_plot_uri, local_directory = sub_plot_directory)
             .Object <- addSubPlot(.Object, .SubPlot)
@@ -216,7 +216,7 @@ setMethod("getData", signature = "Plot", definition = function(
 setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet.name, years) {
         data.path <- getCorrectedAggregatePath(.Object)
         year.folders <- dir(data.path)
-        year.folders <- year.folders[str_detect(year.folders, "^[0-9]{4}([-_][0-9]{4})?$")]
+        year.folders <- year.folders[stringr::str_detect(year.folders, "^[0-9]{4}([-_][0-9]{4})?$")]
         if (!is.null(years)) {
             years <- as.character(years)
             year.folders <- intersect(year.folders, years)
@@ -230,18 +230,18 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
             tryCatch( {
                     data <- data.table(read.xlsx(latest.file, sheet = sheet.name))[-1]
                     col.names <- names(data)
-                    date.col <- na.omit(str_match(col.names, "^.*?[Dd]atum.*?$"))
+                    date.col <- na.omit(stringr::str_match(col.names, "^.*?[Dd]atum.*?$"))
                     data <- suppressWarnings(melt(data, id.var = date.col))
                     setnames(data, date.col, "Datum")
                     data[, Datum := as.POSIXct(as.numeric(Datum) * 60 * 60 * 24, tz = "UTC", origin = "1899-12-30")]
                     data[, value := as.numericTryCatch(value)]
                     data.list[[year]] <- data
                 }, error = function(e) {
-                    if (str_detect(geterrmessage(), pattern = "Cannot find sheet named")) {
+                    if (stringr::str_detect(geterrmessage(), pattern = "Cannot find sheet named")) {
                         cat("\nFile '", latest.file, "'",
                             "\nhas been ignored because it does not contain a sheet with name '", sheet.name, "'",
                             sep = "")
-                    } else if (str_detect(geterrmessage(),
+                    } else if (stringr::str_detect(geterrmessage(),
                         pattern = "NAs introduced by coercion \\(See previous table\\)")) {
                         stop("Error in file \n'",
                             latest.file,

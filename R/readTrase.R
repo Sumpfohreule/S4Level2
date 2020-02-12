@@ -4,7 +4,7 @@ readTrase <- function(path) {
       "AUG", "SEP", "OCT","NOV", "DEC")
   months <- factor(month.short, levels = month.short, ordered = TRUE)
   test.string <- readLines(path, n = 1L)
-  if (str_detect(test.string, "\\t")) {
+  if (stringr::str_detect(test.string, "\\t")) {
     data <- as.data.table(read.delim(path, header = FALSE))
   } else {
     data <- as.data.table(read.csv(path, header = FALSE))
@@ -32,7 +32,7 @@ readTrase <- function(path) {
   }
   data[, Datum := paste(get(date.col), get(time.col))]
   for (index in 1 : length(months)) {
-    data[, Datum := str_replace(Datum,
+    data[, Datum := stringr::str_replace(Datum,
             paste0("(?i)",months[index]),
             paste0("_", as.character(as.numeric(months[index])), "_"))]
   }
@@ -50,7 +50,7 @@ readTrase <- function(path) {
       value.var = c("Values", "Error"))
   setkey(wide.table, Datum)
   col.names <- names(wide.table)
-  order.by <- str_replace(col.names, "([[:alpha:]]+_?[[:alpha:]]*_?)([0-9]?)",
+  order.by <- stringr::str_replace(col.names, "([[:alpha:]]+_?[[:alpha:]]*_?)([0-9]?)",
       "\\2_\\1")
   out.table <- wide.table[, col.names[order(order.by)], with = FALSE]
   return(out.table)

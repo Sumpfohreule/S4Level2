@@ -8,11 +8,11 @@ level2 <- createAndAddPlot(level2,
     plot_name = ro_plot_name,
     corrected.aggregate.path = "O:/PROJEKT/NIEDER/LOGGER/ROTENFEL/Rotenfels_Fichte_gesamt_Korrektur")
 level2 <- createAndAddMultipleSubPlots(level2,
-    .PlotURI = new("URI", ro_plot_name),
+    .PlotURI = URI(ro_plot_name),
     sub_plot_names = c("Fichte", "Freiland"))
 
 # Fichte
-ro_fi_deltaT_uri <- new("URI", ro_plot_name, "Fichte", "DeltaT")
+ro_fi_deltaT_uri <- URI(ro_plot_name, "Fichte", "DeltaT")
 level2 <- createAndAddLogger(level2,
     logger_type = "DeltaT",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ROTENFEL/Rotenfels_Fichte_DeltaT_neu/backup.dat",
@@ -43,14 +43,14 @@ level2 <- addSensorMapping(level2,
 #ro.deltaT.fi.alt <- new("DeltaT", name = "DeltaT_alt", paths = ro.deltaT.fi.alt.path)
 #ro.plot <- addLogger(ro.plot, ro.deltaT.fi.alt, "Fichte")
 
-ro_fi_envilog_uri <- new("URI", ro_plot_name, "Fichte", "Envilog")
+ro_fi_envilog_uri <- URI(ro_plot_name, "Fichte", "Envilog")
 level2 <- createAndAddLogger(level2,
     logger_type = "Envilog",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ROTENFEL/Rotenfels_Fichte_Envilog",
     .URI = ro_fi_envilog_uri)
 
 # Freiland
-ro_frei_ADLM_uri <- new("URI", ro_plot_name, "Freiland", "ADLM")
+ro_frei_ADLM_uri <- URI(ro_plot_name, "Freiland", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ROTENFEL/Rotenfels_1/CSV",

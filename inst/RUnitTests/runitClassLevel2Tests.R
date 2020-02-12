@@ -27,41 +27,41 @@ testGetLocalDirectory <- function() {
 }
 
 testCreateDirectoryStructure <- function() {
-    .Logger_URI <- new("URI", "")
+    .Logger_URI <- URI("")
     test_directory <- file.path(tempdir(), "CreateTestDir")
     .Level2 <- .initializeL2Object(.Logger_URI, test_directory)
     saveL2Object(.Level2)
-    
+
     RUnit::checkTrue(dir.exists(test_directory))
 }
 
 testGetPlot <- function() {
     plot_name <- "TestPlot"
-    .URI <- new("URI", plot_name)
-    
+    .URI <- URI(plot_name)
+
     .Level2 <- new("Level2", local_directory = tempdir())
     .TestPlot <- new("Plot",
         name = plot_name,
         local_directory = file.path(tempdir(), plot_name),
         uri = .URI,
         corrected.aggregate.path = tempdir())
-    
+
     .Level2 <- addPlot(.Level2, .TestPlot)
     RUnit::checkEquals(.TestPlot, getPlot(.Level2, .URI))
 }
 
 testGetSubPlot <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- new("URI", plot_name)
+    .Plot_URI <- URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, tempdir())
-    
+
     sub_plot_name <- "TestSubPlot"
-    .SubPlot_URI <- new("URI", file.path(plot_name, sub_plot_name))
+    .SubPlot_URI <- URI(file.path(plot_name, sub_plot_name))
     .TestSubPlot <- new("SubPlot",
         name = sub_plot_name,
         uri = .SubPlot_URI,
         local_directory = file.path(tempdir(), plot_name, sub_plot_name))
-    
+
     .Level2 <- addSubPlot(.Level2, .TestSubPlot, .SubPlot_URI)
     RUnit::checkEquals(.TestSubPlot, getSubPlot(.Level2, .SubPlot_URI))
 }
@@ -69,37 +69,37 @@ testGetSubPlot <- function() {
 testGetDataStructure <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
-    .SubPlot_URI = new("URI", file.path(plot_name, sub_plot_name))
+    .SubPlot_URI = URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.SubPlot_URI, tempdir())
-    
+
     data_structure_type = "Envilog"
-    .DataStructure_URI <- new("URI", file.path(plot_name, sub_plot_name, data_structure_type))
+    .DataStructure_URI <- URI(file.path(plot_name, sub_plot_name, data_structure_type))
 
     target_local_directory <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_type)
     .TestDataStructure <- new(data_structure_type,
-        uri = new("URI", ""),
+        uri = URI(""),
         local_directory = target_local_directory,
         paths = tempdir())
-    .Level2 <- addDataStructure(.Level2, 
+    .Level2 <- addDataStructure(.Level2,
         .DataStructure = .TestDataStructure,
         .URI =.DataStructure_URI)
-    
+
 	RUnit::checkEquals(.TestDataStructure, getDataStructure(.Level2, .DataStructure_URI))
 }
 
 testAddPlot <- function() {
-	.URI <- new("URI", "")
+	.URI <- URI("")
     .Level2 <- .initializeL2Object(.URI, tempdir())
-    
+
     plot_name <- "TestPlot"
     local_directory_once_added_to_level2 <-  file.path(tempdir(), plot_name)
-    .Plot_URI <- new("URI", plot_name)
+    .Plot_URI <- URI(plot_name)
     .Plot <- new("Plot",
         name = plot_name,
         local_directory = local_directory_once_added_to_level2,
         uri = .Plot_URI,
         corrected.aggregate.path = tempdir())
-    
+
     .Level2 <- addPlot(.Level2, .Plot)
     RUnit::checkEquals(.Plot, getPlot(.Level2, .Plot_URI))
 }
@@ -107,18 +107,18 @@ testAddPlot <- function() {
 testAddSubPlot <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
-    
-    .PlotURI <- new("URI", plot_name)
+
+    .PlotURI <- URI(plot_name)
     .Level2 <- .initializeL2Object(.PlotURI, tempdir())
-    
+
     on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name)
-    .SubPlot_URI = new("URI", file.path(plot_name, sub_plot_name))
+    .SubPlot_URI = URI(file.path(plot_name, sub_plot_name))
     .SubPlot <- new("SubPlot",
         name = sub_plot_name,
         uri = .SubPlot_URI,
         local_directory = on_adding_local_directory_is_set_to)
     .Level2 <- addSubPlot(.Level2, .SubPlot, .PlotURI)
-    
+
     RUnit::checkEquals(.SubPlot, getSubPlot(.Level2, .SubPlot_URI))
 }
 
@@ -126,43 +126,43 @@ testAddDataStructure <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
     data_structure_name = "TestDataStructure"
-    
-    .SubPlot_URI <- new("URI", file.path(plot_name, sub_plot_name))
+
+    .SubPlot_URI <- URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.SubPlot_URI, tempdir())
-    
+
     on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_name)
-    .DataStructure_URI <- new("URI", file.path(plot_name, sub_plot_name, data_structure_name))
+    .DataStructure_URI <- URI(file.path(plot_name, sub_plot_name, data_structure_name))
     .TestDataStructure <- new("DataStructure",
         unique_name = data_structure_name,
         uri = .DataStructure_URI,
         local_directory = on_adding_local_directory_is_set_to,
         paths = tempdir())
     .Level2 <- addDataStructure(.Level2, .TestDataStructure, .DataStructure_URI)
-    
+
     RUnit::checkEquals(.TestDataStructure, getDataStructure(.Level2, .DataStructure_URI))
 }
 
 testAddAndApplySensorMapping <- function() {
-    .URI <- new("URI", "TestPlot/TestSubPlot/DeltaT")
+    .URI <- URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.URI, tempdir())
-    
+
     example_pattern <- "Logtemp"
     example_replacement <- "Logger_Temperature"
     .Level2 <- addSensorMapping(.Level2, pattern = example_pattern, replacement = example_replacement, .URI = .URI)
-    
+
     .DataStructure <- getDataStructure(.Level2, .URI)
     sensor_mappings <- getSensorMappings(.DataStructure)
     RUnit::checkEquals(1, nrow(sensor_mappings))
     RUnit::checkEquals(3, ncol(sensor_mappings))
-    
+
     current_patterns <- unlist(sensor_mappings[1, "patterns"])
     attr(current_patterns, "names") <- NULL
     RUnit::checkEquals(example_pattern, current_patterns)
-    
+
     current_replacements <- unlist(sensor_mappings[1, "replacements"])
     attr(current_replacements, "names") <- NULL
     RUnit::checkEquals(example_replacement, current_replacements)
-    
+
     .Level2 <- updateFilePaths(.Level2)
     saveL2Object(.Level2)
     .Level2 <- updateData(.Level2)
@@ -174,16 +174,16 @@ testAddAndApplySensorMapping <- function() {
 
 testReplaceListObject <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- new("URI", plot_name)
+    .Plot_URI <- URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, path = tempdir())
-    
+
     .Replacement_Plot <- new("Plot",
         name = plot_name,
         uri = .Plot_URI,
         local_directory = "c:/",
         corrected.aggregate.path = "c:/")
     .Level2 <- replaceListObject(.Level2, .Replacement_Plot)
-    
+
     RUnit::checkEquals(.Replacement_Plot, getPlotList(.Level2)[[plot_name]])
 }
 
@@ -193,19 +193,19 @@ testReplaceObjectByURIWithItselfError <- function() {
 
 testReplacePlotByURI <- function() {
     plot_name = "TestPlot"
-    .URI <- new("URI", plot_name)
+    .URI <- URI(plot_name)
     .Level2 <- .initializeL2Object(.URI, tempdir())
-    
+
     .ReplacementPlot <- new("Plot",
         name = plot_name,
         uri = .URI,
         local_directory = tempdir(),
         corrected.aggregate.path = tempdir())
     .Level2 <- replaceObjectByURI(.Level2, .ReplacementObject = .ReplacementPlot)
-    
+
     plot_list <- getPlotList(.Level2)
     RUnit::checkEquals(1, length(plot_list))
-    
+
     .ReplacedPlot <- getPlot(.Level2, .URI)
 	RUnit::checkEquals(.ReplacementPlot, .ReplacedPlot)
 }
@@ -215,23 +215,23 @@ testReplaceSubPlotByURI <- function() {
 }
 
 testUpdateFilePaths <- function() {
-    .Logger_URI <- new("URI", "TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, path = tempdir())
     .Level2 <- updateFilePaths(.Level2)
     .TestLogger <- getDataStructure(.Level2, .Logger_URI)
     test_source_file <- getSourceFileTable(.TestLogger)
-    
+
     RUnit::checkTrue(nrow(test_source_file) == 1)
     RUnit::checkEquals("test_2018_file.dat", test_source_file[, file])
 }
 
 testUpdateData <- function() {
-    .Logger_URI <- new("URI", "TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, tempdir())
     saveL2Object(.Level2)
     .Level2 <- updateFilePaths(.Level2)
     .Level2 <- updateData(.Level2)
-    
+
     imported_data <- getData(.Level2)
     RUnit::checkEquals(1, nrow(imported_data))
     RUnit::checkEquals(6, ncol(imported_data))
@@ -240,11 +240,11 @@ testUpdateData <- function() {
 }
 
 testResetPlot <- function() {
-    .Logger_URI <- new("URI", "TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, tempdir())
     .Level2 <- updateFilePaths(.Level2)
     .Level2 <- resetToInitialization(.Level2)
-    
+
     .TestLogger <- getDataStructure(.Level2, .Logger_URI)
     test_source_file <- getSourceFileTable(.TestLogger)
     RUnit::checkEquals(0, nrow(test_source_file))
@@ -254,12 +254,12 @@ testResetPlot <- function() {
 ########################################################################################################################
 .initializeL2Object <- function(.URI, path) {
     .Level2 <- new("Level2", path)
-    
+
     if (getURI_Depth(.URI) >= 1) {
         plot_name <- getPlotName(.URI)
         .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
     }
-    
+
     if (getURI_Depth(.URI) >= 2) {
         sub_plot_name <- getSubPlotName(.URI)
         .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)

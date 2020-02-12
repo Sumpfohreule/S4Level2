@@ -16,16 +16,16 @@ addToWorkbookWithTemplate <- function(out.table, workbook, sheet) {
     years.last <- 1900 : (year - 1)
     axis.start <- sum(isLeapYear(years.last)) * 366 + sum(!isLeapYear(years.last)) * 365 + 2
     axis.end <- axis.start + as.numeric(isLeapYear(year)) * 366 + as.numeric(!isLeapYear(year)) * 365 - 1
-    
+
     # Adjust xml charts with new x-axis
     xml.paths <- workbook@.xData$charts
     for (xml.path in xml.paths) {
         xml.doc <- xmlInternalTreeParse(xml.path)
         node.set <- getNodeSet(xml.doc, "//c:numRef//c:f")
-        if (str_detect(xmlValue(node.set[[2]]), sheet)) {
+        if (stringr::str_detect(xmlValue(node.set[[2]]), sheet)) {
             max.rows <- nrow(out.table)
             for (text.node in node.set) {
-                xmlValue(text.node) = str_replace(xmlValue(text.node),
+                xmlValue(text.node) = stringr::str_replace(xmlValue(text.node),
                     pattern = "[0-9]+$",
                     replacement = as.character(max.rows + 2))
             }

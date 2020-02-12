@@ -8,14 +8,16 @@ readDeltaT <- function(deltaT_dat_path) {
         mutate_if(is.factor, as.character) %>%
         mutate_at(vars(-starts_with("Label")), as.numeric) %>%
         mutate_if(is.character, trimws)
-    
+
     drop_prefix_and_suffix_pattern <- "X\\.+|\\.+$"
     old_col_names <- names(reduced_dat_data)
-    dropped_pre_and_suffix <- str_replace(old_col_names, pattern = drop_prefix_and_suffix_pattern, replacement = "")
+    dropped_pre_and_suffix <- stringr::str_replace(old_col_names,
+                                                   pattern = drop_prefix_and_suffix_pattern,
+                                                   replacement = "")
     data.table::setnames(reduced_dat_data, dropped_pre_and_suffix)
     data.table::setnames(reduced_dat_data, old = "Label", new = "Datum")
-        
-    file_readout_year <- as.numeric(str_match(basename(deltaT_dat_path), "(?<=_)[0-9]{4}(?=_)"))
+
+    file_readout_year <- as.numeric(stringr::str_match(basename(deltaT_dat_path), "(?<=_)[0-9]{4}(?=_)"))
     if (is.na(file_readout_year)) {
         stop("File names for DeltaT need to contain the retrieval year in format _XXXX_ as it is not logged in file")
     }
@@ -34,7 +36,7 @@ readDeltaT <- function(deltaT_dat_path) {
         mutate(Datum = paste(year_paste_vector, Datum)) %>%
         mutate(Datum = as.POSIXct(Datum, tz = "UTC", format = "%Y %d/%m %H:%M:%S")) %>%
         mutate(Datum = roundPOSIXct(Datum, 5 * 60))
-    
+
     return(added_date_data)
 }
 
