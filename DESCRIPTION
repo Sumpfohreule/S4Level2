@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9022
+Version: 0.0.0.9024
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -63,6 +63,7 @@ Collate:
     'getSourcePaths.R'
     'setSensorMappings.R'
     'setSourcePaths.R'
+    'data.table_setOldClass.R'
     '4.0.0-DataStructure.R'
     'loadData.R'
     'saveData.R'
