@@ -11,3 +11,4 @@ for (file in dir(file.path(.S4Level2.PATH, "R"),
     source(file)
 }
 rm(file)
+data.table()
