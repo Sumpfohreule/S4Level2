@@ -1,6 +1,6 @@
 setwd("O:/TRANSP/IsenbergLars/Projekte/S4Level2")
 rm(list = ls(all.names = TRUE))
-source("init.R")
+.S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
 
 #source("0-initial_plot_setup.R")
 .Level2 <- loadL2Object()
@@ -20,15 +20,12 @@ saveL2Object(.Level2)
 # TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: replace generic methods like applyToList with more specific once (applyToPlotList, applyToSubPlotList)
 # to remove strange intial values by null
-# TODO: remove .S4Level2.PATH constant from all methods
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
 # TODO: remove name Level2 as it is not needed (return class name instead if needed)
 # TODO: Try to replace calculated columns with (protected) excel-formulas
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Check logger name within raw files if existing (e.g. DeltaT)
 # TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
-# TODO: Package the Project
-# TODO: create "facade" of functions to hide implementation
 # TODO: split variable columns into sensor, position and vertical!
 # TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
 # TODO: create a summary function to give an overview over the objects
