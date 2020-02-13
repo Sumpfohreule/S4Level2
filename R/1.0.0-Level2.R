@@ -1,5 +1,6 @@
 ########################################################################################################################
-setClass(Class = "Level2",
+#' @export Level2
+Level2 <- setClass(Class = "Level2",
     slots = c(
         Name = "character",
         LocalDirectory = "character",
