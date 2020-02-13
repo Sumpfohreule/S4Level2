@@ -22,7 +22,7 @@
 
 ########################################################################################################################
 testGetLocalDirectory <- function() {
-    .Level2 <- new("Level2", local_directory = tempdir())
+    .Level2 <- Level2(local_directory = tempdir())
     RUnit::checkEquals(tempdir(), getLocalDirectory(.Level2))
 }
 
@@ -39,7 +39,7 @@ testGetPlot <- function() {
     plot_name <- "TestPlot"
     .URI <- URI(plot_name)
 
-    .Level2 <- new("Level2", local_directory = tempdir())
+    .Level2 <- Level2(local_directory = tempdir())
     .TestPlot <- new("Plot",
         name = plot_name,
         local_directory = file.path(tempdir(), plot_name),
@@ -253,7 +253,7 @@ testResetPlot <- function() {
 
 ########################################################################################################################
 .initializeL2Object <- function(.URI, path) {
-    .Level2 <- new("Level2", path)
+    .Level2 <- Level2(path)
 
     if (getURI_Depth(.URI) >= 1) {
         plot_name <- getPlotName(.URI)

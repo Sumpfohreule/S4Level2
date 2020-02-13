@@ -40,7 +40,7 @@ testReplaceSubPlotByURI <- function() {
 
 ########################################################################################################################
 .initializeL2Object <- function(.URI, path) {
-    .Level2 <- new("Level2", path)
+    .Level2 <- Level2(path)
 
     if (getURI_Depth(.URI) >= 1) {
         plot_name <- getPlotName(.URI)
