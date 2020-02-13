@@ -132,7 +132,7 @@ testAddDataStructure <- function() {
 
     on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_name)
     .DataStructure_URI <- URI(file.path(plot_name, sub_plot_name, data_structure_name))
-    .TestDataStructure <- new("DataStructure",
+    .TestDataStructure <- DataStructure(
         unique_name = data_structure_name,
         uri = .DataStructure_URI,
         local_directory = on_adding_local_directory_is_set_to,

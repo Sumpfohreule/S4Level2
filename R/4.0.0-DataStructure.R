@@ -1,7 +1,9 @@
 ########################################################################################################################
 #' @include URI.R
 #' @include data.table_setOldClass.R
-setClass("DataStructure", slots = c(
+#' @export DataStructure
+#' @exportClass DataStructure
+DataStructure <- setClass("DataStructure", slots = c(
         UniqueName = "character",
         URI = "URI",
         LocalDirectory = "character",

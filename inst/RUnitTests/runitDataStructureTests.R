@@ -30,7 +30,7 @@ testMultiSourcePathInitialization <- function() {
     multiple_folders <- list.dirs(tempdir())
     assertthat::assert_that(length(multiple_folders) > 1)
 
-    .Data_Structure <- new("DataStructure",
+    .Data_Structure <- DataStructure(
         unique_name = "TestName",
         uri = URI(""),
         local_directory = tempdir(),
@@ -45,11 +45,11 @@ testFilesForPathsError <- function() {
     assertthat::assert_that(file.exists(test_file))
 
     folders_with_file <- list.files(tempdir(), full.names = TRUE)
-    RUnit::checkException(new("DataStructure", unique_name = "TestName", paths = folders_with_file))
+    RUnit::checkException(DataStructure(unique_name = "TestName", paths = folders_with_file))
 }
 
 testInitializationNoneExistingSourcePath <- function() {
-    RUnit::checkException(new("DataStructure", unique_name = "TestName", paths = "ax"))
+    RUnit::checkException(DataStructure(unique_name = "TestName", paths = "ax"))
 }
 
 testDontUseURIForDeeperNestedObjects <- function() {

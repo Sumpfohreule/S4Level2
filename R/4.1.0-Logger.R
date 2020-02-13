@@ -121,7 +121,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
                             new.data.list[[source.files[index, file]]] <- new.data
                             source.files[index, ":=" (
                                     imported = TRUE,
-                                    comment = appendString(comment, "Duplicate dates within file removed!"))]
+                                    comment = MyUtilities::appendString(comment, "Duplicate dates within file removed!"))]
                         } else if (stringr::str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
                             source.files[index, skip := TRUE]
                         } else {
@@ -132,11 +132,11 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
                     }, error = function(err) {
                         source.files[index, ":=" (
                                 skip = TRUE,
-                                comment = appendString(comment, geterrmessage()))]
+                                comment = MyUtilities::appendString(comment, geterrmessage()))]
                     }, warning = function(warn) {
                         source.files[index, ":=" (
                                 skip = TRUE,
-                                comment = appendString(comment, warn[["message"]]))]
+                                comment = MyUtilities::appendString(comment, warn[["message"]]))]
                     }
                 )
                 # Skip files for which there is no mapping of columns to sensors yet
