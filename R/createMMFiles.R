@@ -16,7 +16,7 @@ createMMFiles <- function(xlsx.file) {
         replacement = c("ST", "MP", "WC"))
     for (pattern.index in mappings[, pattern]) {
         replacement = mappings[pattern == pattern.index, replacement]
-        meo.table[, variable := remapLevels(variable,
+        meo.table[, variable := MyUtilities::remapLevels(variable,
                 pattern = pattern.index,
                 replacement = replacement)]
     }

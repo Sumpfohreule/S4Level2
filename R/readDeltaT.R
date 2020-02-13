@@ -35,7 +35,7 @@ readDeltaT <- function(deltaT_dat_path) {
     added_date_data <- reduced_dat_data %>%
         mutate(Datum = paste(year_paste_vector, Datum)) %>%
         mutate(Datum = as.POSIXct(Datum, tz = "UTC", format = "%Y %d/%m %H:%M:%S")) %>%
-        mutate(Datum = roundPOSIXct(Datum, 5 * 60))
+        mutate(Datum = MyUtilities::roundPOSIXct(Datum, 5 * 60))
 
     return(added_date_data)
 }

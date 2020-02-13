@@ -227,12 +227,12 @@ testUpdateFilePaths <- function() {
 
 testUpdateData <- function() {
     .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
-    .Level2 <- .initializeL2Object(.Logger_URI, tempdir())
-    saveL2Object(.Level2)
-    .Level2 <- updateFilePaths(.Level2)
-    .Level2 <- updateData(.Level2)
+    Level2 <- .initializeL2Object(.Logger_URI, tempdir())
+    saveL2Object(Level2)
+    Level2 <- updateFilePaths(Level2)
+    Level2 <- updateData(Level2)
 
-    imported_data <- getData(.Level2)
+    imported_data <- getData(Level2)
     RUnit::checkEquals(1, nrow(imported_data))
     RUnit::checkEquals(6, ncol(imported_data))
     current_value <- unlist(imported_data[1, "value"])

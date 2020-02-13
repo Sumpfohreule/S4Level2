@@ -81,10 +81,10 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
         all.files <- dir(getSourcePaths(.Object), full.names = TRUE, recursive = TRUE)
         select.files <- all.files[stringr::str_detect(basename(all.files), pattern = getSourceFilePattern(.Object))]
-        file.table <- data.table(
+        file.table <- data.table::data.table(
             file = basename(select.files),
             path = as.factor(dirname(select.files)))
-        setkey(file.table, path, file)
+        data.table::setkey(file.table, path, file)
         source.table <- getSourceFileTable(.Object)[file.table]
         source.table[is.na(imported), imported := FALSE]
         source.table[is.na(skip), skip := FALSE]
@@ -142,14 +142,14 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
                 # Skip files for which there is no mapping of columns to sensors yet
             }
 
-            new.data.table <- rbindlist(new.data.list, use.names = TRUE, fill = FALSE)
+            new.data.table <- data.table::rbindlist(new.data.list, use.names = TRUE, fill = FALSE)
             rm(new.data.list)
 
             if (nrow(new.data.table) > 0) {
                 new.data.table <- remapSensorNames(.Object, long.l2.table = new.data.table)
-                complete.table <- rbindlist(list(loadData(.Object), new.data.table), use.names = TRUE, fill = FALSE)
-                setcolorder(complete.table, c("Plot", "SubPlot", "Logger", "variable"))
-                setkey(complete.table, Plot, SubPlot, Logger, variable, Datum)
+                complete.table <- data.table::rbindlist(list(loadData(.Object), new.data.table), use.names = TRUE, fill = FALSE)
+                data.table::setcolorder(complete.table, c("Plot", "SubPlot", "Logger", "variable"))
+                data.table::setkey(complete.table, Plot, SubPlot, Logger, variable, Datum)
 
                 # Drops duplicated rows (same Date and variable but maybe different value!)
                 complete.table <- unique(complete.table, by = c("Datum", "variable"))

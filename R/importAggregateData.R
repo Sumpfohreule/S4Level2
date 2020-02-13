@@ -13,8 +13,8 @@ importAggregateData <- function(xlsx.file) {
                 )
                 column.names <- names(read.xlsx(xlsx.file, sheet = sub.plot.type, rows = 1))[1:ncol(sub.plot.table)]
                 setnames(sub.plot.table, column.names)
-                sub.plot.table[, Datum := as.POSIXctFixed(Datum * 60 * 60 * 24, origin = "1899-12-30", tz = "UTC")]
-                sub.plot.table[, Datum := roundPOSIXct(Datum,
+                sub.plot.table[, Datum := MyUtilities::as.POSIXctFixed(Datum * 60 * 60 * 24, origin = "1899-12-30", tz = "UTC")]
+                sub.plot.table[, Datum := MyUtilities::roundPOSIXct(Datum,
                         in.seconds = 5 * 60,
                         round.fun = round)]
                 long.sub.plot.table <- melt(sub.plot.table, id.vars = "Datum")

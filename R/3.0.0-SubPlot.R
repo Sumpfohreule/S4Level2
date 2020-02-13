@@ -126,7 +126,7 @@ setMethod("getSourceFileTable", signature = "SubPlot", definition = function(.Ob
             source.table[, logger := as.factor(logger.name)]
             list[[logger.name]] <- source.table
         }
-        return(rbindlist(list))
+        return(data.table::rbindlist(list))
     }
 )
 
@@ -156,10 +156,10 @@ setMethod("getData", signature = "SubPlot", definition = function(.Object, start
                     start.date = start.date,
                     end.date = end.date)
             }
-            data <- rbindlist(list, use.names = TRUE, fill = FALSE)
+            data <- data.table::rbindlist(list, use.names = TRUE, fill = FALSE)
             rm(list)
             if (ncol(data) > 0) {
-                setkey(data, Plot, SubPlot, Logger, variable, Datum)
+                data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
                 return(data)
             }
         }

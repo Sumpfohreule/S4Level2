@@ -27,13 +27,13 @@ readEnvilog <- function(path) {
         replacement = "\\3_\\1_\\2")
     col.names[1] <- "Datum"
     setnames(data, col.names)
-    data[, Datum := as.POSIXctFixed(Datum, format = "%d.%m.%Y %H:%M", tz = "UTC")]
+    data[, Datum := MyUtilities::as.POSIXctFixed(Datum, format = "%d.%m.%Y %H:%M", tz = "UTC")]
     for (col.name in names(data)[-1]) {
         data[, (col.name) := stringr::str_replace(get(col.name), "^\\D+$", "")]
         data[, (col.name) := stringr::str_replace(get(col.name), ",", ".")]
         data[, (col.name) := as.numeric(get(col.name))]
     }
     five.minutes = 5 * 60 # = 300 seconds for rounding times to
-    data[, Datum := roundPOSIXct(Datum, five.minutes)]
+    data[, Datum := MyUtilities::roundPOSIXct(Datum, five.minutes)]
     return(data)
 }

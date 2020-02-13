@@ -56,7 +56,7 @@ setMethod("addSensorMapping", signature = "DataStructure", definition = function
 
         stringr::str_replace("", pattern, replacement) # Early testing of for syntax errors
         new_sensor_mapping <- list(pattern, replacement, as.POSIXct(origin.date, tz = "UTC"))
-        combined_sensor_mapping <- rbindlist(list(getSensorMappings(.Object), new_sensor_mapping))
+        combined_sensor_mapping <- data.table::rbindlist(list(getSensorMappings(.Object), new_sensor_mapping))
         .Object <- setSensorMappings(.Object, unique(combined_sensor_mapping))
         .Object
     }
@@ -137,12 +137,12 @@ setMethod("remapSensorNames", signature = "DataStructure", definition = function
                 min.date <- mappings[mapping.index, origin.date]
                 if (min.date == as.POSIXct("1900-01-01", tz = "UTC")) {
                     long.l2.table[,
-                        variable := remapLevels(variable,
+                        variable := MyUtilities::remapLevels(variable,
                             pattern = mappings[mapping.index, patterns],
                             replacement = mappings[mapping.index, replacements])]
                 } else {
                     long.l2.table[Datum >= min.date,
-                        variable := remapLevels(variable,
+                        variable := MyUtilities::remapLevels(variable,
                             pattern = mappings[mapping.index, patterns],
                             replacement = mappings[mapping.index, replacements])]
                     long.l2.table[, variable := factor(as.character(variable))]

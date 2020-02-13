@@ -36,12 +36,12 @@ readTrase <- function(path) {
             paste0("(?i)",months[index]),
             paste0("_", as.character(as.numeric(months[index])), "_"))]
   }
-  data[, Datum := str_replace_all(Datum, "[.] |(?<=_) ", "")]
-  data[, Datum := str_replace_all(Datum,
+  data[, Datum := stringr::str_replace_all(Datum, "[.] |(?<=_) ", "")]
+  data[, Datum := stringr::str_replace_all(Datum,
           "(?<=[0-9]{1,2}_[0-9]{1,2}_)([0-9]{2})(?= )",
           "20\\1")]
-  data[, Datum := as.POSIXctFixed(Datum, format = "%d_%m_%Y %H:%M:%S", tz = "UTC")]
-  data[, Datum := roundPOSIXct(Datum, 15 * 60)]
+  data[, Datum := MyUtilities::as.POSIXctFixed(Datum, format = "%d_%m_%Y %H:%M:%S", tz = "UTC")]
+  data[, Datum := MyUtilities::roundPOSIXct(Datum, 15 * 60)]
   data[, Instruments := paste0("Sensor_", get(sens.col))]
   data[, Values := get(val.col)]
   data[, Error := get(err.col)]

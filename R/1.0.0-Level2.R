@@ -94,7 +94,7 @@ setMethod("createAndAddLogger", signature = "Level2", definition = function(
         .URI,
         unique_logger_name) {
 
-        logger_name = if_else(is.na(unique_logger_name), true = logger_type, false = as.character(unique_logger_name))
+        logger_name = dplyr::if_else(is.na(unique_logger_name), true = logger_type, false = as.character(unique_logger_name))
         logger_directory <- file.path(getLocalDirectory(.Object), getPlotName(.URI), getSubPlotName(.URI), logger_name)
         .Logger = new(logger_type,
             unique_name = logger_name,
@@ -115,7 +115,7 @@ setMethod("createAndAddAccessDBObject", signature = "Level2", definition = funct
         date_column,
         unique_logger_name = NA) {
 
-        object_name <- if_else(condition = is.na(unique_logger_name),
+        object_name <- dplyr::if_else(condition = is.na(unique_logger_name),
             true = "AccessDB",
             false = as.character(unique_logger_name))
         local_directory <- file.path(getLocalDirectory(.Object), getPlotName(.URI), getSubPlotName(.URI), object_name)
@@ -273,11 +273,11 @@ setMethod("getData", signature = "Level2", definition = function(
                     sub.plot = sub.plot,
                     logger.name = logger.name)
             }
-            data <- rbindlist(list)
+            data <- data.table::rbindlist(list)
             rm(list)
-            setkey(data, Plot, SubPlot, Logger, variable, Datum)
+            data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
             if (as.wide.table) {
-                data <- dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
+                data <- data.table::dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
             }
             return(data)
         } else {

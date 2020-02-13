@@ -14,11 +14,12 @@ readTinyTag <- function(txt.path) {
         num.col <- names(tt.table)[unlist(lapply(tt.table, is.numeric))]
         tt.table <- tt.table[, .(Datum = paste(V2, V3), RegenX = get(num.col))]
     }
-    date.format <- guessDateFormat(tt.table[1, Datum])
-    tt.table[, Datum := as.POSIXctFixed(Datum,
+    date.format <- MyUtilities::guessDateFormat(tt.table[1, Datum])
+    tt.table[, Datum := MyUtilities::as.POSIXctFixed(
+            Datum,
             tz = "UTC",
             format = date.format)]
-    tt.table[, Datum := roundPOSIXct(Datum, in.seconds = 5 * 60)]
+    tt.table[, Datum := MyUtilities::roundPOSIXct(Datum, in.seconds = 5 * 60)]
     tt.table[, RegenX := as.numeric(stringr::str_match(RegenX, pattern = "^[0-9]+(?:\\.[0-9]+$)?"))]
     setkey(tt.table, Datum)
     return(tt.table)

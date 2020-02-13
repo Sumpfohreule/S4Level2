@@ -30,7 +30,7 @@ setMethod("initialize", signature = "AccessDB", definition = function(.Object,
 ########################################################################################################################
 #' @include setLastImportDate.R
 setMethod("setLastImportDate", signature = "AccessDB", definition = function(.Object, posixct_date) {
-        if (!is.POSIXct(posixct_date)) {
+        if (!MyUtilities::is.POSIXct(posixct_date)) {
             stop("posixct_date is not of class POSIXct")
         }
         .Object@Last_Import_Date <- posixct_date
@@ -72,7 +72,7 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
         file.name <- getOutputFile(.Object)
         dir.create(out.dir, showWarnings = FALSE)
         date.column <- "Dat_Zeit"
-        access32BitQuery(db.path,
+        MyUtilities::access32BitQuery(db.path,
             sql.query = sql.query,
             date.col = date.column,
             out.file = file.path(out.dir, file.name))
@@ -80,7 +80,7 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
         access.data[, Proto_Dat := NULL]
         flag.cols <- na.omit(stringr::str_match(names(access.data), "^x_.*"))
         value.cols <- setdiff(names(access.data), c(date.column, flag.cols))
-        access.long <- melt(access.data,
+        access.long <- data.table::melt(access.data,
             id.vars = date.column,
             measure.vars = value.cols)
         access.long <- access.long[!is.na(value)]
@@ -89,9 +89,9 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
                 SubPlot = as.factor(getSubPlotName(.Object)),
                 Logger = as.factor(getName(.Object)))]
         key.columns <- c("Plot", "SubPlot", "Logger", "variable", date.column)
-        setcolorder(access.long, key.columns)
-        setkeyv(access.long, key.columns)
-        setnames(access.long, date.column, "Datum")
+        data.table::setcolorder(access.long, key.columns)
+        data.table::setkeyv(access.long, key.columns)
+        data.table::setnames(access.long, date.column, "Datum")
         access.long <- remapSensorNames(.Object, long.l2.table = access.long)
 
         saveRDS(access.long, file.path(out.dir, file.name))

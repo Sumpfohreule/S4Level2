@@ -199,11 +199,11 @@ setMethod("getData", signature = "Plot", definition = function(
                     end.date = end.date,
                     logger.name = logger.name)
             }
-            data <- rbindlist(list)
+            data <- data.table::rbindlist(list)
             rm(list)
-            setkey(data, Plot, SubPlot, Logger, variable, Datum)
+            data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
             if (as.wide.table) {
-                data <- dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
+                data <- data.table::dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
             }
             return(data)
         } else {
@@ -223,18 +223,18 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
         }
         data.list <- list()
         for (year in year.folders) {
-            latest.file <- getLastModifiedFile(
+            latest.file <- MyUtilities::getLastModifiedFile(
                 folder = file.path(data.path, year),
                 pattern = "\\.xlsx$",
                 recursive = TRUE)
             tryCatch( {
-                    data <- data.table(read.xlsx(latest.file, sheet = sheet.name))[-1]
+                    data <- data.table::data.table(openxlsx::read.xlsx(latest.file, sheet = sheet.name))[-1]
                     col.names <- names(data)
                     date.col <- na.omit(stringr::str_match(col.names, "^.*?[Dd]atum.*?$"))
-                    data <- suppressWarnings(melt(data, id.var = date.col))
-                    setnames(data, date.col, "Datum")
+                    data <- suppressWarnings(data.table::melt(data, id.var = date.col))
+                    data.table::setnames(data, date.col, "Datum")
                     data[, Datum := as.POSIXct(as.numeric(Datum) * 60 * 60 * 24, tz = "UTC", origin = "1899-12-30")]
-                    data[, value := as.numericTryCatch(value)]
+                    data[, value := MyUtilities::as.numericTryCatch(value)]
                     data.list[[year]] <- data
                 }, error = function(e) {
                     if (stringr::str_detect(geterrmessage(), pattern = "Cannot find sheet named")) {
@@ -253,11 +253,11 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
             )
         }
         if (length(data.list) != 0) {
-            full.data <- rbindlist(data.list)
+            full.data <- data.table::rbindlist(data.list)
             full.data[, ":=" (
                     Plot = factor(getName(.Object)),
                     SubPlot = factor(sheet.name))]
-            setkey(full.data, Plot, SubPlot, variable, Datum)
+            data.table::setkey(full.data, Plot, SubPlot, variable, Datum)
             return(full.data)
         } else {
             print(paste0("Skipped plot '", getName(.Object), "' for sheet '", sheet.name, "' as it was empty"))
@@ -332,7 +332,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         empty.column.table) {
 
         out.file <- paste0(getName(.Object), "_Gesamt_", year, ".xlsx")
-        if (file.exists(paste0(getOutputDirectory(), "/~$", out.file)))
+        if (file.exists(paste0(getOutputDirectory(.Object), "/~$", out.file)))
             stop(sprintf("Achtung die Datei '%s' ist bereits geöffnet und muss vorher geschlossen werden.",
                     out.file))
 
@@ -343,7 +343,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         data <- data[year(Datum) == year]
         data[, Logger := NULL]
         if (round.times) {
-            data[, Datum := roundPOSIXct(Datum), by = .(SubPlot, variable)]
+            data[, Datum := MyUtilities::roundPOSIXct(Datum), by = .(SubPlot, variable)]
             if (data[, TRUE %in% duplicated(data, by = c("SubPlot", "variable", "Datum"))])
                 print("Duplicated values after rounding of date times to the interval have been removed!")
             data <- unique(data, by = c("SubPlot", "variable", "Datum"))
@@ -351,21 +351,21 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         additional.table.list <- calculatePFTable(data)
         additional.table.list[["pr_table"]] <- calculatePRTable(data)
         additional.table.list[["original"]] <- data
-        full.table <- rbindlist(additional.table.list, use.names = TRUE)
+        full.table <- data.table::rbindlist(additional.table.list, use.names = TRUE)
         rm(data, additional.table.list)
 
         template_file_name <- paste0("/_", getName(.Object), "_Gesamt_Template.xlsx")
         template.file <- system.file("extdata", template_file_name, package = "S4Level2", mustWork = TRUE)
-        template.workbook <- loadWorkbook(template.file)
+        template.workbook <- openxlsx::loadWorkbook(template.file)
         for (sheet.name in full.table[, unique(SubPlot)]) {
-            sub.plot.table <- dcast(full.table[SubPlot == sheet.name], Datum ~ variable)
+            sub.plot.table <- data.table::dcast(full.table[SubPlot == sheet.name], Datum ~ variable)
             missing.columns <- empty.column.table[sheet == sheet.name, columns]
             if (length(missing.columns) > 0)
                 sub.plot.table[, (missing.columns) := NA]
             dates <- sub.plot.table[, Datum]
-            dates <- addYearStartEnd(dates)
-            dates <- fillDateGaps(dates)
-            out.table <- merge(data.table(Datum = dates), sub.plot.table, all.x = TRUE, by = "Datum")
+            dates <- MyUtilities::addYearStartEnd(dates)
+            dates <- MyUtilities::fillDateGaps(dates)
+            out.table <- merge(data.table::data.table(Datum = dates), sub.plot.table, all.x = TRUE, by = "Datum")
 
             template.workbook <- addToWorkbookWithTemplate(
                 out.table = out.table,
@@ -373,7 +373,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
                 sheet = sheet.name)
         }
         output_file_path <- file.path(getOutputDirectory(.Object), out.file)
-        saveWorkbook(template.workbook, file = output_file_path, overwrite = TRUE)
+        openxlsx::saveWorkbook(template.workbook, file = output_file_path, overwrite = TRUE)
         print(paste0("Saved file in path '", output_file_path, "'"))
     }
 )
@@ -387,8 +387,8 @@ setMethod("getSourceFileTable", signature = "Plot", definition = function(.Objec
             source.table[, sub.plot := as.factor(sub.plot.name)]
             list[[sub.plot.name]] <- source.table
         }
-        merged.list <- rbindlist(list)
-        setkey(merged.list, sub.plot, logger, path, file)
+        merged.list <- data.table::rbindlist(list)
+        data.table::setkey(merged.list, sub.plot, logger, path, file)
         return(merged.list)
     }
 )

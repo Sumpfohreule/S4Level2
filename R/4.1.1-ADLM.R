@@ -26,7 +26,7 @@ setMethod("initialize", signature = "ADLM",
 setMethod("importRawLoggerFile", signature = "ADLM", definition = function(.Object, path) {
         data <- readADLM(path)
         long.table <- melt(data, id.vars = "Datum")
-        setkey(long.table, variable, Datum)
+        data.table::setkey(long.table, variable, Datum)
         return(long.table)
     }
 )

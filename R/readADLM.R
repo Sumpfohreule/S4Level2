@@ -6,9 +6,9 @@ readADLM <- function(path) {
     for (col.name in names(in.table)) {
         in.table[, (col.name) := as.numeric(get(col.name))]
     }
-    in.table[, Datum := as.POSIXctFixed(Datum * 60 * 60 * 24, tz = "UTC",
+    in.table[, Datum := MyUtilities::as.POSIXctFixed(Datum * 60 * 60 * 24, tz = "UTC",
             origin = "1899-12-30")]
-    in.table[, Datum := roundPOSIXct(Datum, 60)]
+    in.table[, Datum := MyUtilities::roundPOSIXct(Datum, 60)]
     setkey(in.table, Datum)
     return(in.table)
 }
