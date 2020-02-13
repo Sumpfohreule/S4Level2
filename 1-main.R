@@ -1,8 +1,7 @@
-setwd("O:/TRANSP/IsenbergLars/Projekte/S4Level2")
-rm(list = ls(all.names = TRUE))
-.S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
+# .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
 
-#source("0-initial_plot_setup.R")
+initializeDataLocation("W:/Level2_Data")
+
 .Level2 <- loadL2Object()
 #.Level2 <- resetToInitialization(loadL2Object())
 .Level2 <- updateFilePaths(.Level2)
