@@ -6,15 +6,25 @@ clean_temp <- function() {
 
 test_that("Folders are corectly initialized in an existing directory", {
     clean_temp()
-    test_dir <- tempdir()
+    test_directory <- tempdir()
 
-    initializeDataLocation(test_dir)
+    initializeDataLocation(test_directory)
 
-    created_folders <- dir(test_dir)
+    created_folders <- dir(test_directory)
     expect_equal(created_folders, "internal_structure")
 })
 
-test_that("Error is thrown if base folder does not exist", {
+test_that("New data folder is created in existing directory", {
+    clean_temp()
+    test_directory <- file.path(tempdir(), "NewDataTopFolder")
+
+    initializeDataLocation(test_directory)
+
+    created_folders <- dir(test_directory)
+    expect_equal(created_folders, "internal_structure")
+})
+
+test_that("Error is thrown if path to new to create folder does not exist", {
     clean_temp()
     not_exisiting_path <- file.path("g:", "is", "quite", "unrealistic")
 

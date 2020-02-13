@@ -1,6 +1,7 @@
 initializeDataLocation <- function(path) {
-    if (!dir.exists(path)) {
-        stop("Can't create data folder in not existing path: ", path)
+    parent_path <- dirname(path)
+    if (!dir.exists(parent_path)) {
+        stop("Can't create data folder in not existing path: ", parent_path)
     }
 
     structure_path <- file.path(path, "internal_structure")
@@ -8,7 +9,7 @@ initializeDataLocation <- function(path) {
         stop("S4Level2 location has already been initialized before. 'resetDataLocation()' can be used to reset.")
     }
 
-    dir.create(structure_path, showWarnings = FALSE)
+    dir.create(structure_path, showWarnings = FALSE, recursive = TRUE)
     level2 <- Level2(structure_path)
     saveL2Object(level2)
 }

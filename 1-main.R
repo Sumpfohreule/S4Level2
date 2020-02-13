@@ -1,8 +1,7 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-
-initializeDataLocation("W:/Level2_Data")
-
-.Level2 <- loadL2Object()
+data_location <- "W:/Level2_Data"
+initializeDataLocation(data_location)
+.Level2 <- loadL2Object(data_location)
 #.Level2 <- resetToInitialization(loadL2Object())
 .Level2 <- updateFilePaths(.Level2)
 .Level2 <- updateData(.Level2)
