@@ -13,7 +13,3 @@ initializeDataLocation <- function(path) {
     level2 <- Level2(structure_path)
     saveL2Object(level2)
 }
-
-# for(plot.init.file in dir("plot_setup_files", full.names = TRUE)) {
-#     source(plot.init.file)
-# }
