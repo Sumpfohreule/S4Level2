@@ -2,21 +2,13 @@
 #' Load the top level Level2 Object
 #' @param data_path A string with the path to the package top level data location
 #' @return An Object of class Level2
-# TODO: remove plot.name here and where used (replace with %>% chains)
-loadL2Object <- function(plot.name = NULL) {
-    # FIXME: remove .S4Level2.PATH constant
-    plot.dir <- file.path(.S4Level2.PATH, "Data/structure")
-    tryCatch(.Object <- readRDS(file = file.path(plot.dir, "Level2.rds")),
+loadL2Object <- function(data_path) {
+    level2_file <- dir(data_path, pattern = "Level2.rds$", full.names = TRUE, recursive = TRUE)
+    tryCatch(.Object <- readRDS(file = level2_file),
              error = function(e) {
-                 stop("'", plot.name, "' does not seem to exist. Either initialize the Object (new(...)) or correct the path ",
-                      "(setwd(...) or plot name.")
+                 stop("Data directory does not seem to be initialized.\n",
+                      "Change data_path or use initializeDataLocation function")
              }
     )
-    if (!is.null(plot.name)) {
-        if (!(plot.name %in% names(getPlotList(.Object))))
-            stop("The plot with the name '", plot.name, "' has not been initialized.\n",
-                 "  Check spelling and plot_setup_files")
-        .Object <- getPlotList(.Object)[[plot.name]]
-    }
     return(.Object)
 }
