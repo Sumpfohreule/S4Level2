@@ -1,6 +1,7 @@
 ########################################################################################################################
 if (!exists("level2")) {
-    level2 <- loadL2Object()
+    data_path = "w:/Data"
+    level2 <- loadL2Object(data_path)
 }
 
 # Heidelberg
@@ -9,10 +10,10 @@ level2 <- createAndAddPlot(level2,
     plot_name = plot_name,
     corrected.aggregate.path = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_ges_Korrektur")
 level2 <- createAndAddMultipleSubPlots(level2,
-    .PlotURI = URI(plot_name))
+    .PlotURI = Level2URI(plot_name))
 
 # HD Buche
-hd_bu_deltaT_uri <- URI(plot_name, "Buche", "DeltaT")
+hd_bu_deltaT_uri <- Level2URI(plot_name, "Buche", "DeltaT")
 level2 <- createAndAddLogger(level2,
     logger_type = "DeltaT",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Bu/Heidelberg_Bu_Delta_T/Backup.dat",
@@ -43,7 +44,7 @@ level2 <- addSensorMapping(level2,
     .URI = hd_bu_deltaT_uri)
 
 
-hd_bu_ADLM_uri <- URI(plot_name, "Buche", "ADLM")
+hd_bu_ADLM_uri <- Level2URI(plot_name, "Buche", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Bu/Heidelberg_Bu_ADL/csv",
@@ -59,7 +60,7 @@ level2 <- addSensorMapping(level2,
     .URI = hd_bu_ADLM_uri)
 
 # HD Fichte
-hd_fi_ADLM_uri <- URI(plot_name, "Fichte", "ADLM")
+hd_fi_ADLM_uri <- Level2URI(plot_name, "Fichte", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Fi/CSV",
@@ -99,7 +100,7 @@ level2 <- addSensorMapping(level2,
     .URI = hd_fi_ADLM_uri)
 
 # HD Freiland
-hd_frei_ADLM_uri <- URI(plot_name, "Freiland", "ADLM")
+hd_frei_ADLM_uri <- Level2URI(plot_name, "Freiland", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Freiland/csv",

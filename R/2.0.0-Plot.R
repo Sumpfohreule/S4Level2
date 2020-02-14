@@ -2,7 +2,7 @@
 #' @include URI.R
 setClass(Class = "Plot", slots = c(
         Name = "character",
-        URI = "URI",
+        Level2URI = "Level2URI",
         LocalDirectory = "character",
         CorrectedAggregatePath = "character",
         SubPlots = "list"
@@ -18,7 +18,7 @@ setMethod("initialize", signature = "Plot", definition = function(
 
         .Object@Name <- name
         .Object@LocalDirectory = local_directory
-        .Object@URI = URI(getPlotName(uri))
+        .Object@Level2URI = Level2URI(getPlotName(uri))
         .Object <- setCorrectedAggregatePath(.Object, corrected.aggregate.path)
 
         .Object
@@ -49,7 +49,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = funct
         plot_name <- getPlotName(getURI(.Object))
         plot_directory <- getLocalDirectory(.Object)
 		for (sub_plot_name in sub_plot_names) {
-            sub_plot_uri <- URI(file.path(plot_name, sub_plot_name))
+            sub_plot_uri <- Level2URI(file.path(plot_name, sub_plot_name))
             sub_plot_directory = file.path(plot_directory, sub_plot_name)
             .SubPlot <- new("SubPlot", name = sub_plot_name, uri = sub_plot_uri, local_directory = sub_plot_directory)
             .Object <- addSubPlot(.Object, .SubPlot)
@@ -130,7 +130,7 @@ setMethod("getName", signature = "Plot", definition = function(.Object) {
 
 #' @include getURI.R
 setMethod("getURI", signature = "Plot", definition = function(.Object) {
-        .Object@URI
+        .Object@Level2URI
     }
 )
 

@@ -1,11 +1,11 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "W:/Level2_Data"
+data_location <- "W:/Data"
 initializeDataLocation(data_location)
-.Level2 <- loadL2Object(data_location)
-#.Level2 <- resetToInitialization(loadL2Object())
-.Level2 <- updateFilePaths(.Level2)
-.Level2 <- updateData(.Level2)
-saveL2Object(.Level2)
+level2 <- loadL2Object(data_location)
+#level2 <- resetToInitialization(loadL2Object())
+level2 <- updateFilePaths(level2)
+level2 <- updateData(level2)
+saveL2Object(level2)
 
 # FIXME: Include MyUtilities package in inst?
 
@@ -32,7 +32,8 @@ saveL2Object(.Level2)
 
 ########################################################################################################################
 # Altensteig
-at.data <- getData(loadL2Object("Altensteig"),
+at_plot <- level2 %>% getPlot(Level2URI("Altensteig"))
+at.data <- getData(at_plot,
     start.date = "2018-01-01",
     end.date = "2019-01-01",
     as.wide.table = TRUE)
@@ -48,7 +49,8 @@ createAggregateExcel(
 
 ########################################################################################################################
 # Conventwald
-co.data <- getData(loadL2Object("Conventwald"),
+co_plot <- level2 %>% getPlot("Conventwald")
+co.data <- getData(co_plot,
     start.date = "2018-01-01",
     end.date = "2019-01-01",
     as.wide.table = TRUE)
@@ -63,7 +65,8 @@ createAggregateExcel(
 
 ########################################################################################################################
 # Esslingen
-es.data <- getData(loadL2Object("Esslingen"),
+es_plot <- level2 %>% getPlot("Esslingen")
+es.data <- getData(es_plot,
     start.date = "2018-01-01",
     end.date = "2019-01-01",
     as.wide.table = TRUE)

@@ -5,7 +5,7 @@
 #' @exportClass DataStructure
 DataStructure <- setClass("DataStructure", slots = c(
         UniqueName = "character",
-        URI = "URI",
+        Level2URI = "Level2URI",
         LocalDirectory = "character",
         SourcePaths = "character",
         SensorMappings = "data.table")
@@ -18,7 +18,7 @@ setMethod("initialize", signature = "DataStructure", definition = function(
                 local_directory,
                 paths) {
       .Object@UniqueName <- unique_name
-      .Object@URI <- uri
+      .Object@Level2URI <- uri
       .Object <- setLocalDirectory(.Object, local_directory)
       .Object <- setSourcePaths(.Object, paths)
       .Object <- setSensorMappings(.Object, initializeSensorMappings())
@@ -78,13 +78,13 @@ setMethod("getName", signature = "DataStructure", definition = function(.Object)
 
 #' @include getPlotName.R
 setMethod("getPlotName", signature = "DataStructure", definition = function(.Object) {
-        return(getPlotName(.Object@URI))
+        return(getPlotName(.Object@Level2URI))
     }
 )
 
 #' @include getURI.R
 setMethod("getURI", signature = "DataStructure", definition = function(.Object) {
-        .Object@URI
+        .Object@Level2URI
     }
 )
 
@@ -96,7 +96,7 @@ setMethod("getSourcePaths", signature = "DataStructure", definition = function(.
 
 #' @include getSubPlotName.R
 setMethod("getSubPlotName", signature = "DataStructure", definition = function(.Object) {
-        return(getSubPlotName(.Object@URI))
+        return(getSubPlotName(.Object@Level2URI))
     }
 )
 

@@ -17,7 +17,7 @@ testCreateDirectoryStructure <- function() {
     sub_plot_name = "TestSubPlot"
     data_structure_type = "TinyTag"
 
-    .URI = URI(file.path(plot_name, sub_plot_name, data_structure_type))
+    .URI = Level2URI(file.path(plot_name, sub_plot_name, data_structure_type))
 
     .Level2 <- .initializeL2Object(.URI, tempdir())
     saveL2Object(.Level2)
@@ -32,7 +32,7 @@ testMultiSourcePathInitialization <- function() {
 
     .Data_Structure <- DataStructure(
         unique_name = "TestName",
-        uri = URI(""),
+        uri = Level2URI(""),
         local_directory = tempdir(),
         paths = multiple_folders)
     RUnit::checkIdentical(multiple_folders, getSourcePaths(.Data_Structure))

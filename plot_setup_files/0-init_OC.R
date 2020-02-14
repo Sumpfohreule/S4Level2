@@ -1,6 +1,7 @@
 ########################################################################################################################
 if (!exists("level2")) {
-    level2 <- loadL2Object()
+    data_path = "w:/Data"
+    level2 <- loadL2Object(data_path)
 }
 
 # Ochsenhausen
@@ -9,10 +10,10 @@ level2 <- createAndAddPlot(level2,
     plot_name = oc_plot_name,
     corrected.aggregate.path = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_gesamt_Korrektur")
 level2 <- createAndAddMultipleSubPlots(level2,
-    .PlotURI = URI(oc_plot_name))
+    .PlotURI = Level2URI(oc_plot_name))
 
 # OC Buche
-oc_bu_DeltaT_uri <- URI(oc_plot_name, "Buche", "DeltaT")
+oc_bu_DeltaT_uri <- Level2URI(oc_plot_name, "Buche", "DeltaT")
 level2 <- createAndAddLogger(level2,
     logger_type = "DeltaT",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Buche_Delta_T/Backup.dat",
@@ -43,7 +44,7 @@ level2 <- addSensorMapping(level2,
     replacement = "PR_",
     .URI = oc_bu_DeltaT_uri)
 
-oc_buche_ADLM_uri <- URI(oc_plot_name, "Buche", "ADLM")
+oc_buche_ADLM_uri <- Level2URI(oc_plot_name, "Buche", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Bu_ADLM/CSV",
@@ -56,7 +57,7 @@ level2 <- addSensorMapping(level2,
 
 
 # OC Fichte
-oc_fi_ADLM_uri <- URI(oc_plot_name, "Fichte", "ADLM")
+oc_fi_ADLM_uri <- Level2URI(oc_plot_name, "Fichte", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochs_PF_Meter_1/CSV",
@@ -91,7 +92,7 @@ level2 <- addSensorMapping(level2,
     replacement = "_Z",
     .URI = oc_fi_ADLM_uri)
 
-oc_fi_envilog_uri <- URI(oc_plot_name, "Fichte", "Envilog")
+oc_fi_envilog_uri <- Level2URI(oc_plot_name, "Fichte", "Envilog")
 oc_envi_fi_path <- "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Fichte_ungedüngt_envilog"
 Encoding(oc_envi_fi_path) <- "UTF-8"
 level2 <- createAndAddLogger(level2,
@@ -101,7 +102,7 @@ level2 <- createAndAddLogger(level2,
 
 
 # OC Freiland
-oc_frei_ADLM_URI <- URI(oc_plot_name, "Freiland", "ADLM")
+oc_frei_ADLM_URI <- Level2URI(oc_plot_name, "Freiland", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_1/CSV",

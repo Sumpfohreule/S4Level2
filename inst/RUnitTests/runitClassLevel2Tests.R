@@ -27,7 +27,7 @@ testGetLocalDirectory <- function() {
 }
 
 testCreateDirectoryStructure <- function() {
-    .Logger_URI <- URI("")
+    .Logger_URI <- Level2URI("")
     test_directory <- file.path(tempdir(), "CreateTestDir")
     .Level2 <- .initializeL2Object(.Logger_URI, test_directory)
     saveL2Object(.Level2)
@@ -37,7 +37,7 @@ testCreateDirectoryStructure <- function() {
 
 testGetPlot <- function() {
     plot_name <- "TestPlot"
-    .URI <- URI(plot_name)
+    .URI <- Level2URI(plot_name)
 
     .Level2 <- Level2(local_directory = tempdir())
     .TestPlot <- new("Plot",
@@ -52,11 +52,11 @@ testGetPlot <- function() {
 
 testGetSubPlot <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- URI(plot_name)
+    .Plot_URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, tempdir())
 
     sub_plot_name <- "TestSubPlot"
-    .SubPlot_URI <- URI(file.path(plot_name, sub_plot_name))
+    .SubPlot_URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .TestSubPlot <- new("SubPlot",
         name = sub_plot_name,
         uri = .SubPlot_URI,
@@ -69,15 +69,15 @@ testGetSubPlot <- function() {
 testGetDataStructure <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
-    .SubPlot_URI = URI(file.path(plot_name, sub_plot_name))
+    .SubPlot_URI = Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.SubPlot_URI, tempdir())
 
     data_structure_type = "Envilog"
-    .DataStructure_URI <- URI(file.path(plot_name, sub_plot_name, data_structure_type))
+    .DataStructure_URI <- Level2URI(file.path(plot_name, sub_plot_name, data_structure_type))
 
     target_local_directory <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_type)
     .TestDataStructure <- new(data_structure_type,
-        uri = URI(""),
+        uri = Level2URI(""),
         local_directory = target_local_directory,
         paths = tempdir())
     .Level2 <- addDataStructure(.Level2,
@@ -88,12 +88,12 @@ testGetDataStructure <- function() {
 }
 
 testAddPlot <- function() {
-	.URI <- URI("")
+	.URI <- Level2URI("")
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     plot_name <- "TestPlot"
     local_directory_once_added_to_level2 <-  file.path(tempdir(), plot_name)
-    .Plot_URI <- URI(plot_name)
+    .Plot_URI <- Level2URI(plot_name)
     .Plot <- new("Plot",
         name = plot_name,
         local_directory = local_directory_once_added_to_level2,
@@ -108,11 +108,11 @@ testAddSubPlot <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
 
-    .PlotURI <- URI(plot_name)
+    .PlotURI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.PlotURI, tempdir())
 
     on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name)
-    .SubPlot_URI = URI(file.path(plot_name, sub_plot_name))
+    .SubPlot_URI = Level2URI(file.path(plot_name, sub_plot_name))
     .SubPlot <- new("SubPlot",
         name = sub_plot_name,
         uri = .SubPlot_URI,
@@ -127,11 +127,11 @@ testAddDataStructure <- function() {
     sub_plot_name = "TestSubPlot"
     data_structure_name = "TestDataStructure"
 
-    .SubPlot_URI <- URI(file.path(plot_name, sub_plot_name))
+    .SubPlot_URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.SubPlot_URI, tempdir())
 
     on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_name)
-    .DataStructure_URI <- URI(file.path(plot_name, sub_plot_name, data_structure_name))
+    .DataStructure_URI <- Level2URI(file.path(plot_name, sub_plot_name, data_structure_name))
     .TestDataStructure <- DataStructure(
         unique_name = data_structure_name,
         uri = .DataStructure_URI,
@@ -143,7 +143,7 @@ testAddDataStructure <- function() {
 }
 
 testAddAndApplySensorMapping <- function() {
-    .URI <- URI("TestPlot/TestSubPlot/DeltaT")
+    .URI <- Level2URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     example_pattern <- "Logtemp"
@@ -174,7 +174,7 @@ testAddAndApplySensorMapping <- function() {
 
 testReplaceListObject <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- URI(plot_name)
+    .Plot_URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, path = tempdir())
 
     .Replacement_Plot <- new("Plot",
@@ -193,7 +193,7 @@ testReplaceObjectByURIWithItselfError <- function() {
 
 testReplacePlotByURI <- function() {
     plot_name = "TestPlot"
-    .URI <- URI(plot_name)
+    .URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     .ReplacementPlot <- new("Plot",
@@ -215,7 +215,7 @@ testReplaceSubPlotByURI <- function() {
 }
 
 testUpdateFilePaths <- function() {
-    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- Level2URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, path = tempdir())
     .Level2 <- updateFilePaths(.Level2)
     .TestLogger <- getDataStructure(.Level2, .Logger_URI)
@@ -226,7 +226,7 @@ testUpdateFilePaths <- function() {
 }
 
 testUpdateData <- function() {
-    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- Level2URI("TestPlot/TestSubPlot/DeltaT")
     Level2 <- .initializeL2Object(.Logger_URI, tempdir())
     saveL2Object(Level2)
     Level2 <- updateFilePaths(Level2)
@@ -240,7 +240,7 @@ testUpdateData <- function() {
 }
 
 testResetPlot <- function() {
-    .Logger_URI <- URI("TestPlot/TestSubPlot/DeltaT")
+    .Logger_URI <- Level2URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, tempdir())
     .Level2 <- updateFilePaths(.Level2)
     .Level2 <- resetToInitialization(.Level2)

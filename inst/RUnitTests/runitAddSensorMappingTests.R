@@ -41,7 +41,7 @@ testDontAddDuplicateMapping <- function() {
 ########################################################################################################################
 .getDefaultDataStructure <- function() {
     return(DataStructure(unique_name = "TestName",
-            uri = URI(""),
+            uri = Level2URI(""),
             local_directory = tempdir(),
             paths = tempdir()))
 }

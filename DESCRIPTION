@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9054
+Version: 0.0.0.9055
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -93,7 +93,7 @@ Collate:
     'getEuPlotId.R'
     'importAggregateData.R'
     'initialSourceFilesTable.R'
-    'initializePersistentDataLocation.R'
+    'initializeDataLocation.R'
     'initializeSensorMappings.R'
     'is.DataStructure.R'
     'is.Logger.R'

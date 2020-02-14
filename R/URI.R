@@ -1,24 +1,24 @@
 ########################################################################################################################
-#' @export URI
-URI <- setClass(Class = "URI", slots = c(
+#' @export Level2URI
+Level2URI <- setClass(Class = "Level2URI", slots = c(
         URI_Split = "character",
         Depth = "numeric"
     )
 )
 
-setMethod("initialize", signature = "URI", definition = function(.Object, ...) {
+setMethod("initialize", signature = "Level2URI", definition = function(.Object, ...) {
         elipsis_elements <- list(...)
         for (index in 1:length(elipsis_elements)) {
             element <- elipsis_elements[[index]]
 
             is_character <- is.character(element)
-            is_uri <- is.URI(element)
+            is_uri <- is.Level2URI(element)
             if (!(is_character || is_uri)) {
-                stop("Element to be passed to URI needs to be of character or URI class")
+                stop("Element to be passed to URI needs to be of character or Level2URI class")
             }
 
             elipsis_elements[[index]] <- ifelse(
-                test = is.URI(element),
+                test = is.Level2URI(element),
                 yes = getURIString(element),
                 no = as.character(element))
         }
@@ -35,40 +35,40 @@ setMethod("initialize", signature = "URI", definition = function(.Object, ...) {
 )
 
 #' @include getURI_Depth.R
-setMethod("getURI_Depth", signature = "URI", definition = function(.Object) {
+setMethod("getURI_Depth", signature = "Level2URI", definition = function(.Object) {
 		return(.Object@Depth)
     }
 )
 
 #' @include getPlotName.R
-setMethod("getPlotName", signature = "URI", definition = function(.Object) {
+setMethod("getPlotName", signature = "Level2URI", definition = function(.Object) {
         if (getURI_Depth(.Object) < 1) {
-            stop("PlotName seems to be missing from this URI")
+            stop("PlotName seems to be missing from this Level2URI")
         }
 		return(.Object@URI_Split[1])
     }
 )
 
 #' @include getSubPlotName.R
-setMethod("getSubPlotName", signature = "URI", definition = function(.Object) {
+setMethod("getSubPlotName", signature = "Level2URI", definition = function(.Object) {
         if (getURI_Depth(.Object) < 2) {
-            stop("SubPlotName seems to be missing from this URI")
+            stop("SubPlotName seems to be missing from this Level2URI")
         }
         return(.Object@URI_Split[2])
     }
 )
 
 #' @include getDataStructureName.R
-setMethod("getDataStructureName", signature = "URI", definition = function(.Object) {
+setMethod("getDataStructureName", signature = "Level2URI", definition = function(.Object) {
         if (getURI_Depth(.Object) < 3) {
-            stop("DataStructureName seems to be missing from this URI")
+            stop("DataStructureName seems to be missing from this Level2URI")
         }
         return(.Object@URI_Split[3])
     }
 )
 
 #' @include getURIString.R
-setMethod("getURIString", signature = "URI", definition = function(.Object) {
+setMethod("getURIString", signature = "Level2URI", definition = function(.Object) {
 		uri_string <- paste(.Object@URI_Split, collapse = "/")
         return(uri_string)
     }

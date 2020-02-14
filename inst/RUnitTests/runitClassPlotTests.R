@@ -1,7 +1,7 @@
 ########################################################################################################################
 testGetLocalDirectory <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- URI(plot_name)
+    .Plot_URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, tempdir())
 
     .Test_Plot <- getPlotList(.Level2)[[plot_name]]
@@ -11,7 +11,7 @@ testGetLocalDirectory <- function() {
 
 testGetURI <- function() {
     plot_name = "TestPlot"
-    .URI <- URI(file.path(plot_name))
+    .URI <- Level2URI(file.path(plot_name))
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     .Test_Plot <- getPlot(.Level2, .URI)
@@ -25,7 +25,7 @@ testDontUseURIForDeeperNestedObjects <- function() {
 
 testCreateDirectoryStructure <- function() {
     plot_name <- "TestPlot"
-    .Plot_URI <- URI(plot_name)
+    .Plot_URI <- Level2URI(plot_name)
     test_directory <- file.path(tempdir(), plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, tempdir())
     saveL2Object(.Level2)
@@ -35,7 +35,7 @@ testCreateDirectoryStructure <- function() {
 
 testCreateAndAddMultipleSubPlots <- function() {
     plot_name <- "TestPlot"
-    .URI <- URI(plot_name)
+    .URI <- Level2URI(plot_name)
 
     .Plot <- new("Plot",
         name = plot_name,
@@ -55,13 +55,13 @@ testCreateAndAddMultipleSubPlots <- function() {
 testReplaceListObject <- function() {
     plot_name <- "TestPlot"
     sub_plot_name <- "TestSubPlot"
-    .Plot_URI <- URI(file.path(plot_name, sub_plot_name))
+    .Plot_URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.URI = .Plot_URI, path = tempdir())
 
     .TestPlot <- getPlotList(.Level2)[[plot_name]]
     .Replacement_SubPlot <- new("SubPlot",
         name = sub_plot_name,
-        uri = URI("PlotName/SubPlotName"),
+        uri = Level2URI("PlotName/SubPlotName"),
         local_directory = "c:/")
     .TestPlot <- replaceListObject(.TestPlot, .Replacement_SubPlot)
 
@@ -71,7 +71,7 @@ testReplaceListObject <- function() {
 testReplaceSubPlotByURI <- function() {
     plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
-    .URI <- URI(file.path(plot_name, sub_plot_name))
+    .URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     .ReplacementSubPlot <- new("SubPlot",

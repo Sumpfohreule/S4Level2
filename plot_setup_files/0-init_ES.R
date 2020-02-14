@@ -1,6 +1,7 @@
 ########################################################################################################################
 if (!exists("level2")) {
-    level2 <- loadL2Object()
+    data_path = "w:/Data"
+    level2 <- loadL2Object(data_path)
 }
 
 # Esslingen
@@ -9,12 +10,12 @@ level2 <- createAndAddPlot(level2,
     plot_name = plot_name,
     corrected.aggregate.path = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_gesamt_Korrektur")
 
-.PlotURI <- URI(plot_name)
+.PlotURI <- Level2URI(plot_name)
 level2 <- createAndAddMultipleSubPlots(level2,
     .PlotURI = .PlotURI)
 
 # ES Buche
-es_bu_deltaT_URI <- URI(.PlotURI, "Buche", "DeltaT")
+es_bu_deltaT_URI <- Level2URI(.PlotURI, "Buche", "DeltaT")
 level2 <- createAndAddLogger(level2,
     logger_type = "DeltaT",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_Buche_DeltaT/Backup.dat",
@@ -51,7 +52,7 @@ level2 <- addSensorMapping(level2,
     replacement = "SE904",
     .URI = es_bu_deltaT_URI)
 
-es_bu_tinytag_uri <- URI(.PlotURI, "Buche", "TinyTag")
+es_bu_tinytag_uri <- Level2URI(.PlotURI, "Buche", "TinyTag")
 level2 <- createAndAddLogger(level2,
     logger_type = "TinyTag",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_Buche_TinyTag/backup.txt",
@@ -83,7 +84,7 @@ level2 <- addSensorMapping(level2,
     .URI = es_bu_tinytag_uri)
 
 # ES Fichte
-es_fi_ADLM_uri = URI(.PlotURI, "Fichte", "ADLM")
+es_fi_ADLM_uri = Level2URI(.PlotURI, "Fichte", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_PF_Meter_1/csv",
@@ -110,7 +111,7 @@ level2 <- addSensorMapping(level2,
     replacement = "PR",
     .URI = es_fi_ADLM_uri)
 
-es_fi_envilog_uri <- URI(.PlotURI, "Fichte", "Envilog")
+es_fi_envilog_uri <- Level2URI(.PlotURI, "Fichte", "Envilog")
 level2 <- createAndAddLogger(level2,
     logger_type = "Envilog",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_Fichte_envilog",
@@ -122,7 +123,7 @@ level2 <- createAndAddLogger(level2,
 #es.plot <- addLogger(es.plot, .DataStructure = es.deltaT.fi, sub.plot = "Fichte")
 
 # ES Freiland
-es_frei_ADLM_uri <- URI(.PlotURI, "Freiland", "ADLM")
+es_frei_ADLM_uri <- Level2URI(.PlotURI, "Freiland", "ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_1/CSV",

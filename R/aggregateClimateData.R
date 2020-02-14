@@ -3,8 +3,10 @@ aggregateClimateData <- function(plot) {
     column_selection <- c('Lufttemperatur', 'Precipitation', 'PR', 'Luftfeuchte', 'Windgeschwindigkeit',
         'SolarRadiation', 'AT', 'RH', 'WS', 'SR', 'Pluvio_mm','Niederschlag.Casella')
 
+    .Plot <- loadL2Object() %>%
+        getPlot(plot)
     freiland_import <- loadCorrectedData(
-        .Object = loadL2Object(plot),
+        .Object = .Plot,
         sheet.name = "Freiland")
 
     climate_data <- freiland_import %>%

@@ -6,7 +6,7 @@ testDontUseURIForDeeperNestedObjects <- function() {
 testCreateDirectoryStructure <- function() {
 	plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
-    .URI = URI(file.path(plot_name, sub_plot_name))
+    .URI = Level2URI(file.path(plot_name, sub_plot_name))
 
     .Level2 <- .initializeL2Object(.URI, tempdir())
     saveL2Object(.Level2)
@@ -20,7 +20,7 @@ testReplaceSubPlotByURI <- function() {
     sub_plot_name = "TestSubPlot"
     data_structure_type = "ADLM"
 
-    .URI <- URI(file.path(plot_name, sub_plot_name, data_structure_type))
+    .URI <- Level2URI(file.path(plot_name, sub_plot_name, data_structure_type))
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     .ReplacementDataStructure <- new(data_structure_type,

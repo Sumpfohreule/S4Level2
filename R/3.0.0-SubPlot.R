@@ -2,7 +2,7 @@
 #' @include URI.R
 setClass("SubPlot", slots = c(
         Name = "character",
-        URI = "URI",
+        Level2URI = "Level2URI",
         LocalDirectory = "character",
         Loggers = "list"
     )
@@ -15,7 +15,7 @@ setMethod("initialize", signature = "SubPlot", definition = function(
         local_directory) {
 
         .Object@Name <- name
-        .Object@URI = URI(getPlotName(uri), getSubPlotName(uri))
+        .Object@Level2URI = Level2URI(getPlotName(uri), getSubPlotName(uri))
         .Object@LocalDirectory <- local_directory
         .Object
     }
@@ -91,7 +91,7 @@ setMethod("getName", signature = "SubPlot", definition = function(.Object) {
 
 #' @include getURI.R
 setMethod("getURI", signature = "SubPlot", definition = function(.Object) {
-        .Object@URI
+        .Object@Level2URI
     }
 )
 

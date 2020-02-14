@@ -2,6 +2,6 @@
 
 export(DataStructure)
 export(Level2)
-export(URI)
+export(Level2URI)
 exportClasses(DataStructure)
 exportMethods(updateData)

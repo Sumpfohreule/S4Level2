@@ -1,6 +1,7 @@
 ########################################################################################################################
 if (!exists("level2")) {
-    level2 <- loadL2Object()
+    data_path = "w:/Data"
+    level2 <- loadL2Object(data_path)
 }
 
 # Add Altensteig Plot and SubPlots
@@ -9,11 +10,11 @@ level2 <- createAndAddPlot(level2,
     plot_name = plot_name,
     corrected.aggregate.path = "O:/PROJEKT/NIEDER/LOGGER/ALTENST/AT_ges_Korrektur")
 
-plot_uri <- URI(plot_name)
+plot_uri <- Level2URI(plot_name)
 level2 <- createAndAddMultipleSubPlots(level2, .PlotURI = plot_uri)
 
 # AL Freiland
-al_freiland_adlm_uri <- URI("Altensteig/Freiland/ADLM")
+al_freiland_adlm_uri <- Level2URI("Altensteig/Freiland/ADLM")
 level2 <- createAndAddLogger(
     level2,
     logger_type = "ADLM",
@@ -51,7 +52,7 @@ level2 <- addSensorMapping(level2,
 
 
 # AL Buche
-al_buche_adlm_uri <- URI(file.path(plot_name, "Buche", "ADLM"))
+al_buche_adlm_uri <- Level2URI(file.path(plot_name, "Buche", "ADLM"))
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ALTENST/Altensteig_BU_1/CSV",
@@ -95,7 +96,7 @@ level2 <- addSensorMapping(level2,
     .URI = al_buche_adlm_uri)
 
 # AL Fichte
-al_fichte_adlm_uri <- URI("Altensteig/Fichte/ADLM")
+al_fichte_adlm_uri <- Level2URI("Altensteig/Fichte/ADLM")
 level2 <- createAndAddLogger(level2,
     logger_type = "ADLM",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/ALTENST/Altensteig_Fi_1/CSV",
