@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9055
+Version: 0.0.0.9057
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -60,7 +60,7 @@ Collate:
     'getSubPlotName.R'
     'getPlotName.R'
     'getURI_Depth.R'
-    'URI.R'
+    'Level2URI.R'
     '2.0.0-Plot.R'
     'getDataStructureList.R'
     '3.0.0-SubPlot.R'
@@ -98,8 +98,8 @@ Collate:
     'is.DataStructure.R'
     'is.Logger.R'
     'is.Plot.R'
+    'is.S4Level2URI.R'
     'is.SubPlot.R'
-    'is.URI.R'
     'loadDeltaTFullYear.R'
     'loadL2Object.R'
     'readADLM.R'

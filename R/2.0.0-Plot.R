@@ -1,5 +1,5 @@
 ########################################################################################################################
-#' @include URI.R
+#' @include Level2URI.R
 setClass(Class = "Plot", slots = c(
         Name = "character",
         Level2URI = "Level2URI",
