@@ -4,7 +4,7 @@ setGeneric("getOutputDirectory", def = function(.Object) {
     }
 )
 
-setMethod("getOutputDirectory", signature = "missing", definition = function() {
-        return(file.path(.S4Level2.PATH, "Data/output"))
-    }
-)
+# setMethod("getOutputDirectory", signature = "missing", definition = function() {
+#         return(file.path(.S4Level2.PATH, "Data/output"))
+#     }
+# )

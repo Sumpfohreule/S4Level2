@@ -161,7 +161,7 @@ setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object
 
 #' @include getOutputDirectory.R
 setMethod("getOutputDirectory", signature = "Plot", definition = function(.Object) {
-        return(file.path(.S4Level2.PATH, "Data/output", getName(.Object)))
+        return(file.path("../..", getLocalDirectory(.Object)))
     }
 )
 

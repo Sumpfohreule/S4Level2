@@ -3,21 +3,21 @@ importAggregateData <- function(xlsx.file) {
     full.data.list <- list()
     for (sub.plot.type in c("Buche", "Fichte", "Freiland")) {
         tryCatch({
-                sub.plot.table <- as.data.table(
-                    read.xlsx(xlsx.file,
+                sub.plot.table <- data.table::as.data.table(
+                    openxlsx::read.xlsx(xlsx.file,
                         sheet = sub.plot.type,
                         startRow = 3,
                         colNames = FALSE,
                         skipEmptyCols = FALSE
                     )
                 )
-                column.names <- names(read.xlsx(xlsx.file, sheet = sub.plot.type, rows = 1))[1:ncol(sub.plot.table)]
-                setnames(sub.plot.table, column.names)
+                column.names <- names(openxlsx::read.xlsx(xlsx.file, sheet = sub.plot.type, rows = 1))[1:ncol(sub.plot.table)]
+                data.table::setnames(sub.plot.table, column.names)
                 sub.plot.table[, Datum := MyUtilities::as.POSIXctFixed(Datum * 60 * 60 * 24, origin = "1899-12-30", tz = "UTC")]
                 sub.plot.table[, Datum := MyUtilities::roundPOSIXct(Datum,
                         in.seconds = 5 * 60,
                         round.fun = round)]
-                long.sub.plot.table <- melt(sub.plot.table, id.vars = "Datum")
+                long.sub.plot.table <- data.table::melt(sub.plot.table, id.vars = "Datum")
                 long.sub.plot.table[, SubPlot := as.factor(sub.plot.type)]
                 full.data.list[[sub.plot.type]] <- long.sub.plot.table
             }, error = function(e) {
@@ -27,5 +27,5 @@ importAggregateData <- function(xlsx.file) {
             }
         )
     }
-    return(rbindlist(full.data.list))
+    return(data.table::rbindlist(full.data.list))
 }
