@@ -1,11 +1,12 @@
-initializeDataLocation <- function(path) {
-    parent_path <- dirname(path)
+initializeDataLocation <- function(data_path) {
+    parent_path <- dirname(data_path)
     if (!dir.exists(parent_path)) {
         stop("Can't create data folder in not existing path: ", parent_path)
     }
 
-    structure_path <- file.path(path, "internal_structure")
-    if (file.exists(file.path(structure_path, "Level2.rds"))) {
+    structure_path <- file.path(data_path, "internal_structure")
+    pre_initialized_locations <- dir(data_path, pattern = "Level2.rds$", recursive = TRUE)
+    if (length(pre_initialized_locations) > 0) {
         stop("S4Level2 location has already been initialized before. 'resetDataLocation()' can be used to reset.")
     }
 
