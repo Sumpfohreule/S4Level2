@@ -1,4 +1,4 @@
-addPlotWithLoggersFromXML <- function(level2, xml_path) {
+addCompletePlotFromXml <- function(level2, xml_path) {
     xml_root <- xml2::read_xml(xml_path)
 
     plot_name <- xml2::xml_attr(xml_root, attr = "name")
