@@ -1,7 +1,8 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "W:/Data"
+data_location <- "W:/Level2_Data"
 initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
+level2 <- createPlotFromXML(level2, "W:/Level2_Data/internal_structure/Altensteig.xml")
 #level2 <- resetToInitialization(loadL2Object())
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)

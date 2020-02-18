@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.0.0.9057
+Version: 0.1.1
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -83,6 +83,7 @@ Collate:
     'setLastImportDate.R'
     '4.2.0-AccessDB.R'
     'accumulateMMFiles.R'
+    'addPlotWithLoggersFromXML.R'
     'addToWorkbookWithTemplate.R'
     'aggregateClimateData.R'
     'calculateDendroSum.R'
@@ -107,3 +108,6 @@ Collate:
     'readEnvilog.R'
     'readTinyTag.R'
     'readTrase.R'
+    'xml_addSensorMapping.R'
+    'xml_createLogger.R'
+    'xml_createPlot.R'
