@@ -20,21 +20,34 @@ addCompletePlotFromXml <- function(level2, xml_path) {
             xml2::xml_attr("path")
         logger_uri <- Level2URI(sub_plot_uri, logger_type)
 
-        level2 <- createAndAddLogger(level2,
-                                     logger_type = logger_type,
-                                     source_paths = source_paths,
-                                     .URI = logger_uri)
+        if (logger_type == "AccessDB") {
+            db_table_name <- xml2::xml_attr(logger_node, "db_table_name")
+            date_column_name <- xml2::xml_attr(logger_node, "date_column")
+            level2 <- createAndAddAccessDBObject(level2,
+                                         source_paths = source_paths,
+                                         .URI = logger_uri,
+                                         table_name = db_table_name,
+                                         date_column = date_column_name)
+        } else {
+            level2 <- createAndAddLogger(level2,
+                                         logger_type = logger_type,
+                                         source_paths = source_paths,
+                                         .URI = logger_uri)
+        }
 
         # Add Sensor Mappings
         mapping_table <- xml_readMappings(logger_node)
-        for (mapping_index in 1:nrow(mapping_table)) {
-            pattern <- mapping_table[mapping_index, "patterns"]
-            replacement <- mapping_table[mapping_index, "replacements"]
-            origin_date <- mapping_table[mapping_index, "origin_dates"]
-            level2 <- addSensorMapping(level2,
-                                       pattern,
-                                       replacement,
-                                       .URI = logger_uri)
+        if (nrow(mapping_table) > 0) {
+            for (mapping_index in 1:nrow(mapping_table)) {
+                pattern <- mapping_table[mapping_index, "patterns"]
+                replacement <- mapping_table[mapping_index, "replacements"]
+                origin_date <- mapping_table[mapping_index, "origin_dates"]
+                level2 <- addSensorMapping(level2,
+                                           pattern,
+                                           replacement,
+                                           origin.date = origin_date,
+                                           .URI = logger_uri)
+            }
         }
     }
     return(level2)
@@ -53,6 +66,6 @@ xml_readMappings <- function(xml_node) {
         xml2::xml_attr("origin_date")
 
     mapping_table <- data.frame(patterns, replacements, origin_dates) %>%
-        mutate_all(as.character)
+        dplyr::mutate_all(as.character)
     return(mapping_table)
 }
