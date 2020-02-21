@@ -60,14 +60,16 @@ setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = funct
 
 #' @include addSubPlot.R
 setMethod("addSubPlot", signature = "Plot", definition = function(.Object, .SubPlot) {
+        sub_plot_name <- getName(.SubPlot)
         if (class(.SubPlot) != "SubPlot") {
             stop("'.SubPlot' needs to be of type SubPlot, however is of type: ", class(.SubPlot))
+        } else if (sub_plot_name %in% names(.Object@SubPlots)) {
+            stop("Can't add SubPlot '", sub_plot_name, "' as it already exists.")
         }
-
         sub_plot_directory <- file.path(getLocalDirectory(.Object), getName(.SubPlot))
         .SubPlot <- setLocalDirectory(.SubPlot, sub_plot_directory)
 
-        .Object@SubPlots[[getName(.SubPlot)]] <- .SubPlot
+        .Object@SubPlots[[sub_plot_name]] <- .SubPlot
         .Object
     }
 )
