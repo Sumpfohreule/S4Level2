@@ -21,7 +21,7 @@
     <Mapping pattern="_KR$" replacement="_Y" origin_date=""/>
     <Mapping pattern="_L$" replacement="_Z" origin_date=""/>
   </Logger>
-  <Logger name="ADLM" type="ADLM" sub_plot="Fichte">
+  <Logger name="Envilog" type="Envilog" sub_plot="Fichte">
     <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Fichte_ungedüngt_envilog"/>
   </Logger>
   <Logger name="ADLM" type="ADLM" sub_plot="Freiland">

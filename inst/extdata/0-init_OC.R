@@ -82,7 +82,7 @@ xml2::xml_add_child(oc_plot, oc_fi_adlm)
 
 # Envilog
 oc_fi_envilog <- xml_createLogger(
-    type = "ADLM",
+    type = "Envilog",
     sub_plot = "Fichte",
     source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Fichte_unged\u00FCngt_envilog")
 xml2::xml_add_child(oc_plot, oc_fi_envilog)
