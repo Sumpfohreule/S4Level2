@@ -11,16 +11,22 @@ addCompletePlotFromXml <- function(level2, xml_path) {
     dir.create(plot_dir, showWarnings = FALSE)
     logger_nodes <- xml2::xml_children(xml_root)
 
-    for (logger_node in logger_nodes) {
-        # Create SubPlot if needed
-        sub_plot_name <- xml2::xml_attr(logger_node, "sub_plot")
+    sub_plot_names <- logger_nodes %>%
+        xml2::xml_attr("sub_plot") %>%
+        unique()
+    for (sub_plot_name in sub_plot_names) {
         sub_plot_uri <- Level2URI(plot_name, sub_plot_name)
         level2 <- createAndAddSubPlot(level2, sub_plot_name, sub_plot_uri)
         sub_plot_dir <- level2 %>%
             getSubPlot(sub_plot_uri) %>%
             getLocalDirectory()
         dir.create(sub_plot_dir, showWarnings = FALSE)
+    }
 
+    for (logger_node in logger_nodes) {
+        # Create SubPlot if needed
+        sub_plot_name <- xml2::xml_attr(logger_node, "sub_plot")
+        sub_plot_uri <- Level2URI(plot_name, sub_plot_name)
 
         # Create and add Logger
         logger_type <- xml2::xml_attr(logger_node, "type")
