@@ -1,14 +1,21 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "W:/Level2_Data"
+data_location <- "W:/Level2_Data2"
 initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
-level2 <- createPlotFromXML(level2, "W:/Level2_Data/internal_structure/Altensteig.xml")
-#level2 <- resetToInitialization(loadL2Object())
+# level2 <- initializeDefaultPlots(level2)
+# level2 <- resetToInitialization(loadL2Object())
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
-# FIXME: Include MyUtilities package in inst?
+level2 %>%
+    getDataStructure(Level2URI("Conventwald", "Fichte", "Envilog"))
+
+# TODO: Try to replace calculated columns with (protected) excel-formulas in SUM
+# TODO: remove date_time rounding at import and reimplement on data export where needed!
+# TODO: split variable columns into sensor, position and vertical!
+# TODO: export Excel-Template functionality to its own package and import afterwards
+# TODO: Start specifying public interface for this package
 
 # FIXME: change Name attribute for all classes to more informative names!
 # FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
@@ -16,19 +23,16 @@ saveL2Object(level2)
 # FIXME: make it possible to excempt loggers from createAggregateExcel
 # FIXME: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
 
-# TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: replace generic methods like applyToList with more specific once (applyToPlotList, applyToSubPlotList)
 # to remove strange intial values by null
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
 # TODO: remove name Level2 as it is not needed (return class name instead if needed)
-# TODO: Try to replace calculated columns with (protected) excel-formulas
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Check logger name within raw files if existing (e.g. DeltaT)
-# TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
-# TODO: split variable columns into sensor, position and vertical!
 # TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
 # TODO: create a summary function to give an overview over the objects
-# TODO: check if date_time rounding should not be done at import!
+# TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
+
 
 
 ########################################################################################################################
