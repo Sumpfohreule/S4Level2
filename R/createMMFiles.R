@@ -1,7 +1,12 @@
 ########################################################################################################################
 createMMFiles <- function(xlsx.file) {
     # Import "Gesamt" tables for all sub plots
-    full.table <- importAggregateData(xlsx.file)
+    table_list <- list()
+    for (sub_plot in c("Fichte", "Buche", "Freiland")) {
+        table_list[[sub_plot]] <- importAggregateData(xlsx.file, sub_plot)
+    }
+    full.table <- data.table::rbindlist(table_list)
+
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
     meo.table <- full.table[stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"),
         separate(.SD,
