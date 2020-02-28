@@ -11,7 +11,7 @@ saveL2Object(level2)
 level2 %>%
     getDataStructure(Level2URI("Conventwald", "Fichte", "Envilog"))
 
-# TODO: Try to replace calculated columns with (protected) excel-formulas in SUM
+# TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: remove date_time rounding at import and reimplement on data export where needed!
 # TODO: split variable columns into sensor, position and vertical!
 # TODO: export Excel-Template functionality to its own package and import afterwards
