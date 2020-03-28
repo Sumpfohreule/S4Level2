@@ -4,14 +4,13 @@ clean_temp <- function() {
     unlink(temp_contents, recursive = TRUE)
 }
 
-test_that("Folders are corectly initialized in an existing directory", {
+test_that("Root folder is correctly initialized in an existing directory", {
     clean_temp()
     test_directory <- tempdir()
 
     initializeDataLocation(test_directory)
 
-    created_folders <- dir(test_directory)
-    expect_equal(created_folders, "internal_structure")
+    expect_true(dir.exists(file.path(test_directory, "internal_structure")))
 })
 
 test_that("New data folder is created in existing directory", {
