@@ -3,7 +3,7 @@ createMMFiles <- function(xlsx.file) {
     # Import "Gesamt" tables for all sub plots
     table_list <- list()
     for (sub_plot in c("Fichte", "Buche", "Freiland")) {
-        table_list[[sub_plot]] <- importAggregateData(xlsx.file, sub_plot)
+        table_list[[sub_plot]] <- MyUtilities::importAggregateExcelSheet(xlsx.file, sub_plot)
     }
     full.table <- data.table::rbindlist(table_list)
 

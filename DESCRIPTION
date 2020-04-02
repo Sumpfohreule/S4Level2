@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.1.1
+Version: 0.1.7
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -11,14 +11,14 @@ Imports: stringr,
          openxlsx,
          RODBC,
          XML,
-         MyUtilities
+         MyUtilities (>= 1.3.1)
 Depends: data.table,
          dplyr
 Suggests: testthat
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate: 
     'createDirectoryStructure.R'
     'saveL2Object.R'
@@ -83,7 +83,7 @@ Collate:
     'setLastImportDate.R'
     '4.2.0-AccessDB.R'
     'accumulateMMFiles.R'
-    'addPlotWithLoggersFromXML.R'
+    'addCompletePlotFromXml.R'
     'addToWorkbookWithTemplate.R'
     'aggregateClimateData.R'
     'calculateDendroSum.R'
@@ -92,9 +92,9 @@ Collate:
     'calculatePRTable.R'
     'createMMFiles.R'
     'getEuPlotId.R'
-    'importAggregateData.R'
     'initialSourceFilesTable.R'
     'initializeDataLocation.R'
+    'initializeDefaultPlots.R'
     'initializeSensorMappings.R'
     'is.DataStructure.R'
     'is.Logger.R'
