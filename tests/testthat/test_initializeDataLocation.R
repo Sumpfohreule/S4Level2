@@ -1,11 +1,6 @@
 context("Initialization of S4Level2 Project structure")
-clean_temp <- function() {
-    temp_contents <- dir(tempdir(), full.names = TRUE)
-    unlink(temp_contents, recursive = TRUE)
-}
-
 test_that("Root folder is correctly initialized in an existing directory", {
-    clean_temp()
+    MyUtilities::.clear_tempdir()
     test_directory <- tempdir()
 
     initializeDataLocation(test_directory)
@@ -14,7 +9,7 @@ test_that("Root folder is correctly initialized in an existing directory", {
 })
 
 test_that("New data folder is created in existing directory", {
-    clean_temp()
+    MyUtilities::.clear_tempdir()
     test_directory <- file.path(tempdir(), "NewDataTopFolder")
 
     initializeDataLocation(test_directory)
@@ -24,14 +19,14 @@ test_that("New data folder is created in existing directory", {
 })
 
 test_that("Error is thrown if path to new to create folder does not exist", {
-    clean_temp()
+    MyUtilities::.clear_tempdir()
     not_exisiting_path <- file.path("g:", "is", "quite", "unrealistic")
 
     expect_error(initializeDataLocation(not_exisiting_path))
 })
 
 test_that("Error is thrown that folder was already initialized and should be reset if needed", {
-    clean_temp()
+    MyUtilities::.clear_tempdir()
 
     initializeDataLocation(tempdir())
 

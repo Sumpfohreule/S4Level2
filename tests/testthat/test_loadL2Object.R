@@ -1,11 +1,7 @@
 context("Loading of top Level2 Project class")
-clean_temp <- function() {
-    temp_contents <- dir(tempdir(), full.names = TRUE)
-    unlink(temp_contents, recursive = TRUE)
-}
 
 test_that("Level2 Object is correctly loaded from path", {
-    clean_temp()
+    MyUtilities::.clear_tempdir()
     initializeDataLocation(tempdir())
 
     level2_object <- loadL2Object(tempdir())
