@@ -1,38 +1,40 @@
 ########################################################################################################################
-#' @export Level2URI
-Level2URI <- setClass(Class = "Level2URI", slots = c(
+setClass(Class = "Level2URI", slots = c(
         URI_Split = "character",
         Depth = "numeric"
     )
 )
 
-setMethod("initialize", signature = "Level2URI", definition = function(.Object, ...) {
-        elipsis_elements <- list(...)
-        for (index in 1:length(elipsis_elements)) {
-            element <- elipsis_elements[[index]]
+#' Constructor for Level2URI
+#' @param ... URI like path consisting of 0-3 strings (Plot, SubPlot, Logger)
+#' @export
+Level2URI <- function(...) {
+    elipsis_elements <- list(...)
+    for (index in 1:length(elipsis_elements)) {
+        element <- elipsis_elements[[index]]
 
-            is_character <- is.character(element)
-            is_uri <- is.Level2URI(element)
-            if (!(is_character || is_uri)) {
-                stop("Element to be passed to URI needs to be of character or Level2URI class")
-            }
-
-            elipsis_elements[[index]] <- ifelse(
-                test = is.Level2URI(element),
-                yes = getURIString(element),
-                no = as.character(element))
+        is_character <- is.character(element)
+        is_uri <- is.Level2URI(element)
+        if (!(is_character || is_uri)) {
+            stop("Element to be passed to URI needs to be of character or Level2URI class")
         }
-        uri_string <- paste(unlist(elipsis_elements), collapse = "/")
-        # TODO: check for double //
-		uri_split <- strsplit(uri_string, "/")[[1]]
-        depth = length(uri_split)
-        assertthat::assert_that(depth <= 3)
 
-        .Object@URI_Split <- uri_split
-        .Object@Depth <- depth
-        .Object
+        elipsis_elements[[index]] <- ifelse(
+            test = is.Level2URI(element),
+            yes = getURIString(element),
+            no = as.character(element))
     }
-)
+    uri_string <- paste(unlist(elipsis_elements), collapse = "/")
+    # TODO: check for double //
+    uri_split <- strsplit(uri_string, "/")[[1]]
+    depth = length(uri_split)
+    assertthat::assert_that(depth <= 3)
+
+    .Object <- new("Level2URI")
+    .Object@URI_Split <- uri_split
+    .Object@Depth <- depth
+    .Object
+}
 
 #' @include getURI_Depth.R
 setMethod("getURI_Depth", signature = "Level2URI", definition = function(.Object) {
