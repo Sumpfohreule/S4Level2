@@ -163,7 +163,10 @@ setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object
 
 #' @include getOutputDirectory.R
 setMethod("getOutputDirectory", signature = "Plot", definition = function(.Object) {
-        return(file.path("../..", getLocalDirectory(.Object)))
+    plot_name <- getName(.Object)
+    output_directory <- getLocalDirectory(.Object) %>%
+        file.path("../..", plot_name)
+        return(output_directory)
     }
 )
 

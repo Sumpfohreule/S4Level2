@@ -1,18 +1,20 @@
 ########################################################################################################################
 #' @export Level2
-Level2 <- setClass(Class = "Level2",
+setClass(Class = "Level2",
     slots = c(
         Name = "character",
         LocalDirectory = "character",
         Plots = "list")
 )
 
-setMethod("initialize", signature = "Level2", definition = function(.Object, local_directory) {
-        .Object@Name <- "Level2"
-        .Object@LocalDirectory <- local_directory
-        .Object
-    }
-)
+#' Constructor function for Level2 Object
+#' @param local_directory Directory path where outputs and internal data are stored
+Level2 <- function(local_directory) {
+    .Object <- new("Level2")
+    .Object@Name <- "Level2"
+    .Object@LocalDirectory <- local_directory
+    .Object
+}
 
 
 ########################################################################################################################
@@ -248,6 +250,11 @@ setMethod("getOutputFile", signature = "Level2", definition = function(.Object) 
         return(paste0(getName(.Object), ".rds"))
     }
 )
+
+#' @include getOutputDirectory.R
+setMethod("getOutputDirectory", signature = "Level2", definition = function(.Object) {
+    return(file.path("..", getLocalDirectory(.Object)))
+})
 
 
 ########################################################################################################################

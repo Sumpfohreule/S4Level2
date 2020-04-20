@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.1.9
+Version: 0.1.12
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -11,7 +11,7 @@ Imports: stringr,
          openxlsx,
          RODBC,
          XML,
-         MyUtilities (>= 1.3.1)
+         MyUtilities (>= 3.2.0)
 Depends: data.table,
          dplyr
 Suggests: testthat
@@ -33,6 +33,7 @@ Collate:
     'updateData.R'
     'updateFilePaths.R'
     'getData.R'
+    'getOutputDirectory.R'
     'getOutputFile.R'
     'getLocalDirectory.R'
     'getDataStructure.R'
@@ -57,7 +58,6 @@ Collate:
     'loadCorrectedData.R'
     'getSubPlotList.R'
     'getCorrectedAggregatePath.R'
-    'getOutputDirectory.R'
     'getURI.R'
     'setLocalDirectory.R'
     'setCorrectedAggregatePath.R'
