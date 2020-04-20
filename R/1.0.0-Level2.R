@@ -2,7 +2,6 @@
 #' @export Level2
 setClass(Class = "Level2",
     slots = c(
-        Name = "character",
         LocalDirectory = "character",
         Plots = "list")
 )
@@ -11,7 +10,6 @@ setClass(Class = "Level2",
 #' @param local_directory Directory path where outputs and internal data are stored
 Level2 <- function(local_directory) {
     .Object <- new("Level2")
-    .Object@Name <- "Level2"
     .Object@LocalDirectory <- local_directory
     .Object
 }
@@ -202,7 +200,7 @@ setMethod("replaceListObject", signature = "Level2", definition = function(.Obje
 ########################################################################################################################
 #' @include getName.R
 setMethod("getName", signature = "Level2", definition = function(.Object) {
-        .Object@Name
+        as.character(class(.Object))
     }
 )
 
