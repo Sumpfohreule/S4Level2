@@ -9,21 +9,21 @@ setClass(Class = "Plot", slots = c(
     )
 )
 
-setMethod("initialize", signature = "Plot", definition = function(
-        .Object,
-        name,
-        uri,
-        local_directory,
-        corrected.aggregate.path) {
-
-        .Object@Name <- name
-        .Object@LocalDirectory = local_directory
-        .Object@Level2URI = Level2URI(getPlotName(uri))
-        .Object <- setCorrectedAggregatePath(.Object, corrected.aggregate.path)
-
-        .Object
-    }
-)
+#' Constructor function for Plot class
+#'
+#' @param name Name of this plot which needs to be unique within a Level2 Object
+#' @param local_directory
+#' @param corrected.aggregate.path
+Plot <- function(name,
+                 local_directory,
+                 corrected.aggregate.path) {
+    .Object <- new("Plot")
+    .Object@Name <- name
+    .Object@LocalDirectory = local_directory
+    .Object@Level2URI = Level2URI(name)
+    .Object <- setCorrectedAggregatePath(.Object, corrected.aggregate.path)
+    .Object
+}
 
 
 ########################################################################################################################

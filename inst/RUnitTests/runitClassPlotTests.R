@@ -37,11 +37,9 @@ testCreateAndAddMultipleSubPlots <- function() {
     plot_name <- "TestPlot"
     .URI <- Level2URI(plot_name)
 
-    .Plot <- new("Plot",
-        name = plot_name,
-        local_directory = tempdir(),
-        uri = .URI,
-        corrected.aggregate.path = tempdir())
+    .Plot <- Plot(name = plot_name,
+                  local_directory = tempdir(),
+                  corrected.aggregate.path = tempdir())
 
     sub_plot_names <- c("Buche", "Fichte", "Freiland")
     .Plot <- createAndAddMultipleSubPlots(.Plot, sub_plot_names)

@@ -40,11 +40,9 @@ testGetPlot <- function() {
     .URI <- Level2URI(plot_name)
 
     .Level2 <- Level2(local_directory = tempdir())
-    .TestPlot <- new("Plot",
-        name = plot_name,
-        local_directory = file.path(tempdir(), plot_name),
-        uri = .URI,
-        corrected.aggregate.path = tempdir())
+    .TestPlot <- Plot(name = plot_name,
+                      local_directory = file.path(tempdir(), plot_name),
+                      corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .TestPlot)
     RUnit::checkEquals(.TestPlot, getPlot(.Level2, .URI))
@@ -94,11 +92,9 @@ testAddPlot <- function() {
     plot_name <- "TestPlot"
     local_directory_once_added_to_level2 <-  file.path(tempdir(), plot_name)
     .Plot_URI <- Level2URI(plot_name)
-    .Plot <- new("Plot",
-        name = plot_name,
-        local_directory = local_directory_once_added_to_level2,
-        uri = .Plot_URI,
-        corrected.aggregate.path = tempdir())
+    .Plot <- Plot(name = plot_name,
+                  local_directory = local_directory_once_added_to_level2,
+                  corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .Plot)
     RUnit::checkEquals(.Plot, getPlot(.Level2, .Plot_URI))
@@ -177,11 +173,9 @@ testReplaceListObject <- function() {
     .Plot_URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.Plot_URI, path = tempdir())
 
-    .Replacement_Plot <- new("Plot",
-        name = plot_name,
-        uri = .Plot_URI,
-        local_directory = "c:/",
-        corrected.aggregate.path = "c:/")
+    .Replacement_Plot <- Plot(name = plot_name,
+                              local_directory = tempdir(),
+                              corrected.aggregate.path = tempdir())
     .Level2 <- replaceListObject(.Level2, .Replacement_Plot)
 
     RUnit::checkEquals(.Replacement_Plot, getPlotList(.Level2)[[plot_name]])
@@ -196,11 +190,9 @@ testReplacePlotByURI <- function() {
     .URI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
-    .ReplacementPlot <- new("Plot",
-        name = plot_name,
-        uri = .URI,
-        local_directory = tempdir(),
-        corrected.aggregate.path = tempdir())
+    .ReplacementPlot <- Plot(name = plot_name,
+                             local_directory = tempdir(),
+                             corrected.aggregate.path = tempdir())
     .Level2 <- replaceObjectByURI(.Level2, .ReplacementObject = .ReplacementPlot)
 
     plot_list <- getPlotList(.Level2)
