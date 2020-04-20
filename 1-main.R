@@ -1,15 +1,14 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "W:/Level2_Data2"
+data_location <- "/home/polarfalke/Data/Temp/level2"
 initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- initializeDefaultPlots(level2)
+level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/internal_structure")
 # level2 <- resetToInitialization(loadL2Object())
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
-level2 %>%
-    getDataStructure(Level2URI("Conventwald", "Fichte", "Envilog"))
 
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: remove date_time rounding at import and reimplement on data export where needed!
@@ -47,9 +46,8 @@ at.data[SubPlot == "Freiland"]
 at.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 at.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-createAggregateExcel(
-    .Object = loadL2Object("Altensteig"),
-    year = 2019)
+level2 %>% getPlot(Level2URI("Altensteig")) %>%
+    createAggregateExcel(year = 2019)
 
 
 ########################################################################################################################
@@ -63,9 +61,8 @@ co.data <- getData(co_plot,
 co.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 co.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-createAggregateExcel(
-    .Object = loadL2Object("Conventwald"),
-    year = 2019)
+level2 %>% getPlot(Level2URI("Conventwald")) %>%
+    createAggregateExcel(year = 2019)
 
 
 ########################################################################################################################
@@ -82,9 +79,8 @@ es.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), 
 # TODO: Update 2019 TinyTag data (Some files to convert on M:/Bu-Labor/Lars_Temp)
 # TODO: Update Bu DeltaT 2019 (Jan/Feb, Mai, August/September)
 # TODO: Update Fi Envilog 2019 (Mai - September)
-createAggregateExcel(
-    .Object = loadL2Object("Esslingen"),
-    year = 2019)
+level2 %>% getPlot(Level2URI("Esslingen")) %>%
+    createAggregateExcel(year = 2019)
 
 
 ########################################################################################################################
@@ -99,10 +95,8 @@ hd.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), 
 # TODO: HD BU ADLM auf Sicherheitsauslese warten (ab 18.06.2019 keine Daten)
 # FIXME: HD BU DeltaT fehlende Daten (10.09.2019)
 
-createAggregateExcel(
-    .Object = loadL2Object("Heidelberg"),
-    year = 2019)
-
+level2 %>% getPlot(Level2URI("Heidelberg")) %>%
+    createAggregateExcel(year = 2019)
 
 ########################################################################################################################
 # Ochsenhausen
@@ -114,10 +108,8 @@ oc.data <- getData(loadL2Object("Ochsenhausen"),
 oc.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 oc.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-createAggregateExcel(
-    .Object = loadL2Object("Ochsenhausen"),
-    year = 2019)
-
+level2 %>% getPlot(Level2URI("Ochsenhausen")) %>%
+    createAggregateExcel(year = 2019)
 
 ########################################################################################################################
 # Rotenfels
@@ -131,9 +123,8 @@ ro.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plo
 
 # TODO RO Fi DeltaT Daten
 
-createAggregateExcel(
-    .Object = loadL2Object("Rotenfels"),
-    year = 2019,
-    round.times = FALSE)
+level2 %>% getPlot(Level2URI("Rotenfels")) %>%
+    createAggregateExcel(year = 2019,
+                         round.times = FALSE)
 
 
