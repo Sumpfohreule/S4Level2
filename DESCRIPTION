@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.1.7
+Version: 0.1.9
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -20,6 +20,12 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
 Collate: 
+    'getURIString.R'
+    'getDataStructureName.R'
+    'getSubPlotName.R'
+    'getPlotName.R'
+    'getURI_Depth.R'
+    '0.0.0-Level2URI.R'
     'createDirectoryStructure.R'
     'saveL2Object.R'
     'applyToList.R'
@@ -55,12 +61,6 @@ Collate:
     'getURI.R'
     'setLocalDirectory.R'
     'setCorrectedAggregatePath.R'
-    'getURIString.R'
-    'getDataStructureName.R'
-    'getSubPlotName.R'
-    'getPlotName.R'
-    'getURI_Depth.R'
-    'Level2URI.R'
     '2.0.0-Plot.R'
     'getDataStructureList.R'
     '3.0.0-SubPlot.R'
@@ -95,6 +95,7 @@ Collate:
     'initialSourceFilesTable.R'
     'initializeDataLocation.R'
     'initializeDefaultPlots.R'
+    'initializePlotsFromXml.R'
     'initializeSensorMappings.R'
     'is.DataStructure.R'
     'is.Logger.R'
