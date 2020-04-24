@@ -1,5 +1,5 @@
 ########################################################################################################################
-setGeneric("getPlot", def = function(.Object, .URI) {
+setGeneric("getPlot", def = function(.Object, .Level2URI) {
         standardGeneric("getPlot")
     }
 )
