@@ -9,11 +9,6 @@ setClass(Class = "Plot", slots = c(
     )
 )
 
-#' Constructor function for Plot class
-#'
-#' @param name Name of this plot which needs to be unique within a Level2 Object
-#' @param local_directory
-#' @param corrected.aggregate.path
 Plot <- function(name,
                  local_directory,
                  corrected.aggregate.path) {
@@ -217,7 +212,12 @@ setMethod("getData", signature = "Plot", definition = function(
     }
 )
 
+#' Load the data of corrected files from predefined folders of this plot
+#' @param sheet.name String to determine which kind of SubPlot should be loaded from each file
+#' @param years Numeric vector of years to load from the plot corrected files
+#' @return A data.table with all the data combined
 #' @include loadCorrectedData.R
+#' @export
 setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet.name, years) {
         data.path <- getCorrectedAggregatePath(.Object)
         year.folders <- dir(data.path)

@@ -202,15 +202,29 @@ setMethod("getName", signature = "Level2", definition = function(.Object) {
     }
 )
 
+#' Returns the Plot contained within this object by name or Level2URI
+#' @param .Object Level2 object
+#' @param .URI An Level2URI object or character string with the plot name
+#' @return An object of type Plot
 #' @include getPlot.R
-setMethod("getPlot", signature = "Level2", definition = function(.Object, .URI) {
+#' @export
+setMethod("getPlot", signature = "Level2", definition = function(.Object, .Level2URI) {
+    assertthat::assert_that(assertthat::is.string(.Level2URI) | class(.Object) == "Level2URI")
+    if (class(.Level2URI) == "Level2URI") {
         plot_name <- getPlotName(.URI)
-        .Plot <- getPlotList(.Object)[[plot_name]]
-        .Plot
+    } else {
+        plot_name <- .Level2URI
     }
-)
+    .Plot <- getPlotList(.Object)[[plot_name]]
+    .Plot
+})
 
+#' Return the list of Plots from an Level2 object
+#'
+#' @param .Object An Level2 object
+#' @return A list of Plot objects
 #' @include getPlotList.R
+#' @export
 setMethod("getPlotList", signature = "Level2", definition = function(.Object) {
         return(.Object@Plots)
     }

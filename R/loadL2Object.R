@@ -2,6 +2,7 @@
 #' Load the top level Level2 Object
 #' @param data_path A string with the path to the package top level data location
 #' @return An Object of class Level2
+#' @export
 loadL2Object <- function(data_path) {
     level2_file <- dir(data_path, pattern = "Level2.rds$", full.names = TRUE, recursive = TRUE)
     tryCatch(.Object <- readRDS(file = level2_file),
