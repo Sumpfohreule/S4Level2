@@ -1,13 +1,14 @@
+ro_base_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/ROTENFEL"
 ro_plot <- xml_createPlot(
     plot_name = "Rotenfels",
-    screened_data_path = "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/ROTENFEL/Rotenfels_Fichte_gesamt_Korrektur/")
+    screened_data_path = file.path(ro_base_path, "Rotenfels_Fichte_gesamt_Korrektur"))
 
 # Fichte
 # DeltaT
 ro_fi_delta <- xml_createLogger(
     type = "DeltaT",
     sub_plot = "Fichte",
-    source_paths = "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/ROTENFEL/Rotenfels_Fichte_DeltaT_neu/backup.dat")
+    source_paths = file.path(ro_base_path, "Rotenfels_Fichte_DeltaT_neu/backup.dat"))
 
 xml_addSensorMapping(
     xml_logger = ro_fi_delta,
@@ -39,14 +40,14 @@ xml2::xml_add_child(ro_plot, ro_fi_delta)
 ro_fi_envilog <- xml_createLogger(
     type = "Envilog",
     sub_plot = "Fichte",
-    source_paths = "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/ROTENFEL/Rotenfels_Fichte_Envilog")
+    source_paths = file.path(ro_base_path, "Rotenfels_Fichte_Envilog"))
 xml2::xml_add_child(ro_plot, ro_fi_envilog)
 
 # Freiland
 ro_frei_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Freiland",
-    source_paths = "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/ROTENFEL/Rotenfels_1/CSV")
+    source_paths = file.path(ro_base_path, "Rotenfels_1/CSV"))
 
 xml_addSensorMapping(
     xml_logger = ro_frei_adlm,
