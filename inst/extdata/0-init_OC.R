@@ -1,13 +1,14 @@
+oc_base_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS"
 oc_plot <- xml_createPlot(
     plot_name = "Ochsenhausen",
-    screened_data_path = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_gesamt_Korrektur")
+    screened_data_path = file.path(oc_base_path, "Ochsenhausen_gesamt_Korrektur"))
 
 # Buche
 # DeltaT
 oc_bu_delta <- xml_createLogger(
     type = "DeltaT",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Buche_Delta_T/Backup.dat")
+    source_paths = file.path(oc_base_path, "Ochsenhausen_Buche_Delta_T/Backup.dat"))
 xml_addSensorMapping(
     xml_logger = oc_bu_delta,
     pattern = "^FDR([0-9]{2})([xyz])$",
@@ -38,7 +39,7 @@ xml2::xml_add_child(oc_plot, oc_bu_delta)
 oc_bu_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Bu_ADLM/CSV")
+    source_paths = file.path(oc_base_path, "Ochsenhausen_Bu_ADLM/CSV"))
 xml_addSensorMapping(
     xml_logger = oc_bu_adlm,
     pattern = "Regen",
@@ -50,7 +51,7 @@ xml2::xml_add_child(oc_plot, oc_bu_adlm)
 oc_fi_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Fichte",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochs_PF_Meter_1/CSV")
+    source_paths = file.path(oc_base_path, "Ochs_PF_Meter_1/CSV"))
 xml_addSensorMapping(
     xml_logger = oc_fi_adlm,
     pattern = "^Regen",
@@ -84,14 +85,14 @@ xml2::xml_add_child(oc_plot, oc_fi_adlm)
 oc_fi_envilog <- xml_createLogger(
     type = "Envilog",
     sub_plot = "Fichte",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_Fichte_unged\u00FCngt_envilog")
+    source_paths = file.path(oc_base_path, "Ochsenhausen_Fichte_unged\u00FCngt_envilog"))
 xml2::xml_add_child(oc_plot, oc_fi_envilog)
 
 # Freiland
 oc_frei_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Freiland",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/OCHS/Ochsenhausen_1/CSV")
+    source_paths = file.path(oc_base_path, "Ochsenhausen_1/CSV"))
 xml_addSensorMapping(
     xml_logger = oc_frei_adlm,
     pattern = "^Niederschlag$",
@@ -137,4 +138,4 @@ xml_addSensorMapping(
     pattern = "^Windrichtung",
     replacement = "WD")
 xml2::xml_add_child(oc_plot, oc_frei_adlm)
-xml2::write_xml(oc_plot, "inst/extdata/plot_xml/ochsenhausen_setup.xml")
+xml2::write_xml(oc_plot, "/home/polarfalke/Data/Temp/level2/ochsenhausen_setup.xml")

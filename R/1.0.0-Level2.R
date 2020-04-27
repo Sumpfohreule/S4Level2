@@ -209,9 +209,9 @@ setMethod("getName", signature = "Level2", definition = function(.Object) {
 #' @include getPlot.R
 #' @export
 setMethod("getPlot", signature = "Level2", definition = function(.Object, .Level2URI) {
-    assertthat::assert_that(assertthat::is.string(.Level2URI) | class(.Object) == "Level2URI")
+    assertthat::assert_that(assertthat::is.string(.Level2URI) || is.Level2URI(.Level2URI))
     if (class(.Level2URI) == "Level2URI") {
-        plot_name <- getPlotName(.URI)
+        plot_name <- getPlotName(.Level2URI)
     } else {
         plot_name <- .Level2URI
     }

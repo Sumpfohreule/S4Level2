@@ -1,4 +1,4 @@
-initializePlotsFromXml <- function(level1, xml_parent_dir) {
+initializePlotsFromXml <- function(level2, xml_parent_dir) {
     all_xml <- dir(xml_parent_dir, full.names = TRUE, pattern = "\\.xml$")
     for (xml_path in all_xml) {
         level2 <- addCompletePlotFromXml(level2, xml_path = xml_path)

@@ -3,7 +3,7 @@ data_location <- "/home/polarfalke/Data/Temp/level2"
 initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- initializeDefaultPlots(level2)
-level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/internal_structure")
+level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
 # level2 <- resetToInitialization(loadL2Object())
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)

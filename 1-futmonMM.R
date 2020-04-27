@@ -2,8 +2,8 @@
 devtools::load_all()
 
 ########################################################################################################################
-target.year <- 2018
-data_path = "w:/Level2_Data2"
+target.year <- 2019
+data_path = "/home/polarfalke/Data/Temp/level2"
 .Level2 <- loadL2Object(data_path)
 
 .Level2 %>%

@@ -1,12 +1,13 @@
 ########################################################################################################################
+es_base_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/Esslingen"
 es_plot <- xml_createPlot(
     plot_name = "Esslingen",
-    screened_data_path = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_gesamt_Korrektur")
+    screened_data_path = file.path(es_base_path, "Esslingen_gesamt_Korrektur"))
 
 es_bu_delta <- xml_createLogger(
     type = "DeltaT",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_Buche_DeltaT/Backup.dat")
+    source_paths = file.path(es_base_path, "Esslingen_Buche_DeltaT/Backup.dat"))
 xml_addSensorMapping(
     xml_logger = es_bu_delta,
     pattern = "Regen",
@@ -43,7 +44,7 @@ xml2::xml_add_child(es_plot, es_bu_delta)
 es_bu_tinytag <- xml_createLogger(
     type = "TinyTag",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_Buche_TinyTag/backup.txt")
+    source_paths = file.path(es_base_path, "Esslingen_Buche_TinyTag/backup.txt"))
 xml_addSensorMapping(
     xml_logger = es_bu_tinytag,
     pattern = "(FDR|PF)([0-9]{2})",
@@ -74,7 +75,7 @@ xml2::xml_add_child(es_plot, es_bu_tinytag)
 es_fi_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Fichte",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_PF_Meter_1/csv")
+    source_paths = file.path(es_base_path, "Esslingen_PF_Meter_1/csv"))
 xml_addSensorMapping(
     xml_logger = es_fi_adlm,
     pattern = "(?<=[0-9]{2})K(?=\\.ES\\.Fi\\.TDR)",
@@ -106,7 +107,7 @@ xml2::xml_add_child(es_plot, es_fi_adlm)
 es_frei_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Freiland",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/ESSLINGN/FVA/Esslingen_1/CSV")
+    source_paths = file.path(es_base_path, "Esslingen_1/CSV"))
 xml_addSensorMapping(
     xml_logger = es_frei_adlm,
     pattern = "Hygro\\.S3\\.Temperatur",
@@ -132,5 +133,5 @@ xml_addSensorMapping(
     pattern = "Windrichtung",
     replacement = "WD")
 xml2::xml_add_child(es_plot, es_frei_adlm)
-xml2::write_xml(es_plot, "inst/extdata/plot_xml/esslingen_setup.xml")
+xml2::write_xml(es_plot, "/home/polarfalke/Data/Temp/level2/esslingen_setup.xml")
 

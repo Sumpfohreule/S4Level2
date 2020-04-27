@@ -1,13 +1,14 @@
+hd_base_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG"
 hd_plot <- xml_createPlot(
     plot_name = "Heidelberg",
-    screened_data_path = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_ges_Korrektur")
+    screened_data_path = file.path(hd_base_path, "Heidelberg_ges_Korrektur"))
 
 # Buche
 # DeltaT
 hd_bu_delta <- xml_createLogger(
     type = "DeltaT",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Bu/Heidelberg_Bu_Delta_T/Backup.dat")
+    source_paths = file.path(hd_base_path, "Heidelberg_Bu_Delta_T/Backup.dat"))
 xml_addSensorMapping(
     xml_logger = hd_bu_delta,
     pattern = "Regen",
@@ -38,7 +39,7 @@ xml2::xml_add_child(hd_plot, hd_bu_delta)
 hd_bu_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Buche",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Bu/Heidelberg_Bu_ADL/csv")
+    source_paths = file.path(hd_base_path, "Heidelberg_Bu_ADL/csv"))
 xml_addSensorMapping(
     xml_logger = hd_bu_adlm,
     pattern = "Regen",
@@ -54,7 +55,7 @@ xml2::xml_add_child(hd_plot, hd_bu_adlm)
 hd_fi_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Fichte",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Fi/CSV")
+    source_paths = file.path(hd_base_path, "Heidelberg_Fi/CSV"))
 xml_addSensorMapping(
     xml_logger = hd_fi_adlm,
     pattern = "Regen",
@@ -93,7 +94,7 @@ xml2::xml_add_child(hd_plot, hd_fi_adlm)
 hd_frei_adlm <- xml_createLogger(
     type = "ADLM",
     sub_plot = "Freiland",
-    source_paths = "O:/PROJEKT/NIEDER/LOGGER/HEIDELBG/Heidelberg_Freiland/csv")
+    source_paths = file.path(hd_base_path, "Heidelberg_Freiland/csv"))
 xml_addSensorMapping(
     xml_logger = hd_frei_adlm,
     pattern = "^Hygro\\.S3\\.Temperatur$",
@@ -119,4 +120,4 @@ xml_addSensorMapping(
     pattern = "^Windrichtung",
     replacement = "WD")
 xml2::xml_add_child(hd_plot, hd_frei_adlm)
-xml2::write_xml(hd_plot, "inst/extdata/plot_xml/heidelberg_setup.xml")
+xml2::write_xml(hd_plot, "/home/polarfalke/Data/Temp/level2/heidelberg_setup.xml")
