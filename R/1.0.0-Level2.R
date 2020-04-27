@@ -33,14 +33,18 @@ setMethod("createAndAddPlot", signature = "Level2", definition = function(
 
 #' @include addPlot.R
 setMethod("addPlot", signature = "Level2", definition = function(.Object, .Plot) {
-        if (!is.Plot(.Plot))
-            stop("Can only add objects of class 'Plot' to class 'Level2'!")
-        plot_directory <- file.path(getLocalDirectory(.Object), getName(.Plot))
-        .Plot <- setLocalDirectory(.Plot, plot_directory)
-        .Object@Plots[[getName(.Plot)]] <- .Plot
-        .Object
+    assertthat::assert_that(is.Plot(.Plot))
+    plot_name <- getName(.Plot)
+    plot_list <- getPlotList(.Object)
+    if (plot_name %in% names(plot_list)) {
+        stop("Plot with the same name '", plot_name, "' already exists and would be overwritten")
     }
-)
+    plot_directory <- file.path(getLocalDirectory(.Object), plot_name)
+    .Plot <- setLocalDirectory(.Plot, plot_directory)
+    plot_list[[plot_name]] <- .Plot
+    .Object@Plots <- plot_list
+    .Object
+})
 
 #' @include createAndAddMultipleSubPlots.R
 setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = function(.Object,
