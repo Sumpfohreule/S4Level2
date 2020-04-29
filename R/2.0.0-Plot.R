@@ -140,11 +140,11 @@ setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI)
 )
 
 #' @include getDataStructure.R
-setMethod("getDataStructure", signature = "Plot", definition = function(.Object, .URI) {
-        sub.plot = getSubPlotName(.URI)
+setMethod("getDataStructure", signature = "Plot", definition = function(.Object, .Level2URI) {
+        sub.plot = getSubPlotName(.Level2URI)
         if (!sub.plot %in% names(.Object@SubPlots))
             stop(sprintf("Subplot '%s' is not contained within Plot '%s'", sub.plot, getName(.Object)))
-        data <- getDataStructure(.Object@SubPlots[[sub.plot]], .URI = .URI)
+        data <- getDataStructure(.Object@SubPlots[[sub.plot]], .Level2URI = .Level2URI)
         return(data)
     }
 )

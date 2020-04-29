@@ -108,8 +108,8 @@ setMethod("getDataStructureList", signature = "SubPlot", definition = function(.
 )
 
 #' @include getDataStructure.R
-setMethod("getDataStructure", signature = "SubPlot", definition = function(.Object, .URI) {
-        logger = getDataStructureName(.URI)
+setMethod("getDataStructure", signature = "SubPlot", definition = function(.Object, .Level2URI) {
+        logger = getDataStructureName(.Level2URI)
         if (!logger %in% names(.Object@Loggers))
             stop(sprintf("Logger '%s' is not contained within Subplot '%s'", logger, getName(.Object)))
         .Logger <- .Object@Loggers[[logger]]

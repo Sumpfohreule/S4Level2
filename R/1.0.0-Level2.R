@@ -243,15 +243,18 @@ setMethod("getSubPlot", signature = "Level2", definition = function(.Object, .UR
 )
 
 #' @include getDataStructure.R
-setMethod("getDataStructure", signature = "Level2", definition = function(.Object, .URI) {
-        Plots <- getPlotList(.Object)
-        plot = getPlotName(.URI)
-        if (!plot %in% names(Plots))
-            stop(sprintf("Plot '%s' is not contained within the Level2 Object", plot))
-        data <- getDataStructure(Plots[[plot]], .URI = .URI)
-        return(data)
+setMethod("getDataStructure", signature = "Level2", definition = function(.Object, .Level2URI) {
+    assertthat::assert_that(is.Level2URI(.Level2URI) || "character" %in% class(.Level2URI))
+    if (!is.Level2URI(.Level2URI)) {
+        .Level2URI <- Level2URI(.Level2URI)
     }
-)
+    Plots <- getPlotList(.Object)
+    plot = getPlotName(.Level2URI)
+    if (!plot %in% names(Plots))
+        stop(sprintf("Plot '%s' is not contained within the Level2 Object", plot))
+    data <- getDataStructure(Plots[[plot]], .Level2URI = .Level2URI)
+    return(data)
+})
 
 #' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "Level2", definition = function(.Object) {

@@ -1,5 +1,5 @@
 ########################################################################################################################
-setGeneric("getDataStructure", def = function(.Object, .URI) {
+setGeneric("getDataStructure", def = function(.Object, .Level2URI) {
         standardGeneric("getDataStructure")
     }
 )
