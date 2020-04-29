@@ -1,6 +1,6 @@
 ########################################################################################################################
 readDeltaT <- function(deltaT_dat_path) {
-    raw_dat_data <- read.csv(deltaT_dat_path, header = TRUE, skip = 7)
+    raw_dat_data <- read.csv(deltaT_dat_path, header = TRUE, skip = 7, fileEncoding = "cp1258")
     reduced_dat_data <- raw_dat_data %>%
         slice(-1:-3) %>%
         select(-matches("^X\\.*[0-9]*$")) %>%
