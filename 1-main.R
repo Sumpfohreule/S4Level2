@@ -1,10 +1,10 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "/home/polarfalke/Data/Temp/level2_2"
-initializeDataLocation(data_location)
+data_location <- "/home/polarfalke/Data/Temp/level2"
+# initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- resetToInitialization(level2)
 # level2 <- initializeDefaultPlots(level2)
-level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
+# level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
@@ -85,17 +85,23 @@ level2 %>% getPlot(Level2URI("Esslingen")) %>%
 
 ########################################################################################################################
 # Heidelberg
-hd.data <- getData(loadL2Object("Heidelberg"),
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = TRUE)
-hd.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-hd.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+hd.data <- level2 %>%
+    getPlot("Heidelberg") %>%
+    getData(start.date = "2019-01-01",
+            end.date = "2020-01-01",
+            as.wide.table = TRUE)
+hd.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+hd.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+
+hd_bu_missing <- level2 %>%
+    getDataStructure("Heidelberg/Buche/ADLM") %>%
+    getSourceFileTable() %>%
+    filter(imported == FALSE)
 
 # TODO: HD BU ADLM auf Sicherheitsauslese warten (ab 18.06.2019 keine Daten)
 # FIXME: HD BU DeltaT fehlende Daten (10.09.2019)
 
-level2 %>% getPlot(Level2URI("Heidelberg")) %>%
+level2 %>% getPlot("Heidelberg") %>%
     createAggregateExcel(year = 2019)
 
 ########################################################################################################################
@@ -113,10 +119,11 @@ level2 %>% getPlot(Level2URI("Ochsenhausen")) %>%
 
 ########################################################################################################################
 # Rotenfels
-ro.data <- getData(.Object = loadL2Object("Rotenfels"),
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = TRUE)
+ro.data <- level2 %>%
+    getPlot("Rotenfels") %>%
+    getData(start.date = "2019-01-01",
+            end.date = "2020-01-01",
+            as.wide.table = TRUE)
 
 ro.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 ro.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
@@ -126,5 +133,3 @@ ro.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plo
 level2 %>% getPlot(Level2URI("Rotenfels")) %>%
     createAggregateExcel(year = 2019,
                          round.times = FALSE)
-
-
