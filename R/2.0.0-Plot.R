@@ -353,8 +353,8 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
             stop(sprintf("Achtung die Datei '%s' ist bereits geöffnet und muss vorher geschlossen werden.",
                     out.file))
 
-        data <- getDataForYear(.Object, year)
-        data[, Logger := NULL]
+        data <- getDataForYear(.Object, year) %>%
+            select(-Logger)
         if (round.times) {
             data[, Datum := MyUtilities::roundPOSIXct(Datum), by = .(SubPlot, variable)]
             if (data[, TRUE %in% duplicated(data, by = c("SubPlot", "variable", "Datum"))])

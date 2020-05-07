@@ -79,19 +79,19 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
-        all.files <- dir(getSourcePaths(.Object), full.names = TRUE, recursive = TRUE)
-        select.files <- all.files[stringr::str_detect(basename(all.files), pattern = getSourceFilePattern(.Object))]
-        file.table <- data.table::data.table(
-            file = basename(select.files),
-            path = as.factor(dirname(select.files)))
-        data.table::setkey(file.table, path, file)
-        source.table <- getSourceFileTable(.Object)[file.table]
-        source.table[is.na(imported), imported := FALSE]
-        source.table[is.na(skip), skip := FALSE]
-        .Object@SourceFiles <- source.table
-        .Object
-    }
-)
+  current_table <- getSourceFileTable(.Object) %>%
+    mutate(path = as.character(path))
+  new_table <- .Object %>%
+    getSourcePaths() %>%
+    dir(full.names = TRUE, recursive = TRUE) %>%
+    purrr::map_df(function(x) return(data.frame(file = basename(x), path = dirname(x)))) %>%
+    filter(stringr::str_detect(file, pattern = getSourceFilePattern(.Object))) %>%
+    full_join(current_table, by = c("path", "file")) %>%
+    mutate_at(vars(imported, skip), function(x) if_else(is.na(x), FALSE, x)) %>%
+    arrange(file, path)
+  .Object@SourceFiles <- new_table
+  .Object
+})
 
 #' @include updateData.R
 setMethod("updateData", signature = "Logger", definition = function(.Object) {

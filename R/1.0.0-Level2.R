@@ -312,6 +312,7 @@ setMethod("getData", signature = "Level2", definition = function(
 )
 
 #' @include updateFilePaths.R
+#' @export
 setMethod("updateFilePaths", signature = "Level2", definition = function(.Object) {
         .Object <- applyToList(.Object, updateFilePaths)
         .Object
