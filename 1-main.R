@@ -137,5 +137,11 @@ ro.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plo
 # TODO RO Fi DeltaT Daten
 
 level2 %>% getPlot(Level2URI("Rotenfels")) %>%
+    getDataForYear(2019) %>%
+    mutate(value = if_else(
+        condition = (variable == "Niederschlag.Casella" &
+                    Datum <= as.POSIXct("2019-04-03", tz = "UTC")),
+        true = value * 2,
+        false = value)) %>%
     createAggregateExcel(year = 2019,
                          round.times = FALSE)

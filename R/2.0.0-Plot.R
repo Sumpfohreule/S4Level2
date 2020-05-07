@@ -178,6 +178,18 @@ setMethod("getSubPlotList", signature = "Plot", definition = function(.Object) {
 )
 
 ########################################################################################################################
+#' @include getDataForYear.R
+setMethod("getDataForYear",
+          signature = "Plot",
+          definition = function(.Object, target_year) {
+              start.date <- paste0(year - 1, "-12-01")
+              end.date <- paste0(year + 1, "-02-01")
+              target_data <- getData(.Object, start.date = start.date, end.date = end.date) %>%
+                  filter(data.table::year(Datum) == target_year)
+              return(target_data)
+
+})
+
 #' @include getData.R
 setMethod("getData", signature = "Plot", definition = function(
         .Object,
@@ -341,11 +353,7 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
             stop(sprintf("Achtung die Datei '%s' ist bereits geöffnet und muss vorher geschlossen werden.",
                     out.file))
 
-        # Overproviding data first as in one case it was cutting of from the target year
-        start.date <- paste0(year - 1, "-12-01")
-        end.date <- paste0(year + 1, "-02-01")
-        data <- getData(.Object, start.date = start.date, end.date = end.date)
-        data <- data[year(Datum) == year]
+        data <- getDataForYear(.Object, year)
         data[, Logger := NULL]
         if (round.times) {
             data[, Datum := MyUtilities::roundPOSIXct(Datum), by = .(SubPlot, variable)]

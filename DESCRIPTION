@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 0.1.23
+Version: 0.2.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -56,6 +56,7 @@ Collate:
     'getSourceFileTable.R'
     'createAggregateExcel.R'
     'loadCorrectedData.R'
+    'getDataForYear.R'
     'getSubPlotList.R'
     'getCorrectedAggregatePath.R'
     'getURI.R'
