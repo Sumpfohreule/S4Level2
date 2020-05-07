@@ -10,11 +10,12 @@ level2 <- updateData(level2)
 saveL2Object(level2)
 
 
+# TODO: Check logger name within raw files if existing (e.g. DeltaT)
+# TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
+# TODO: create a summary function to give an overview over the objects
+# TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
-# TODO: remove date_time rounding at import and reimplement on data export where needed!
 # TODO: split variable columns into sensor, position and vertical!
-# TODO: export Excel-Template functionality to its own package and import afterwards
-# TODO: Start specifying public interface for this package
 
 # FIXME: change Name attribute for all classes to more informative names!
 # FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
@@ -22,15 +23,14 @@ saveL2Object(level2)
 # FIXME: make it possible to excempt loggers from createAggregateExcel
 # FIXME: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
 
+# TODO: Start specifying public interface for this package
+# TODO: remove date_time rounding at import and reimplement on data export where needed!
+# TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: replace generic methods like applyToList with more specific once (applyToPlotList, applyToSubPlotList)
 # to remove strange intial values by null
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
-# TODO: remove name Level2 as it is not needed (return class name instead if needed)
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
-# TODO: Check logger name within raw files if existing (e.g. DeltaT)
-# TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
-# TODO: create a summary function to give an overview over the objects
-# TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
+# TODO: Test where overproviding data for getDataForYear was necessary and solve problem
 
 
 
@@ -106,13 +106,19 @@ level2 %>% getPlot("Heidelberg") %>%
 
 ########################################################################################################################
 # Ochsenhausen
-oc.data <- getData(loadL2Object("Ochsenhausen"),
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = FALSE)
+oc.data <- level2 %>%
+    getPlot("Ochsenhausen") %>%
+    getData(start.date = "2019-01-01",
+            end.date = "2020-01-01",
+            as.wide.table = FALSE)
 
-oc.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-oc.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+oc.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+oc.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+
+level2 %>%
+    getDataStructure("Ochsenhausen/Buche/DeltaT") %>%
+    getSourceFileTable() %>%
+    filter(imported == FALSE)
 
 level2 %>% getPlot(Level2URI("Ochsenhausen")) %>%
     createAggregateExcel(year = 2019)
