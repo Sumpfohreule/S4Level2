@@ -338,6 +338,7 @@ setMethod("updateData", signature = "Level2", definition = function(.Object, plo
         for(plot.name in plot.names) {
             .Plots[[plot.name]] <- updateData(.Object@Plots[[plot.name]], sub.plot)
         }
+        .Object@Plots <- .Plots
         .Object
     }
 )
