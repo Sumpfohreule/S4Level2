@@ -10,6 +10,7 @@ level2 <- updateData(level2)
 saveL2Object(level2)
 
 
+# TODO: Replace getDataStructure, getSubPlot getPlot with a unified Method using Level2URI
 # TODO: Check logger name within raw files if existing (e.g. DeltaT)
 # TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
 # TODO: create a summary function to give an overview over the objects
