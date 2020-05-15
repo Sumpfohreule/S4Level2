@@ -93,72 +93,76 @@ setMethod("updateFilePaths", signature = "Logger", definition = function(.Object
   .Object
 })
 
+
 #' @include updateData.R
 setMethod("updateData", signature = "Logger", definition = function(.Object) {
-        source.files <- getSourceFileTable(.Object)
-        # only use import files which are new to reduce processing time
-        if (source.files[, FALSE %in% (imported | skip)]) {
-            new.data.list <- list()
-            for (index in source.files[, which(imported == FALSE & skip == FALSE)]) {
-                current.file.path <- source.files[index, file.path(path, file)]
-                tryCatch({
-                        new.data <- importRawLoggerFile(.Object, current.file.path)
-                        new.data[value == 9999 | value == -9999, value := NA]
-                        new.data <- new.data[!is.na(value)]
-                        new.data[, ":=" (
-                                Plot = as.factor(getPlotName(.Object)),
-                                SubPlot = as.factor(getSubPlotName(.Object)),
-                                Logger = as.factor(getName(.Object)))]
-                        non.duplicates <- new.data[new.data[, !duplicated(Datum), by = variable][, V1]]
-                        date.col <- unique(non.duplicates[, Datum])
-                        if (length(date.col) == 1 && is.na(date.col)) {
-                            source.files[index, skip := TRUE]
-                            stop("Date column was not imported correctly (Only NA's)")
-                        }
-                        if (nrow(non.duplicates) != nrow(new.data)) {
-                            new.data <- non.duplicates
-                            rm(non.duplicates)
-                            new.data.list[[source.files[index, file]]] <- new.data
-                            source.files[index, ":=" (
-                                    imported = TRUE,
-                                    comment = MyUtilities::appendString(comment, "Duplicate dates within file removed!"))]
-                        } else if (stringr::str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
-                            source.files[index, skip := TRUE]
-                        } else {
-                            new.data.list[[source.files[index, file]]] <- new.data
-                            rm(new.data)
-                            source.files[index, imported := TRUE]
-                        }
-                    }, error = function(err) {
-                        source.files[index, ":=" (
-                                skip = TRUE,
-                                comment = MyUtilities::appendString(comment, geterrmessage()))]
-                    }, warning = function(warn) {
-                        source.files[index, ":=" (
-                                skip = TRUE,
-                                comment = MyUtilities::appendString(comment, warn[["message"]]))]
-                    }
-                )
-                # Skip files for which there is no mapping of columns to sensors yet
-            }
+  source_file_table <- getSourceFileTable(.Object)
+  new_files <- source_file_table %>%
+    mutate(index = row_number()) %>%
+    filter(FALSE == (imported | skip))
 
-            new.data.table <- data.table::rbindlist(new.data.list, use.names = TRUE, fill = FALSE)
-            rm(new.data.list)
+  if (nrow(new_files) > 0) {
+    new.data.list <- list()
+    applied_import <- new_files %>%
+      purrr::pmap(~ file.path(..2, ..1)) %>%
+      purrr::map(~ .importOrLogError(.Object, .x))
+    error_on_import <- applied_import %>%
+      purrr::map_lgl(is.character)
+    error_map_indices <- new_files[error_on_import, "index"]
 
-            if (nrow(new.data.table) > 0) {
-                new.data.table <- remapSensorNames(.Object, long.l2.table = new.data.table)
-                complete.table <- data.table::rbindlist(list(loadData(.Object), new.data.table), use.names = TRUE, fill = FALSE)
-                data.table::setcolorder(complete.table, c("Plot", "SubPlot", "Logger", "variable"))
-                data.table::setkey(complete.table, Plot, SubPlot, Logger, variable, Datum)
+    source_file_table[error_map_indices, "skip"] <- TRUE
+    source_file_table[error_map_indices, "comment"] <- applied_import %>%
+      purrr::keep(error_on_import) %>%
+      unlist()
 
-                # Drops duplicated rows (same Date and variable but maybe different value!)
-                complete.table <- unique(complete.table, by = c("Datum", "variable"))
-                saveData(.Object, data = complete.table)
-            }
-        }
-        .Object
+    data_map_indices <- new_files[!error_on_import, "index"]
+    source_file_table[data_map_indices, "imported"] <- TRUE
+    .Object@SourceFiles <- source_file_table
+
+    new_data <- applied_import %>%
+      purrr::keep(!error_on_import) %>%
+      data.table::rbindlist(use.names = TRUE, fill = FALSE)
+
+    if (nrow(new_data) > 0) {
+      .Object %>%
+        remapSensorNames(new_data) %>%
+        list(loadData(.Object), .) %>%
+        data.table::rbindlist(use.names = TRUE, fill = FALSE) %>%
+        data.table::setcolorder(c("Plot", "SubPlot", "Logger", "variable")) %>%
+        data.table::setkey(Plot, SubPlot, Logger, variable, Datum) %>%
+        unique(by = c("Datum", "variable")) %>%
+        saveData(.Object, data = .)
     }
-)
+  }
+  .Object
+})
+
+.importOrLogError <- function(.Object, path) {
+  tryCatch({
+    new.data <- importRawLoggerFile(.Object, path) %>%
+      mutate_at(vars(-Datum), na_if, y = 9999) %>%
+      mutate_at(vars(-Datum), na_if, y = -9999) %>%
+      group_by(variable) %>%
+      distinct(Datum, .keep_all = TRUE) %>%
+      filter_at(vars(-Datum), any_vars(!is.na(.))) %>%
+      mutate(Plot = as.factor(getPlotName(.Object))) %>%
+      mutate(SubPlot = as.factor(getSubPlotName(.Object))) %>%
+      mutate(Logger = as.factor(getName(.Object)))
+
+    unique_dates <- new.data %>%
+      pull(Datum) %>%
+      unique()
+
+    if (length(unique_dates) == 1 && is.na(unique_dates)) {
+      stop("Date column was not imported correctly (Only NA's)")
+    }
+    return(new.data)
+    #if (stringr::str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
+    #  source.files[index, skip := TRUE]
+  },
+  error = function(err) return(geterrmessage()),
+  warning = function(w) return(w[["message"]]))
+}
 
 #' resetToInitialization.R
 setMethod("resetToInitialization", signature = "Logger", definition = function(.Object) {
