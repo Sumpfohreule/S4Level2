@@ -182,8 +182,8 @@ setMethod("getSubPlotList", signature = "Plot", definition = function(.Object) {
 setMethod("getDataForYear",
           signature = "Plot",
           definition = function(.Object, target_year) {
-              start.date <- paste0(year - 1, "-12-01")
-              end.date <- paste0(year + 1, "-02-01")
+              start.date <- paste0(target_year - 1, "-12-01")
+              end.date <- paste0(target_year + 1, "-02-01")
               target_data <- getData(.Object, start.date = start.date, end.date = end.date) %>%
                   filter(data.table::year(Datum) == target_year)
               return(target_data)
