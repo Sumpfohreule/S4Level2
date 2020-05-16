@@ -9,30 +9,19 @@ setClass(Class = "Level2URI", slots = c(
 #' @param ... URI like path consisting of 0-3 strings (Plot, SubPlot, Logger)
 #' @export
 Level2URI <- function(...) {
-    elipsis_elements <- list(...)
-    for (index in 1:length(elipsis_elements)) {
-        element <- elipsis_elements[[index]]
-
-        is_character <- is.character(element)
-        is_uri <- is.Level2URI(element)
-        if (!(is_character || is_uri)) {
-            stop("Element to be passed to URI needs to be of character or Level2URI class")
-        }
-
-        elipsis_elements[[index]] <- ifelse(
-            test = is.Level2URI(element),
-            yes = getURIString(element),
-            no = as.character(element))
+    uri_elements <- list(...) %>%
+        unlist() %>%
+        purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x))) { stop("Some element is not of type character or Level2URI")}) %>%
+        purrr::map(~ as.character(.x)) %>%
+        purrr::map(~ stringr::str_split(.x, pattern = "/")) %>%
+        unlist()
+    if (length(uri_elements) > 3) {
+        elements <- unlist(uri_elements)
+        stop("Can't convert the following elements to a Level2URI as its length would be > 3\n", paste(elements, collapse = "/"))
     }
-    uri_string <- paste(unlist(elipsis_elements), collapse = "/")
-    # TODO: check for double //
-    uri_split <- strsplit(uri_string, "/")[[1]]
-    depth = length(uri_split)
-    assertthat::assert_that(depth <= 3)
-
     .Object <- new("Level2URI")
-    .Object@URI_Split <- uri_split
-    .Object@Depth <- depth
+    .Object@URI_Split <- uri_elements
+    .Object@Depth <- length(uri_elements)
     .Object
 }
 
