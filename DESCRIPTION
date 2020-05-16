@@ -43,6 +43,7 @@ Collate:
     'getName.R'
     'replaceListObject.R'
     'replaceObjectByURI.R'
+    'getObjectByURI.R'
     'addSensorMapping.R'
     'addDataStructure.R'
     'createAndAddAccessDBObject.R'

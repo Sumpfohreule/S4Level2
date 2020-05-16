@@ -130,6 +130,18 @@ setMethod("getSourceFileTable", signature = "SubPlot", definition = function(.Ob
     }
 )
 
+#' @include getObjectByURI.R
+setMethod("getObjectByURI", signature = "SubPlot", definition = function(.Object, level2_uri) {
+    level2_uri <- Level2URI(level2_uri)
+    objects <- list()
+    if (getURI_Depth(level2_uri) == 2 && getSubPlotName(level2_uri) == getName(.Object)) {
+        return(.Object)
+    } else {
+        other_object <- getDataStructure(.Object, level2_uri) %>%
+            getObjectByURI(level2_uri)
+        return(other_object)
+    }
+})
 
 ########################################################################################################################
 #' @include createDirectoryStructure.R

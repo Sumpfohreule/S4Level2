@@ -273,6 +273,19 @@ setMethod("getOutputDirectory", signature = "Level2", definition = function(.Obj
     return(file.path("..", getLocalDirectory(.Object)))
 })
 
+#' @include getObjectByURI.R
+setMethod("getObjectByURI", signature = "Level2", definition = function(.Object, level2_uri) {
+    level2_uri <- Level2URI(level2_uri)
+    objects <- list()
+    if (getURI_Depth(level2_uri) == 0) {
+        return(.Object)
+    } else {
+        other_object <- getPlot(.Object, level2_uri) %>%
+            getObjectByURI(level2_uri)
+        return(other_object)
+    }
+})
+
 
 ########################################################################################################################
 #' @include getData.R

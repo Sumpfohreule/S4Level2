@@ -118,6 +118,18 @@ setMethod("getOutputFile", signature = "DataStructure", definition = function(.O
     }
 )
 
+#' @include getObjectByURI.R
+setMethod("getObjectByURI", signature = "DataStructure", definition = function(.Object, level2_uri) {
+  level2_uri <- Level2URI(level2_uri)
+  objects <- list()
+  if (getURI_Depth(level2_uri) == 3 && getDataStructureName(level2_uri) == getName(.Object)) {
+    return(.Object)
+  } else {
+    stop("Object of path '", getURIString(level2_uri), "' does not exist within '", getName(.Object), "'")
+  }
+})
+
+
 
 ########################################################################################################################
 #' @include createDirectoryStructure.R
