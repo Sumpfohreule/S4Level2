@@ -69,9 +69,7 @@ setMethod("getDataStructureName", signature = "Level2URI", definition = function
     }
 )
 
-#' @include getURIString.R
-setMethod("getURIString", signature = "Level2URI", definition = function(.Object) {
-		uri_string <- paste(.Object@URI_Split, collapse = "/")
-        return(uri_string)
-    }
-)
+as.character.Level2URI <- function(.Object) {
+    uri_string <- paste(.Object@URI_Split, collapse = "/")
+    return(uri_string)
+}

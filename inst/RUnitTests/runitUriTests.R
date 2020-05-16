@@ -81,14 +81,14 @@ testToString <- function() {
     uri_string <- "Hallo/Du/Wurst"
     .URI <- Level2URI(uri_string)
 
-    RUnit::checkEquals(uri_string, getURIString(.URI))
+    RUnit::checkEquals(uri_string, as.character(.URI))
 }
 
 testToStringEmpty <- function() {
     uri_string_empty <- ""
     .URI <- Level2URI(uri_string_empty)
 
-    RUnit::checkEquals(uri_string_empty, getURIString(.URI))
+    RUnit::checkEquals(uri_string_empty, as.character(.URI))
 }
 
 
