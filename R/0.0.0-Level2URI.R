@@ -1,9 +1,8 @@
 ########################################################################################################################
 setClass(Class = "Level2URI", slots = c(
-        URI_Split = "character",
-        Depth = "numeric"
-    )
-)
+    URI_Split = "character",
+    Depth = "numeric"
+))
 
 #' Constructor for Level2URI
 #' @param ... URI like path consisting of 0-3 strings (Plot, SubPlot, Logger)
@@ -27,36 +26,32 @@ Level2URI <- function(...) {
 
 #' @include getURI_Depth.R
 setMethod("getURI_Depth", signature = "Level2URI", definition = function(.Object) {
-		return(.Object@Depth)
-    }
-)
+    return(.Object@Depth)
+})
 
 #' @include getPlotName.R
 setMethod("getPlotName", signature = "Level2URI", definition = function(.Object) {
-        if (getURI_Depth(.Object) < 1) {
-            stop("PlotName seems to be missing from this Level2URI")
-        }
-		return(.Object@URI_Split[1])
+    if (getURI_Depth(.Object) < 1) {
+        stop("PlotName seems to be missing from this Level2URI")
     }
-)
+    return(.Object@URI_Split[1])
+})
 
 #' @include getSubPlotName.R
 setMethod("getSubPlotName", signature = "Level2URI", definition = function(.Object) {
-        if (getURI_Depth(.Object) < 2) {
-            stop("SubPlotName seems to be missing from this Level2URI")
-        }
-        return(.Object@URI_Split[2])
+    if (getURI_Depth(.Object) < 2) {
+        stop("SubPlotName seems to be missing from this Level2URI")
     }
-)
+    return(.Object@URI_Split[2])
+})
 
 #' @include getDataStructureName.R
 setMethod("getDataStructureName", signature = "Level2URI", definition = function(.Object) {
-        if (getURI_Depth(.Object) < 3) {
-            stop("DataStructureName seems to be missing from this Level2URI")
-        }
-        return(.Object@URI_Split[3])
+    if (getURI_Depth(.Object) < 3) {
+        stop("DataStructureName seems to be missing from this Level2URI")
     }
-)
+    return(.Object@URI_Split[3])
+})
 
 as.character.Level2URI <- function(.Object) {
     uri_string <- paste(.Object@URI_Split, collapse = "/")

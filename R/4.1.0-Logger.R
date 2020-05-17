@@ -1,81 +1,74 @@
 ########################################################################################################################
 #' @include 0.0.0-Level2URI.R
 setClass(Class = "Logger", slots = c(
-        SourceFilePattern = "character",
-        SourceFiles = "data.frame"),
-    contains = "DataStructure"
+  SourceFilePattern = "character",
+  SourceFiles = "data.frame"),
+  contains = "DataStructure"
 )
 
 setMethod("initialize", signature = "Logger", definition = function(
-        .Object,
-        unique_name = class(.Object),
-        uri,
-        local_directory,
-        paths,
-        pattern) {
-
-      .Object <- callNextMethod(.Object,
-          unique_name = unique_name,
-          uri = uri,
-          local_directory = local_directory,
-          paths = paths)
-      .Object@SourceFilePattern <- pattern
-      .Object@SourceFiles = initialSourceFilesTable()
-      .Object
-    }
-)
+  .Object,
+  unique_name = class(.Object),
+  uri,
+  local_directory,
+  paths,
+  pattern) {
+  .Object <- callNextMethod(.Object,
+                            unique_name = unique_name,
+                            uri = uri,
+                            local_directory = local_directory,
+                            paths = paths)
+  .Object@SourceFilePattern <- pattern
+  .Object@SourceFiles = initialSourceFilesTable()
+  .Object
+})
 
 
 ########################################################################################################################
 #' @include getSourceFilePattern.R
 setMethod("getSourceFilePattern", signature = "Logger", definition = function(.Object) {
-        return(.Object@SourceFilePattern)
-    }
-)
+  return(.Object@SourceFilePattern)
+})
 
 #' @include getSourceFileTable.R
 setMethod("getSourceFileTable", signature = "Logger", definition = function(.Object) {
-        return(.Object@SourceFiles)
-    }
-)
+  return(.Object@SourceFiles)
+})
 
 ########################################################################################################################
 #' @include saveData.R
 setMethod("saveData", signature = "Logger", definition = function(.Object, data) {
-        out.dir <- getLocalDirectory(.Object)
-        dir.create(out.dir, showWarnings = FALSE)
-        file.name <- getOutputFile(.Object)
-        saveRDS(data, file = file.path(out.dir, file.name))
-        cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
-    }
-)
+  out.dir <- getLocalDirectory(.Object)
+  dir.create(out.dir, showWarnings = FALSE)
+  file.name <- getOutputFile(.Object)
+  saveRDS(data, file = file.path(out.dir, file.name))
+  cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
+})
 
 #' @include getData.R
 setMethod("getData", signature = "Logger", definition = function(.Object, start.date, end.date) {
-        data <- loadData(.Object)
-        if (!is.null(data)) {
-            data <- data[Datum >= as.POSIXct(start.date, tz = "UTC") &
-                    Datum < as.POSIXct(end.date, tz = "UTC")]
-        }
-        return(data)
-    }
-)
+  data <- loadData(.Object)
+  if (!is.null(data)) {
+    data <- data[Datum >= as.POSIXct(start.date, tz = "UTC") &
+                   Datum < as.POSIXct(end.date, tz = "UTC")]
+  }
+  return(data)
+})
 
 #' @include loadData.R
 setMethod("loadData", signature = "Logger", definition = function(.Object) {
-        path <- getLocalDirectory(.Object)
-        file.name <- getOutputFile(.Object)
-        object.path <- file.path(path, file.name)
-        if (file.exists(object.path)) {
-            object <- readRDS(file = object.path)
-            return(object)
-        } else {
-            # Returning NULL in case that no data exists yet, so getData etc. don't break if only partial data was
-            # initialized
-            return(NULL)
-        }
-    }
-)
+  path <- getLocalDirectory(.Object)
+  file.name <- getOutputFile(.Object)
+  object.path <- file.path(path, file.name)
+  if (file.exists(object.path)) {
+    object <- readRDS(file = object.path)
+    return(object)
+  } else {
+    # Returning NULL in case that no data exists yet, so getData etc. don't break if only partial data was
+    # initialized
+    return(NULL)
+  }
+})
 
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
@@ -166,8 +159,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
 
 #' resetToInitialization.R
 setMethod("resetToInitialization", signature = "Logger", definition = function(.Object) {
-        .Object <- callNextMethod(.Object)
-        .Object@SourceFiles <- initialSourceFilesTable()
-        .Object
-    }
-)
+  .Object <- callNextMethod(.Object)
+  .Object@SourceFiles <- initialSourceFilesTable()
+  .Object
+})
