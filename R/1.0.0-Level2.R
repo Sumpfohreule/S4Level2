@@ -40,6 +40,7 @@ setMethod("addPlot", signature = "Level2", definition = function(.Object, .Plot)
     }
     plot_directory <- file.path(getLocalDirectory(.Object), plot_name)
     .Plot <- setLocalDirectory(.Plot, plot_directory)
+    createDirectoryStructure(.Plot)
     plot_list[[plot_name]] <- .Plot
     .Object@Plots <- plot_list
     .Object
@@ -78,7 +79,7 @@ setMethod("addSubPlot", signature = "Level2", definition = function(.Object, .Su
     plot <- getPlotName(.URI)
     plot_directory <- file.path(getLocalDirectory(.Object), plot, getName(.SubPlot))
     .SubPlot <- setLocalDirectory(.SubPlot, plot_directory)
-
+    createDirectoryStructure(.SubPlot)
     .Object <- applyToList(.Object,
                            apply_function = addSubPlot,
                            .SubPlot = .SubPlot,

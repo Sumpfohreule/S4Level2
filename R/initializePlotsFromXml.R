@@ -9,10 +9,6 @@ initializePlotsFromXml <- function(level2, xml_parent_dir) {
             MyUtilities::toUpperByIndex(1)
         plot <- level2 %>%
             getPlot(Level2URI(plot_name))
-
-        output_dir <- plot %>%
-            getOutputDirectory()
-        dir.create(output_dir, showWarnings = FALSE)
     }
     return(level2)
 }
