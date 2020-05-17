@@ -53,6 +53,10 @@ setMethod("getDataStructureName", signature = "Level2URI", definition = function
     return(.Object@URI_Split[3])
 })
 
+#' S3 Method for converting a Level2URI into a character string
+#'
+#' @param .Object An Object of type Level2URI
+#' @export
 as.character.Level2URI <- function(.Object) {
     uri_string <- paste(.Object@URI_Split, collapse = "/")
     return(uri_string)

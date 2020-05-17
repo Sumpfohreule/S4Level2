@@ -1,3 +1,29 @@
+.initializeL2Object <- function(.URI, path) {
+    .Level2 <- Level2(path)
+
+    if (getURI_Depth(.URI) >= 1) {
+        plot_name <- getPlotName(.URI)
+        .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
+    }
+
+    if (getURI_Depth(.URI) >= 2) {
+        sub_plot_name <- getSubPlotName(.URI)
+        .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)
+    }
+
+    if (getURI_Depth(.URI) >= 3) {
+        logger_type <- getDataStructureName(.URI)
+        .Level2 <- createAndAddLogger(
+            .Object = .Level2,
+            logger_type = logger_type,
+            source_paths = path,
+            .URI = .URI)
+    }
+
+    return(.Level2)
+}
+
+
 ########################################################################################################################
 testGetLocalDirectory <- function() {
     plot_name <- "TestPlot"
@@ -88,28 +114,3 @@ testReplaceSubPlotByURI <- function() {
 }
 
 
-########################################################################################################################
-.initializeL2Object <- function(.URI, path) {
-    .Level2 <- Level2(path)
-
-    if (getURI_Depth(.URI) >= 1) {
-        plot_name <- getPlotName(.URI)
-        .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
-    }
-
-    if (getURI_Depth(.URI) >= 2) {
-        sub_plot_name <- getSubPlotName(.URI)
-        .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)
-    }
-
-    if (getURI_Depth(.URI) >= 3) {
-        logger_type <- getDataStructureName(.URI)
-        .Level2 <- createAndAddLogger(
-            .Object = .Level2,
-            logger_type = logger_type,
-            source_paths = path,
-            .URI = .URI)
-    }
-
-    return(.Level2)
-}

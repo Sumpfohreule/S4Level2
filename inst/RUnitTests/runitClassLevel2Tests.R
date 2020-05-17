@@ -19,6 +19,35 @@
     unlink(dir(tempdir(), full.names = TRUE), recursive = TRUE)
 }
 
+.initializeL2Object <- function(.URI, path) {
+    if (dir.exists(file.path(path, "internal_structure"))) {
+        resetDataLocation(path)
+    } else {
+        initializeDataLocation(path)
+    }
+    .Level2 <- loadL2Object(path)
+
+    if (getURI_Depth(.URI) >= 1) {
+        plot_name <- getPlotName(.URI)
+        .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
+    }
+
+    if (getURI_Depth(.URI) >= 2) {
+        sub_plot_name <- getSubPlotName(.URI)
+        .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)
+    }
+
+    if (getURI_Depth(.URI) >= 3) {
+        logger_type <- getDataStructureName(.URI)
+        .Level2 <- createAndAddLogger(
+            .Object = .Level2,
+            logger_type = logger_type,
+            source_paths = path,
+            .URI = .URI)
+    }
+    return(.Level2)
+}
+
 
 ########################################################################################################################
 testGetLocalDirectory <- function() {
@@ -58,7 +87,7 @@ testGetSubPlot <- function() {
     .TestSubPlot <- new("SubPlot",
         name = sub_plot_name,
         uri = .SubPlot_URI,
-        local_directory = file.path(tempdir(), plot_name, sub_plot_name))
+        local_directory = file.path(tempdir(), "internal_structure", plot_name, sub_plot_name))
 
     .Level2 <- addSubPlot(.Level2, .TestSubPlot, .SubPlot_URI)
     RUnit::checkEquals(.TestSubPlot, getSubPlot(.Level2, .SubPlot_URI))
@@ -73,7 +102,7 @@ testGetDataStructure <- function() {
     data_structure_type = "Envilog"
     .DataStructure_URI <- Level2URI(file.path(plot_name, sub_plot_name, data_structure_type))
 
-    target_local_directory <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_type)
+    target_local_directory <- file.path(tempdir(), "internal_structure", plot_name, sub_plot_name, data_structure_type)
     .TestDataStructure <- new(data_structure_type,
         uri = Level2URI(""),
         local_directory = target_local_directory,
@@ -90,7 +119,7 @@ testAddPlot <- function() {
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
     plot_name <- "TestPlot"
-    local_directory_once_added_to_level2 <-  file.path(tempdir(), plot_name)
+    local_directory_once_added_to_level2 <-  file.path(tempdir(), "internal_structure", plot_name)
     .Plot_URI <- Level2URI(plot_name)
     .Plot <- Plot(name = plot_name,
                   local_directory = local_directory_once_added_to_level2,
@@ -107,7 +136,7 @@ testAddSubPlot <- function() {
     .PlotURI <- Level2URI(plot_name)
     .Level2 <- .initializeL2Object(.PlotURI, tempdir())
 
-    on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name)
+    on_adding_local_directory_is_set_to <- file.path(tempdir(), "internal_structure", plot_name, sub_plot_name)
     .SubPlot_URI = Level2URI(file.path(plot_name, sub_plot_name))
     .SubPlot <- new("SubPlot",
         name = sub_plot_name,
@@ -126,7 +155,7 @@ testAddDataStructure <- function() {
     .SubPlot_URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.SubPlot_URI, tempdir())
 
-    on_adding_local_directory_is_set_to <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_name)
+    on_adding_local_directory_is_set_to <- file.path(tempdir(), "internal_structure", plot_name, sub_plot_name, data_structure_name)
     .DataStructure_URI <- Level2URI(file.path(plot_name, sub_plot_name, data_structure_name))
     .TestDataStructure <- DataStructure(
         unique_name = data_structure_name,
@@ -214,7 +243,7 @@ testUpdateFilePaths <- function() {
     test_source_file <- getSourceFileTable(.TestLogger)
 
     RUnit::checkTrue(nrow(test_source_file) == 1)
-    RUnit::checkEquals("test_2018_file.dat", test_source_file[, file])
+    RUnit::checkEquals("test_2018_file.dat", test_source_file[, "file"])
 }
 
 testUpdateData <- function() {
@@ -243,27 +272,3 @@ testResetPlot <- function() {
 }
 
 
-########################################################################################################################
-.initializeL2Object <- function(.URI, path) {
-    .Level2 <- Level2(path)
-
-    if (getURI_Depth(.URI) >= 1) {
-        plot_name <- getPlotName(.URI)
-        .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
-    }
-
-    if (getURI_Depth(.URI) >= 2) {
-        sub_plot_name <- getSubPlotName(.URI)
-        .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)
-    }
-
-    if (getURI_Depth(.URI) >= 3) {
-        logger_type <- getDataStructureName(.URI)
-        .Level2 <- createAndAddLogger(
-            .Object = .Level2,
-            logger_type = logger_type,
-            source_paths = path,
-            .URI = .URI)
-    }
-    return(.Level2)
-}
