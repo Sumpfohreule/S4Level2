@@ -359,7 +359,27 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
     template.file <- system.file("extdata", template_file_name, package = "S4Level2", mustWork = TRUE)
     template.workbook <- openxlsx::loadWorkbook(template.file)
     for (sheet.name in full.table[, unique(SubPlot)]) {
-        sub.plot.table <- data.table::dcast(full.table[SubPlot == sheet.name], Datum ~ variable)
+        tryCatch(sub.plot.table <- full.table %>%
+                     filter(SubPlot == sheet.name) %>%
+                     tidyr::pivot_wider(names_from = variable, values_from = value),
+                 warning = function(w) {
+                     duplicated_rows <- full.table %>%
+                         filter(SubPlot == sheet.name) %>%
+                         select(-Plot, -SubPlot) %>%
+                         tidyr::pivot_wider(names_from = variable, values_from = value, values_fn = list(value = length)) %>%
+                         filter_at(vars(-Datum), any_vars(. > 1)) %>%
+                         select_if(~ mean(., na.rm = TRUE) > 1)
+                     duplicated_dates <- duplicated_rows %>%
+                         pull(Datum)
+                     first_duplicate <-  min(duplicated_dates)
+                     last_duplicate <- max(duplicated_dates)
+                     duplicated_columns <- duplicated_rows %>%
+                         select(-Datum) %>%
+                         names()
+                     stop("Duplicated dates found from ", first_duplicate, " until ", last_duplicate, " in '", getName(.Object), " ", sheet.name, "' at the following variables:\n",
+                          paste(duplicated_columns, collapse = ", "))
+                     }
+                 )
         missing.columns <- empty.column.table[sheet == sheet.name, columns]
         if (length(missing.columns) > 0)
             sub.plot.table[, (missing.columns) := NA]
