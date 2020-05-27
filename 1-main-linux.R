@@ -1,5 +1,5 @@
 # .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "/home/polarfalke/Data/Temp/level2"
+data_location <- "w:/level2"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- resetToInitialization(level2)
@@ -8,6 +8,8 @@ level2 <- loadL2Object(data_location)
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
+Sys.info()
+
 
 
 # TODO: Replace getDataStructure, getSubPlot getPlot with a unified Method using Level2URI
