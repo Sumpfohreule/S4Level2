@@ -344,9 +344,7 @@ setMethod("updateData", signature = "Level2", definition = function(.Object, plo
 
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "Level2", definition = function(.Object) {
-    .Plots <- getPlotList(.Object)
     .Object <- applyToList(.Object, resetToInitialization)
-    .Object@Plots <- list()
     .Object
 })
 
