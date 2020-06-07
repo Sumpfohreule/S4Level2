@@ -112,7 +112,7 @@ setMethod("getObjectByURI", signature = "DataStructure", definition = function(.
   if (getURI_Depth(level2_uri) == 3 && getDataStructureName(level2_uri) == getName(.Object)) {
     return(.Object)
   } else {
-    stop("Object of path '", getURIString(level2_uri), "' does not exist within '", getName(.Object), "'")
+    stop("Object of path '", as.character(level2_uri), "' does not exist within '", getName(.Object), "'")
   }
 })
 
