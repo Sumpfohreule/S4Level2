@@ -124,13 +124,6 @@ setMethod("getURI", signature = "Plot", definition = function(.Object) {
     .Object@Level2URI
 })
 
-#' @include getSubPlot.R
-setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI) {
-    sub_plot_name <- getSubPlotName(.URI)
-    .SubPlot <- getSubPlotList(.Object)[[sub_plot_name]]
-    .SubPlot
-})
-
 #' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object) {
     saved_local_directory <- .Object@LocalDirectory
