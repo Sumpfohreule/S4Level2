@@ -367,8 +367,6 @@ setMethod("applyToList", signature = "Level2", definition = function(.Object, ap
 
 #' @include saveL2Object.R
 setMethod("saveL2Object", signature = "Level2", definition = function(.Object) {
-    createDirectoryStructure(.Object)
-
     plot.dir <- getLocalDirectory(.Object)
     file.name <- getOutputFile(.Object)
     saveRDS(.Object, file = file.path(plot.dir, file.name))
