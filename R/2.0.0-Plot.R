@@ -380,8 +380,8 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
                          names()
                      stop("Duplicated dates found from ", first_duplicate, " until ", last_duplicate, " in '", getName(.Object), " ", sheet.name, "' at the following variables:\n",
                           paste(duplicated_columns, collapse = ", "))
-                     }
-                 )
+                 }
+        )
         missing.columns <- empty.column.table[sheet == sheet.name, columns]
         if (length(missing.columns) > 0)
             sub.plot.table[, (missing.columns) := NA]

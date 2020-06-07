@@ -83,8 +83,8 @@ setMethod("updateFilePaths", signature = "Logger", definition = function(.Object
     full_join(current_table, by = c("path", "file")) %>%
     mutate_at(vars(imported, skip), function(x) if_else(is.na(x), FALSE, x)) %>%
     arrange(path, file)
-.Object@SourceFiles <- new_table
-.Object
+  .Object@SourceFiles <- new_table
+  .Object
 })
 
 
