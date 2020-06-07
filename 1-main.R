@@ -1,17 +1,22 @@
-# .S4Level2.PATH <- "O:/TRANSP/IsenbergLars/Projekte/S4Level2"
-data_location <- "w:/level2"
-# initializeDataLocation(data_location)
+data_location <- "/home/polarfalke/Data/Temp/level2_2"
+# level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
+
+# data_location <- "w:/level2"
+# initializeDefaultPlots(data_location)
+
+# resetDataLocation(data_location)
+
 level2 <- loadL2Object(data_location)
 # level2 <- resetToInitialization(level2)
-# level2 <- initializeDefaultPlots(level2)
-# level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
-Sys.info()
 
+# FIXME: save linux configs somewhere!
+# FIXME: check where the Plot and SubPlot columns come from in the AggregateGsamt file comes from
 
-
+# TODO: Make use of AccessDB LastImportDate or remove it and its setter
+# TODO: create function to add data to an already aggregated excel where files where missing before (dont overwrite manual changes)
 # TODO: Replace getDataStructure, getSubPlot getPlot with a unified Method using Level2URI
 # TODO: Check logger name within raw files if existing (e.g. DeltaT)
 # TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
@@ -19,6 +24,7 @@ Sys.info()
 # TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: split variable columns into sensor, position and vertical!
+# TODO: make updateFilePaths print some info about added files
 
 # FIXME: change Name attribute for all classes to more informative names!
 # FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
@@ -39,15 +45,13 @@ Sys.info()
 
 ########################################################################################################################
 # Altensteig
-at_plot <- level2 %>% getPlot(Level2URI("Altensteig"))
-at.data <- getData(at_plot,
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = TRUE)
-at.data[SubPlot == "Freiland"]
+at_plot <- level2 %>%
+    getPlot(Level2URI("Altensteig")) %>%
+    getDataForYear(2019) %>%
+    as.data.table()
 
-at.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-at.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getPlot(Level2URI("Altensteig")) %>%
     createAggregateExcel(year = 2019)
@@ -55,14 +59,13 @@ level2 %>% getPlot(Level2URI("Altensteig")) %>%
 
 ########################################################################################################################
 # Conventwald
-co_plot <- level2 %>% getPlot("Conventwald")
-co.data <- getData(co_plot,
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = TRUE)
+co_data <- level2 %>%
+    getPlot("Conventwald") %>%
+    getDataForYear(2019) %>%
+    as.data.table()
 
-co.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-co.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getPlot(Level2URI("Conventwald")) %>%
     createAggregateExcel(year = 2019)
@@ -70,18 +73,14 @@ level2 %>% getPlot(Level2URI("Conventwald")) %>%
 
 ########################################################################################################################
 # Esslingen
-es_plot <- level2 %>% getPlot("Esslingen")
-es.data <- getData(es_plot,
-    start.date = "2018-01-01",
-    end.date = "2019-01-01",
-    as.wide.table = TRUE)
+es_data <- level2 %>%
+    getPlot("Esslingen") %>%
+    getDataForYear(2019) %>%
+    as.data.table()
 
-es.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-es.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+es_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+es_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-# TODO: Update 2019 TinyTag data (Some files to convert on M:/Bu-Labor/Lars_Temp)
-# TODO: Update Bu DeltaT 2019 (Jan/Feb, Mai, August/September)
-# TODO: Update Fi Envilog 2019 (Mai - September)
 level2 %>% getPlot(Level2URI("Esslingen")) %>%
     createAggregateExcel(year = 2019)
 
@@ -90,52 +89,39 @@ level2 %>% getPlot(Level2URI("Esslingen")) %>%
 # Heidelberg
 hd.data <- level2 %>%
     getPlot("Heidelberg") %>%
-    getData(start.date = "2019-01-01",
-            end.date = "2020-01-01",
-            as.wide.table = TRUE)
+    getDataForYear(2019) %>%
+    as.data.table()
+
 hd.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 hd.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-hd_bu_missing <- level2 %>%
-    getDataStructure("Heidelberg/Buche/ADLM") %>%
-    getSourceFileTable() %>%
-    filter(imported == FALSE)
-
-# TODO: HD BU ADLM auf Sicherheitsauslese warten (ab 18.06.2019 keine Daten)
-# FIXME: HD BU DeltaT fehlende Daten (10.09.2019)
-
 level2 %>% getPlot("Heidelberg") %>%
     createAggregateExcel(year = 2019)
+
 
 ########################################################################################################################
 # Ochsenhausen
 oc.data <- level2 %>%
     getPlot("Ochsenhausen") %>%
-    getData(start.date = "2019-01-01",
-            end.date = "2020-01-01",
-            as.wide.table = FALSE)
+    getDataForYear(2019) %>%
+    as.data.table()
 
 oc.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 oc.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-level2 %>%
-    getDataStructure("Ochsenhausen/Buche/DeltaT") %>%
-    getSourceFileTable() %>%
-    filter(imported == FALSE)
-
 level2 %>% getPlot(Level2URI("Ochsenhausen")) %>%
     createAggregateExcel(year = 2019)
+
 
 ########################################################################################################################
 # Rotenfels
 ro.data <- level2 %>%
     getPlot("Rotenfels") %>%
-    getData(start.date = "2019-01-01",
-            end.date = "2020-01-01",
-            as.wide.table = TRUE)
+    getDataForYear(2019) %>%
+    as.data.table()
 
-ro.data[, calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-ro.data[, analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+ro.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+ro.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 # TODO RO Fi DeltaT Daten
 
