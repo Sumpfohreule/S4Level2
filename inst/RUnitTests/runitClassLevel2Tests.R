@@ -74,7 +74,7 @@ testGetPlot <- function() {
                       corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .TestPlot)
-    RUnit::checkEquals(.TestPlot, getPlot(.Level2, .URI))
+    RUnit::checkEquals(.TestPlot, getObjectByURI(.Level2, .URI))
 }
 
 testGetSubPlot <- function() {
@@ -127,7 +127,7 @@ testAddPlot <- function() {
                   corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .Plot)
-    RUnit::checkEquals(.Plot, getPlot(.Level2, .Plot_URI))
+    RUnit::checkEquals(.Plot, getObjectByURI(.Level2, .Plot_URI))
 }
 
 testAddSubPlot <- function() {
@@ -235,7 +235,7 @@ testReplacePlotByURI <- function() {
     plot_list <- getPlotList(.Level2)
     RUnit::checkEquals(1, length(plot_list))
 
-    .ReplacedPlot <- getPlot(.Level2, .URI)
+    .ReplacedPlot <- getObjectByURI(.Level2, .URI)
 	RUnit::checkEquals(.ReplacementPlot, .ReplacedPlot)
 }
 

@@ -1,5 +1,3 @@
-context("Loading of top Level2 Project class")
-
 test_that("Level2 Object is correctly loaded from path", {
     MyUtilities::.clear_tempdir()
     initializeDataLocation(tempdir())

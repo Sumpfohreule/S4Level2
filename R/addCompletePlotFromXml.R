@@ -6,7 +6,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
 
     level2 <- createAndAddPlot(level2, plot_name, screened_data_path)
     plot_dir <- level2 %>%
-        getPlot(Level2URI(plot_name)) %>%
+        getObjectByURI(Level2URI(plot_name)) %>%
         getLocalDirectory()
     dir.create(plot_dir, showWarnings = FALSE)
     logger_nodes <- xml2::xml_children(xml_root)

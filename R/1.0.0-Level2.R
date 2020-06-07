@@ -52,7 +52,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = fun
     .PlotURI,
     sub_plot_names) {
 
-    .TargetPlot <- getPlot(.Object, .PlotURI)
+    .TargetPlot <- getObjectByURI(.Object, .PlotURI)
     .TargetPlot <- createAndAddMultipleSubPlots(.TargetPlot, sub_plot_names = sub_plot_names)
     .Object <- replaceObjectByURI(.Object, .TargetPlot)
 
@@ -208,23 +208,6 @@ setMethod("replaceListObject", signature = "Level2", definition = function(.Obje
 #' @include getName.R
 setMethod("getName", signature = "Level2", definition = function(.Object) {
     as.character(class(.Object))
-})
-
-#' Returns the Plot contained within this object by name or Level2URI
-#' @param .Object Level2 object
-#' @param .URI An Level2URI object or character string with the plot name
-#' @return An object of type Plot
-#' @include getPlot.R
-#' @export
-setMethod("getPlot", signature = "Level2", definition = function(.Object, .Level2URI) {
-    assertthat::assert_that(assertthat::is.string(.Level2URI) || is.Level2URI(.Level2URI))
-    if (class(.Level2URI) == "Level2URI") {
-        plot_name <- getPlotName(.Level2URI)
-    } else {
-        plot_name <- .Level2URI
-    }
-    .Plot <- getPlotList(.Object)[[plot_name]]
-    .Plot
 })
 
 #' Return the list of Plots from an Level2 object

@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -20,6 +20,9 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
 Collate: 
+    'getDataStructureURI.R'
+    'getSubPlotURI.R'
+    'getPlotURI.R'
     'getDataStructureName.R'
     'getSubPlotName.R'
     'getPlotName.R'
@@ -36,10 +39,7 @@ Collate:
     'getOutputDirectory.R'
     'getOutputFile.R'
     'getLocalDirectory.R'
-    'getDataStructure.R'
-    'getSubPlot.R'
     'getPlotList.R'
-    'getPlot.R'
     'getName.R'
     'replaceListObject.R'
     'replaceObjectByURI.R'
@@ -63,6 +63,7 @@ Collate:
     'setLocalDirectory.R'
     'setCorrectedAggregatePath.R'
     '2.0.0-Plot.R'
+    'getDataStructure.R'
     'getDataStructureList.R'
     '3.0.0-SubPlot.R'
     'remapSensorNames.R'
@@ -86,14 +87,12 @@ Collate:
     'accumulateMMFiles.R'
     'addCompletePlotFromXml.R'
     'addToWorkbookWithTemplate.R'
-    'aggregateClimateData.R'
     'calculateDendroSum.R'
     'calculateDendrometerTable.R'
     'calculatePFTable.R'
     'calculatePRTable.R'
     'createMMFiles.R'
     'getEuPlotId.R'
-    'getURIString.R'
     'initialSourceFilesTable.R'
     'initializeDataLocation.R'
     'initializeDefaultPlots.R'
