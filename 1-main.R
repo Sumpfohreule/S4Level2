@@ -13,7 +13,6 @@ level2 <- updateData(level2)
 saveL2Object(level2)
 
 # FIXME: save linux configs somewhere!
-# FIXME: check where the Plot and SubPlot columns come from in the AggregateGsamt file comes from
 
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
 # TODO: create function to add data to an already aggregated excel where files where missing before (dont overwrite manual changes)

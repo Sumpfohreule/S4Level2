@@ -363,7 +363,8 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
     for (sheet.name in full.table[, unique(SubPlot)]) {
         tryCatch(sub.plot.table <- full.table %>%
                      filter(SubPlot == sheet.name) %>%
-                     tidyr::pivot_wider(names_from = variable, values_from = value),
+                     tidyr::pivot_wider(names_from = variable, values_from = value) %>%
+                     select(-Plot, -SubPlot),
                  warning = function(w) {
                      duplicated_rows <- full.table %>%
                          filter(SubPlot == sheet.name) %>%
