@@ -64,7 +64,7 @@ testGetDataStructureName <- function() {
 testErrorForMissingSubPlot <- function() {
     .URI <- Level2URI("Altensteig")
     RUnit::checkException({
-            getSubPlot(.URI)
+            getObjectByURI(.URI)
         }
     )
 }

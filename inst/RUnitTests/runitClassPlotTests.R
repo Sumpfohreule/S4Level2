@@ -109,7 +109,7 @@ testReplaceSubPlotByURI <- function() {
     sub_plot_list <- getSubPlotList(.TestPlot)
     RUnit::checkEquals(1, length(sub_plot_list))
 
-    .ReplacedSubPlot <- getSubPlot(.TestPlot, .URI)
+    .ReplacedSubPlot <- getObjectByURI(.TestPlot, .URI)
     RUnit::checkEquals(.ReplacementSubPlot, .ReplacedSubPlot)
 }
 

@@ -75,7 +75,7 @@ setMethod("replaceObjectByURI", signature = "Plot", definition = function(.Objec
         .ChangedSubPlot <- .ReplacementObject
     } else {
         # Replacement target is deeper within the hierarchy
-        .ChangedSubPlot <- getSubPlot(.Object, .TargetURI)
+        .ChangedSubPlot <- getObjectByURI(.Object, .TargetURI)
         .ChangedSubPlot <- replaceObjectByURI(.ChangedSubPlot, .ReplacementObject)
     }
     .Object <- replaceListObject(.Object, .ChangedSubPlot)
@@ -164,13 +164,16 @@ setMethod("getSubPlotList", signature = "Plot", definition = function(.Object) {
 #' @include getObjectByURI.R
 setMethod("getObjectByURI", signature = "Plot", definition = function(.Object, level2_uri) {
     level2_uri <- Level2URI(level2_uri)
-    objects <- list()
-    if (getURI_Depth(level2_uri) == 1 && getPlotName(level2_uri) == getName(.Object)) {
-        return(.Object)
+    uri_depth <- getURI_Depth(level2_uri)
+    if (uri_depth < 1) {
+        stop("Provided level2_uri has a depth of less than 1, so it can't be contained in a Plot or below.\nURI: ", level2_uri)
+    } else if (uri_depth > 1) {
+        lower_object <- getSubPlot(.Object, level2_uri)
+        return(lower_object)
+    } else if (getPlotName(level2_uri) != getName(.Object)) {
+        stop("Can't get this Object of type Plot (Depth = 1) with the given URI because of different names.\nURI: ", level2_uri)
     } else {
-        other_object <- getSubPlot(.Object, level2_uri) %>%
-            getObjectByURI(level2_uri)
-        return(other_object)
+        return(.Object)
     }
 })
 

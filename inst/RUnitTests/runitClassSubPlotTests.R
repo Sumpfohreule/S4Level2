@@ -28,7 +28,7 @@ testReplaceSubPlotByURI <- function() {
         local_directory = file.path(tempdir(), "somewhere_else"),
         paths = tempdir())
 
-    .TestSubPlot <- getSubPlot(.Level2, .URI)
+    .TestSubPlot <- getObjectByURI(.Level2, .URI)
     .TestSubPlot <- replaceObjectByURI(.TestSubPlot, .ReplacementDataStructure)
 
     data_structure_list <- getDataStructureList(.TestSubPlot)

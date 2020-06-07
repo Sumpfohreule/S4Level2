@@ -90,7 +90,7 @@ testGetSubPlot <- function() {
         local_directory = file.path(tempdir(), "internal_structure", plot_name, sub_plot_name))
 
     .Level2 <- addSubPlot(.Level2, .TestSubPlot, .SubPlot_URI)
-    RUnit::checkEquals(.TestSubPlot, getSubPlot(.Level2, .SubPlot_URI))
+    RUnit::checkEquals(.TestSubPlot, getObjectByURI(.Level2, .SubPlot_URI))
 }
 
 testGetDataStructure <- function() {
@@ -144,7 +144,7 @@ testAddSubPlot <- function() {
         local_directory = on_adding_local_directory_is_set_to)
     .Level2 <- addSubPlot(.Level2, .SubPlot, .PlotURI)
 
-    RUnit::checkEquals(.SubPlot, getSubPlot(.Level2, .SubPlot_URI))
+    RUnit::checkEquals(.SubPlot, getObjectByURI(.Level2, .SubPlot_URI))
 }
 
 testAddDataStructure <- function() {

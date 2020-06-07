@@ -18,7 +18,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
         sub_plot_uri <- Level2URI(plot_name, sub_plot_name)
         level2 <- createAndAddSubPlot(level2, sub_plot_name, sub_plot_uri)
         sub_plot_dir <- level2 %>%
-            getSubPlot(sub_plot_uri) %>%
+            getObjectByURI(sub_plot_uri) %>%
             getLocalDirectory()
         dir.create(sub_plot_dir, showWarnings = FALSE)
     }

@@ -137,7 +137,7 @@ setMethod("addDataStructure", signature = "Level2", definition = function(.Objec
     if (!is.DataStructure(.DataStructure)) {
         stop("Passed paramter .DataStructure is not of class Logger")
     }
-    .SubPlot <- getSubPlot(.Object, .URI)
+    .SubPlot <- getObjectByURI(.Object, .URI)
     .SubPlot <- addDataStructure(.SubPlot, .DataStructure = .DataStructure, .URI = .URI)
     .Object <- replaceObjectByURI(.Object, .SubPlot)
     .Object
@@ -226,13 +226,6 @@ setMethod("getPlotList", signature = "Level2", definition = function(.Object) {
     return(.Object@Plots)
 })
 
-#' @include getSubPlot.R
-setMethod("getSubPlot", signature = "Level2", definition = function(.Object, .URI) {
-    .Plot <- getPlot(.Object, .URI)
-    .SubPlot <- getSubPlot(.Plot, .URI)
-    .SubPlot
-})
-
 #' @include getDataStructure.R
 setMethod("getDataStructure", signature = "Level2", definition = function(.Object, .Level2URI) {
     assertthat::assert_that(is.Level2URI(.Level2URI) || "character" %in% class(.Level2URI))
@@ -265,7 +258,6 @@ setMethod("getOutputDirectory", signature = "Level2", definition = function(.Obj
 #' @include getObjectByURI.R
 setMethod("getObjectByURI", signature = "Level2", definition = function(.Object, level2_uri) {
     level2_uri <- Level2URI(level2_uri)
-    objects <- list()
     if (getURI_Depth(level2_uri) == 0) {
         return(.Object)
     } else {
