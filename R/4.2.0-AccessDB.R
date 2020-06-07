@@ -64,14 +64,13 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
   db.path <- getSourcePaths(.Object)
   if (length(db.path) > 1)
     stop("updateData for AccessDB is not constructed with multiple SourcePaths in mind")
-  sql.query <- sprintf("'SELECT * FROM %1$s'", .Object@DB_Table_Name, .Object@Date_Column)
+  sql.query <- sprintf("'SELECT * FROM %1$s'", .Object@DB_Table_Name)
   out.dir <- getLocalDirectory(.Object)
   file.name <- getOutputFile(.Object)
   dir.create(out.dir, showWarnings = FALSE)
-  date.column <- "Dat_Zeit"
+  date.column <- .Object@Date_Column
   MyUtilities::access32BitQuery(db.path,
                                 sql.query = sql.query,
-                                date.col = date.column,
                                 out.file = file.path(out.dir, file.name))
   access.data <- readRDS(file.path(out.dir, file.name))
   access.data[, Proto_Dat := NULL]
