@@ -301,6 +301,8 @@ setMethod("updateData", signature = "Plot", definition = function(.Object, sub.p
 setMethod("createDirectoryStructure", signature = "Plot", definition = function(.Object) {
     plot.dir <- getLocalDirectory(.Object)
     dir.create(plot.dir, showWarnings = FALSE)
+    output_directory <- getOutputDirectory(.Object)
+    dir.create(output_directory)
 
     applyToList(.Object, createDirectoryStructure)
     invisible(return(.Object))
@@ -383,9 +385,10 @@ setMethod("createAggregateExcel", signature = "Plot", definition = function(
         missing.columns <- empty.column.table[sheet == sheet.name, columns]
         if (length(missing.columns) > 0)
             sub.plot.table[, (missing.columns) := NA]
-        dates <- sub.plot.table[, Datum]
-        dates <- MyUtilities::addYearStartEnd(dates)
-        dates <- MyUtilities::fillDateGaps(dates)
+        dates <- sub.plot.table %>%
+            pull(Datum) %>%
+            MyUtilities::addYearStartEnd() %>%
+            MyUtilities::fillDateGaps()
         out.table <- merge(data.table::data.table(Datum = dates), sub.plot.table, all.x = TRUE, by = "Datum")
 
         template.workbook <- addToWorkbookWithTemplate(
