@@ -49,7 +49,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
                                          .URI = logger_uri)
         }
         logger_dir <- level2 %>%
-            getDataStructure(logger_uri) %>%
+            getObjectByURI(logger_uri) %>%
             getLocalDirectory()
         dir.create(logger_dir, showWarnings = FALSE)
 

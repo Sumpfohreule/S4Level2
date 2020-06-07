@@ -1,8 +1,4 @@
 ########################################################################################################################
-testDontUseURIForDeeperNestedObjects <- function() {
-    RUnit::DEACTIVATED("'testDontUseURIForDeeperNestedObjects' is not implemented yet")
-}
-
 testCreateDirectoryStructure <- function() {
 	plot_name = "TestPlot"
     sub_plot_name = "TestSubPlot"
@@ -28,13 +24,19 @@ testReplaceSubPlotByURI <- function() {
         local_directory = file.path(tempdir(), "somewhere_else"),
         paths = tempdir())
 
-    .TestSubPlot <- getObjectByURI(.Level2, .URI)
-    .TestSubPlot <- replaceObjectByURI(.TestSubPlot, .ReplacementDataStructure)
+    sub_plot_uri <- .URI %>%
+        as.character() %>%
+        dirname() %>%
+        Level2URI()
+    .TestSubPlot <- getObjectByURI(.Level2, sub_plot_uri)
+    .TestSubPlot <- replaceObjectByURI(
+        .Object = .TestSubPlot,
+        .ReplacementObject = .ReplacementDataStructure)
 
     data_structure_list <- getDataStructureList(.TestSubPlot)
     RUnit::checkEquals(1, length(data_structure_list))
 
-    .ReplacedDataStructure <- getDataStructure(.TestSubPlot, .URI)
+    .ReplacedDataStructure <- getObjectByURI(.TestSubPlot, .URI)
     RUnit::checkEquals(.ReplacementDataStructure, .ReplacedDataStructure)
 }
 

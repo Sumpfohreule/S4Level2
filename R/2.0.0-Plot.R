@@ -75,7 +75,10 @@ setMethod("replaceObjectByURI", signature = "Plot", definition = function(.Objec
         .ChangedSubPlot <- .ReplacementObject
     } else {
         # Replacement target is deeper within the hierarchy
-        .ChangedSubPlot <- getObjectByURI(.Object, .TargetURI)
+        sub_plot_uri <- .TargetURI %>%
+            getSubPlotName() %>%
+            Level2URI(getName(.Object), .)
+        .ChangedSubPlot <- getObjectByURI(.Object, sub_plot_uri)
         .ChangedSubPlot <- replaceObjectByURI(.ChangedSubPlot, .ReplacementObject)
     }
     .Object <- replaceListObject(.Object, .ChangedSubPlot)
@@ -128,15 +131,6 @@ setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI)
     .SubPlot
 })
 
-#' @include getDataStructure.R
-setMethod("getDataStructure", signature = "Plot", definition = function(.Object, .Level2URI) {
-    sub.plot = getSubPlotName(.Level2URI)
-    if (!sub.plot %in% names(.Object@SubPlots))
-        stop(sprintf("Subplot '%s' is not contained within Plot '%s'", sub.plot, getName(.Object)))
-    data <- getDataStructure(.Object@SubPlots[[sub.plot]], .Level2URI = .Level2URI)
-    return(data)
-})
-
 #' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object) {
     saved_local_directory <- .Object@LocalDirectory
@@ -168,7 +162,9 @@ setMethod("getObjectByURI", signature = "Plot", definition = function(.Object, l
     if (uri_depth < 1) {
         stop("Provided level2_uri has a depth of less than 1, so it can't be contained in a Plot or below.\nURI: ", level2_uri)
     } else if (uri_depth > 1) {
-        lower_object <- getSubPlot(.Object, level2_uri)
+        sub_plot_name <- getSubPlotName(level2_uri)
+        selected_sub_plot <- getSubPlotList(.Object)[[sub_plot_name]]
+        lower_object <- getObjectByURI(.Object = selected_sub_plot, level2_uri)
         return(lower_object)
     } else if (getPlotName(level2_uri) != getName(.Object)) {
         stop("Can't get this Object of type Plot (Depth = 1) with the given URI because of different names.\nURI: ", level2_uri)
