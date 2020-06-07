@@ -13,7 +13,7 @@ level2 <- updateData(level2)
 saveL2Object(level2)
 
 # FIXME: save linux configs somewhere!
-
+# TODO: convert RUnit Tests to testthat
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
 # TODO: create function to add data to an already aggregated excel where files where missing before (dont overwrite manual changes)
 # TODO: Replace getDataStructure, getSubPlot getPlot with a unified Method using Level2URI
@@ -27,7 +27,6 @@ saveL2Object(level2)
 
 # FIXME: change Name attribute for all classes to more informative names!
 # FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
-# FIXME: make an update with only error-files possible
 # FIXME: make it possible to excempt loggers from createAggregateExcel
 # FIXME: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
 
@@ -39,7 +38,7 @@ saveL2Object(level2)
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Test where overproviding data for getDataForYear was necessary and solve problem
-
+# TODO: make an update with only error-files possible
 
 
 ########################################################################################################################
