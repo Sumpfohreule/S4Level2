@@ -12,20 +12,6 @@
 
 
 ########################################################################################################################
-testCreateDirectoryStructure <- function() {
-    plot_name = "TestPlot"
-    sub_plot_name = "TestSubPlot"
-    data_structure_type = "TinyTag"
-
-    .URI = Level2URI(file.path(plot_name, sub_plot_name, data_structure_type))
-
-    .Level2 <- .initializeL2Object(.URI, tempdir())
-    saveL2Object(.Level2)
-
-    target_directory <- file.path(tempdir(), plot_name, sub_plot_name, data_structure_type)
-    RUnit::checkTrue(dir.exists(target_directory))
-}
-
 testMultiSourcePathInitialization <- function() {
     multiple_folders <- list.dirs(tempdir())
     assertthat::assert_that(length(multiple_folders) > 1)
