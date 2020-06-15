@@ -11,7 +11,6 @@ level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
-# FIXME: save linux configs somewhere!
 # TODO: create a summary function to give an overview over the objects
 # TODO: convert RUnit Tests to testthat
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
