@@ -1,33 +1,32 @@
-data_location <- "/home/polarfalke/Data/Temp/level2_2"
-# level2 <- initializePlotsFromXml(level2, "/home/polarfalke/Data/Temp/level2/")
-
+data_location <- "/home/polarfalke/Data/Temp/level2_3"
 # data_location <- "w:/level2"
+initializeDataLocation(data_location)
+level2 <- loadL2Object(data_location)
+level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
 # initializeDefaultPlots(data_location)
 
 # resetDataLocation(data_location)
-
-level2 <- loadL2Object(data_location)
 # level2 <- resetToInitialization(level2)
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
 # FIXME: save linux configs somewhere!
+# TODO: create a summary function to give an overview over the objects
 # TODO: convert RUnit Tests to testthat
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
 # TODO: create function to add data to an already aggregated excel where files where missing before (dont overwrite manual changes)
 # TODO: Check logger name within raw files if existing (e.g. DeltaT)
 # TODO: create function for data saving for flexible testing/usage. Maybe split saves up or use database
-# TODO: create a summary function to give an overview over the objects
 # TODO: maybe add all files (change pattern) (.xlsx) but set not useable to skip (_ed)?
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: split variable columns into sensor, position and vertical!
 # TODO: make updateFilePaths print some info about added files
 
-# FIXME: change Name attribute for all classes to more informative names!
-# FIXME: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
-# FIXME: make it possible to excempt loggers from createAggregateExcel
-# FIXME: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
+# TODO: change Name attribute for all classes to more informative names!
+# TODO: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
+# TODO: make it possible to exempt loggers from createAggregateExcel
+# TODO: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
 
 # TODO: Start specifying public interface for this package
 # TODO: remove date_time rounding at import and reimplement on data export where needed!
