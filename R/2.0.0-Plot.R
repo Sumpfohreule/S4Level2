@@ -221,18 +221,27 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
         getCorrectedAggregatePath() %>%
         dir(full.names = TRUE) %>%
         purrr::keep(~ is.null(years) || (TRUE %in% (basename(.x) %in% as.character(years)))) %>%
-        purrr::map(~ MyUtilities::getLastModifiedFile(
-            folder = .x,
-            pattern = "\\.xlsx$",
-            recursive = TRUE)) %>%
-        purrr::map(~ MyUtilities::importAggregateExcelSheet(.x, sheet.name)) %>%
-        purrr::map(~ tidyr::pivot_longer(
-            .x,
-            cols = -Datum,
-            names_to = "variable")) %>%
-        purrr::map(~ arrange(.x, variable, Datum)) %>%
-        data.table::rbindlist(use.names = TRUE, fill = FALSE)
-        return(full_data)
+        purrr::map(~ {
+            tryCatch({
+                wide_import <- MyUtilities::getLastModifiedFile(
+                    folder = .x,
+                    pattern = "\\.xlsx$",
+                    recursive = TRUE) %>%
+                    MyUtilities::importAggregateExcelSheet(sheet.name)
+                wide_import %>%
+                    data.table::setnames(make.unique(names(wide_import))) %>%
+                    tidyr::pivot_longer(cols = -Datum, names_to = "variable")
+            }, error = function(e) {
+                if (stringr::str_detect(as.character(e), "Values from 'sheet' are not contained in")) {
+                    cat("Skipped file '", basename(.x), "' for sheet '", sheet.name, "' as it was missing.\n", sep = "")
+                } else {
+                    stop(e)
+                }
+            })
+        }) %>%
+        data.table::rbindlist(use.names = TRUE, fill = FALSE) %>%
+        arrange(variable, Datum)
+    return(full_data)
 })
 
 #' @include updateFilePaths.R
