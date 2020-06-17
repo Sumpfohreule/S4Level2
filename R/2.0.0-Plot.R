@@ -217,55 +217,22 @@ setMethod("getData", signature = "Plot", definition = function(
 #' @include loadCorrectedData.R
 #' @export
 setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet.name, years) {
-    data.path <- getCorrectedAggregatePath(.Object)
-    year.folders <- dir(data.path)
-    year.folders <- year.folders[stringr::str_detect(year.folders, "^[0-9]{4}([-_][0-9]{4})?$")]
-    if (!is.null(years)) {
-        years <- as.character(years)
-        year.folders <- intersect(year.folders, years)
-    }
-    data.list <- list()
-    for (year in year.folders) {
-        latest.file <- MyUtilities::getLastModifiedFile(
-            folder = file.path(data.path, year),
+    full_data <- .Object %>%
+        getCorrectedAggregatePath() %>%
+        dir(full.names = TRUE) %>%
+        purrr::keep(~ is.null(years) || (TRUE %in% (basename(.x) %in% as.character(years)))) %>%
+        purrr::map(~ MyUtilities::getLastModifiedFile(
+            folder = .x,
             pattern = "\\.xlsx$",
-            recursive = TRUE)
-        tryCatch( {
-            data <- data.table::data.table(openxlsx::read.xlsx(latest.file, sheet = sheet.name))[-1]
-            col.names <- names(data)
-            date.col <- na.omit(stringr::str_match(col.names, "^.*?[Dd]atum.*?$"))
-            data <- suppressWarnings(data.table::melt(data, id.var = date.col))
-            data.table::setnames(data, date.col, "Datum")
-            data[, Datum := as.POSIXct(as.numeric(Datum) * 60 * 60 * 24, tz = "UTC", origin = "1899-12-30")]
-            data[, value := MyUtilities::as.numericTryCatch(value)]
-            data.list[[year]] <- data
-        }, error = function(e) {
-            if (stringr::str_detect(geterrmessage(), pattern = "Cannot find sheet named")) {
-                cat("\nFile '", latest.file, "'",
-                    "\nhas been ignored because it does not contain a sheet with name '", sheet.name, "'",
-                    sep = "")
-            } else if (stringr::str_detect(geterrmessage(),
-                                           pattern = "NAs introduced by coercion \\(See previous table\\)")) {
-                stop("Error in file \n'",
-                     latest.file,
-                     "'\non sheet '", sheet.name, "'\n", e)
-            } else {
-                stop(e)
-            }
-        }
-        )
-    }
-    if (length(data.list) != 0) {
-        full.data <- data.table::rbindlist(data.list)
-        full.data[, ":=" (
-            Plot = factor(getName(.Object)),
-            SubPlot = factor(sheet.name))]
-        data.table::setkey(full.data, Plot, SubPlot, variable, Datum)
-        return(full.data)
-    } else {
-        print(paste0("Skipped plot '", getName(.Object), "' for sheet '", sheet.name, "' as it was empty"))
-        return(NULL)
-    }
+            recursive = TRUE)) %>%
+        purrr::map(~ MyUtilities::importAggregateExcelSheet(.x, sheet.name)) %>%
+        purrr::map(~ tidyr::pivot_longer(
+            .x,
+            cols = -Datum,
+            names_to = "variable")) %>%
+        purrr::map(~ arrange(.x, variable, Datum)) %>%
+        data.table::rbindlist(use.names = TRUE, fill = FALSE)
+        return(full_data)
 })
 
 #' @include updateFilePaths.R
