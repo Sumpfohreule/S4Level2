@@ -11,7 +11,7 @@ Imports: stringr,
          openxlsx,
          RODBC,
          XML,
-         MyUtilities (>= 3.4.1)
+         MyUtilities (>= 3.5.1)
 Depends: data.table,
          dplyr
 Suggests: testthat
