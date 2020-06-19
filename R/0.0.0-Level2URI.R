@@ -10,7 +10,9 @@ setClass(Class = "Level2URI", slots = c(
 Level2URI <- function(...) {
     uri_elements <- list(...) %>%
         unlist() %>%
-        purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x))) { stop("Some element is not of type character or Level2URI")}) %>%
+        purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x) || is.factor(.x))) {
+            stop("Some element is not of type character or Level2URI")
+            }) %>%
         purrr::map(~ as.character(.x)) %>%
         purrr::map(~ stringr::str_split(.x, pattern = "/")) %>%
         unlist()
