@@ -8,7 +8,7 @@ readADLM <- function(path) {
     }
     in.table[, Datum := MyUtilities::as.POSIXctFixed(Datum * 60 * 60 * 24, tz = "UTC",
             origin = "1899-12-30")]
-    in.table[, Datum := MyUtilities::roundPOSIXct(Datum, 60)]
+    in.table[, Datum := lubridate::round_date(Datum, "1 mins")]
     data.table::setkey(in.table, Datum)
     return(in.table)
 }

@@ -19,7 +19,7 @@ readTinyTag <- function(txt.path) {
             Datum,
             tz = "UTC",
             format = date.format)]
-    tt.table[, Datum := MyUtilities::roundPOSIXct(Datum, in.seconds = 5 * 60)]
+    tt.table[, Datum := lubridate::round_date(Datum, "5 mins")]
     tt.table[, RegenX := as.numeric(stringr::str_match(RegenX, pattern = "^[0-9]+(?:\\.[0-9]+$)?"))]
     setkey(tt.table, Datum)
     return(tt.table)
