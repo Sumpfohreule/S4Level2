@@ -14,10 +14,10 @@ addToWorkbookWithTemplate <- function(out.table, workbook, sheet) {
         stop("More than one year contained in out.table")
     }
     years.last <- 1900 : (year - 1)
-    years.last_is_leap <- MyUtilities::isLeapYear(years.last)
+    years.last_is_leap <- lubridate::leap_year(years.last)
     axis.start <- sum(years.last_is_leap) * 366 + sum(!years.last_is_leap) * 365 + 2
 
-    target_is_leap <- MyUtilities::isLeapYear(year)
+    target_is_leap <- lubridate::leap_year(year)
     axis.end <- axis.start + as.numeric(target_is_leap) * 366 + as.numeric(!target_is_leap) * 365 - 1
 
     # Adjust xml charts with new x-axis
