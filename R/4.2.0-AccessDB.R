@@ -71,7 +71,8 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
   date.column <- .Object@Date_Column
   MyUtilities::access32BitQuery(db.path,
                                 sql.query = sql.query,
-                                out.file = file.path(out.dir, file.name))
+                                out.file = file.path(out.dir, file.name),
+                                date.col = "Dat_Zeit")
   access.data <- readRDS(file.path(out.dir, file.name))
   access.data[, Proto_Dat := NULL]
   flag.cols <- na.omit(stringr::str_match(names(access.data), "^x_.*"))

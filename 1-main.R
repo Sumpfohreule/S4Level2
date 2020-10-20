@@ -59,8 +59,8 @@ co_data <- level2 %>%
     getDataForYear(2019) %>%
     as.data.table()
 
-co.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-co.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Conventwald")) %>%
     createAggregateExcel(year = 2019)
