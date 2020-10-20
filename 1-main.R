@@ -1,4 +1,4 @@
-data_location <- "/home/polarfalke/Data/Temp/level2_2"
+data_location <- "/home/polarfalke/Data/Temp/level2_0"
 # data_location <- "w:/level2"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
@@ -40,13 +40,13 @@ saveL2Object(level2)
 
 ########################################################################################################################
 # Altensteig
-at_plot <- level2 %>%
+at_data <- level2 %>%
     getObjectByURI(Level2URI("Altensteig")) %>%
     getDataForYear(2019) %>%
     as.data.table()
 
-at.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-at.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Altensteig")) %>%
     createAggregateExcel(year = 2019)
