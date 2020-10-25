@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 1.3.1
+Version: 1.4.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -18,7 +18,7 @@ Suggests: testthat
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 
     'getDataStructureURI.R'
     'getSubPlotURI.R'
@@ -54,7 +54,6 @@ Collate:
     'createAndAddPlot.R'
     '1.0.0-Level2.R'
     'getSourceFileTable.R'
-    'createAggregateExcel.R'
     'loadCorrectedData.R'
     'getDataForYear.R'
     'getSubPlotList.R'
@@ -91,6 +90,7 @@ Collate:
     'calculateDendrometerTable.R'
     'calculatePFTable.R'
     'calculatePRTable.R'
+    'createAggregateExcel.R'
     'createMMFiles.R'
     'getEuPlotId.R'
     'initialSourceFilesTable.R'
