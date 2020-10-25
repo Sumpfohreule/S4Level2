@@ -1,14 +1,13 @@
 ########################################################################################################################
-# TODO: Include check if first row is strings
+#' Reads data from an ADLM xlsx file
+#' @param path Path to the ADLM file to read
+#' @export
 readADLM <- function(path) {
-    in.table <- data.table::as.data.table(openxlsx::read.xlsx(path))
-    in.table <- in.table[-1]
-    for (col.name in names(in.table)) {
-        in.table[, (col.name) := as.numeric(get(col.name))]
-    }
-    in.table[, Datum := MyUtilities::as.POSIXctFixed(Datum * 60 * 60 * 24, tz = "UTC",
-            origin = "1899-12-30")]
-    in.table[, Datum := lubridate::round_date(Datum, "1 mins")]
-    data.table::setkey(in.table, Datum)
-    return(in.table)
+    path %>%
+        openxlsx::read.xlsx() %>%
+        slice(-1) %>%
+        mutate(Datum = openxlsx::convertToDateTime(Datum)) %>%
+        mutate(Datum = lubridate::round_date(Datum, "1 mins")) %>%
+        mutate(across(!Datum, as.numeric)) %>%
+        arrange(Datum)
 }
