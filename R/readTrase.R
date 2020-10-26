@@ -41,7 +41,7 @@ readTrase <- function(path) {
           "(?<=[0-9]{1,2}_[0-9]{1,2}_)([0-9]{2})(?= )",
           "20\\1")]
   data[, Datum := MyUtilities::as.POSIXctFixed(Datum, format = "%d_%m_%Y %H:%M:%S", tz = "UTC")]
-  data[, Datum := MyUtilities::roundPOSIXct(Datum, 15 * 60)]
+  data[, Datum := lubridate::round_date(Datum, "15 mins")]
   data[, Instruments := paste0("Sensor_", get(sens.col))]
   data[, Values := get(val.col)]
   data[, Error := get(err.col)]

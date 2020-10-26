@@ -3,38 +3,45 @@ devtools::load_all()
 
 ########################################################################################################################
 target.year <- 2019
-data_path = "/home/polarfalke/Data/Temp/level2"
+data_path = "/home/polarfalke/Data/Temp/level2_0"
 .Level2 <- loadL2Object(data_path)
 
 .Level2 %>%
-    getPlot(Level2URI("Altensteig")) %>%
+    getObjectByURI(Level2URI("Altensteig")) %>%
     getCorrectedAggregatePath() %>%
     file.path(target.year) %>%
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles()
 
 .Level2 %>%
-    getPlot(Level2URI("Conventwald")) %>%
+    getObjectByURI(Level2URI("Conventwald")) %>%
     getCorrectedAggregatePath() %>%
     file.path(target.year) %>%
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles()
 .Level2 %>%
-    getPlot(Level2URI("Esslingen")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles()
-
-.Level2 %>%
-    getPlot(Level2URI("Heidelberg")) %>%
+    getObjectByURI(Level2URI("Esslingen")) %>%
     getCorrectedAggregatePath() %>%
     file.path(target.year) %>%
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles()
 
 .Level2 %>%
-    getPlot(Level2URI("Ochsenhausen")) %>%
+    getObjectByURI(Level2URI("Heidelberg")) %>%
+    getCorrectedAggregatePath() %>%
+    file.path(target.year) %>%
+    MyUtilities::getLastModifiedFile() %>%
+    createMMFiles()
+
+.Level2 %>%
+    getObjectByURI(Level2URI("Ochsenhausen")) %>%
+    getCorrectedAggregatePath() %>%
+    file.path(target.year) %>%
+    MyUtilities::getLastModifiedFile() %>%
+    createMMFiles()
+
+.Level2 %>%
+    getObjectByURI(Level2URI("Rotenfels")) %>%
     getCorrectedAggregatePath() %>%
     file.path(target.year) %>%
     MyUtilities::getLastModifiedFile() %>%

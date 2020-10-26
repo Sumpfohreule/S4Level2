@@ -25,27 +25,27 @@
     } else {
         initializeDataLocation(path)
     }
-    .Level2 <- loadL2Object(path)
+    Level2 <- loadL2Object(path)
 
     if (getURI_Depth(.URI) >= 1) {
         plot_name <- getPlotName(.URI)
-        .Level2 <- createAndAddPlot(.Level2, plot_name = plot_name, corrected.aggregate.path = path)
+        Level2 <- createAndAddPlot(Level2, plot_name = plot_name, corrected.aggregate.path = path)
     }
 
     if (getURI_Depth(.URI) >= 2) {
         sub_plot_name <- getSubPlotName(.URI)
-        .Level2 <- createAndAddSubPlot(.Level2, sub_plot_name = sub_plot_name, .URI = .URI)
+        Level2 <- createAndAddSubPlot(Level2, sub_plot_name = sub_plot_name, .URI = .URI)
     }
 
     if (getURI_Depth(.URI) >= 3) {
         logger_type <- getDataStructureName(.URI)
-        .Level2 <- createAndAddLogger(
-            .Object = .Level2,
+        Level2 <- createAndAddLogger(
+            .Object = Level2,
             logger_type = logger_type,
             source_paths = path,
             .URI = .URI)
     }
-    return(.Level2)
+    return(Level2)
 }
 
 
@@ -74,7 +74,7 @@ testGetPlot <- function() {
                       corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .TestPlot)
-    RUnit::checkEquals(.TestPlot, getPlot(.Level2, .URI))
+    RUnit::checkEquals(.TestPlot, getObjectByURI(.Level2, .URI))
 }
 
 testGetSubPlot <- function() {
@@ -90,7 +90,7 @@ testGetSubPlot <- function() {
         local_directory = file.path(tempdir(), "internal_structure", plot_name, sub_plot_name))
 
     .Level2 <- addSubPlot(.Level2, .TestSubPlot, .SubPlot_URI)
-    RUnit::checkEquals(.TestSubPlot, getSubPlot(.Level2, .SubPlot_URI))
+    RUnit::checkEquals(.TestSubPlot, getObjectByURI(.Level2, .SubPlot_URI))
 }
 
 testGetDataStructure <- function() {
@@ -107,11 +107,12 @@ testGetDataStructure <- function() {
         uri = Level2URI(""),
         local_directory = target_local_directory,
         paths = tempdir())
-    .Level2 <- addDataStructure(.Level2,
+    .Level2 <- addDataStructure(
+        .Object = .Level2,
         .DataStructure = .TestDataStructure,
         .URI =.DataStructure_URI)
 
-	RUnit::checkEquals(.TestDataStructure, getDataStructure(.Level2, .DataStructure_URI))
+	RUnit::checkEquals(.TestDataStructure, getObjectByURI(.Level2, .DataStructure_URI))
 }
 
 testAddPlot <- function() {
@@ -126,7 +127,7 @@ testAddPlot <- function() {
                   corrected.aggregate.path = tempdir())
 
     .Level2 <- addPlot(.Level2, .Plot)
-    RUnit::checkEquals(.Plot, getPlot(.Level2, .Plot_URI))
+    RUnit::checkEquals(.Plot, getObjectByURI(.Level2, .Plot_URI))
 }
 
 testAddSubPlot <- function() {
@@ -144,7 +145,7 @@ testAddSubPlot <- function() {
         local_directory = on_adding_local_directory_is_set_to)
     .Level2 <- addSubPlot(.Level2, .SubPlot, .PlotURI)
 
-    RUnit::checkEquals(.SubPlot, getSubPlot(.Level2, .SubPlot_URI))
+    RUnit::checkEquals(.SubPlot, getObjectByURI(.Level2, .SubPlot_URI))
 }
 
 testAddDataStructure <- function() {
@@ -162,9 +163,12 @@ testAddDataStructure <- function() {
         uri = .DataStructure_URI,
         local_directory = on_adding_local_directory_is_set_to,
         paths = tempdir())
-    .Level2 <- addDataStructure(.Level2, .TestDataStructure, .DataStructure_URI)
+    .Level2 <- addDataStructure(
+        .Object = .Level2,
+        .DataStructure = .TestDataStructure,
+        .URI = .DataStructure_URI)
 
-    RUnit::checkEquals(.TestDataStructure, getDataStructure(.Level2, .DataStructure_URI))
+    RUnit::checkEquals(.TestDataStructure, getObjectByURI(.Level2, .DataStructure_URI))
 }
 
 testAddAndApplySensorMapping <- function() {
@@ -173,9 +177,13 @@ testAddAndApplySensorMapping <- function() {
 
     example_pattern <- "Logtemp"
     example_replacement <- "Logger_Temperature"
-    .Level2 <- addSensorMapping(.Level2, pattern = example_pattern, replacement = example_replacement, .URI = .URI)
+    .Level2 <- addSensorMapping(
+        .Object = .Level2,
+        pattern = example_pattern,
+        replacement = example_replacement,
+        .URI = .URI)
 
-    .DataStructure <- getDataStructure(.Level2, .URI)
+    .DataStructure <- getObjectByURI(.Level2, .URI)
     sensor_mappings <- getSensorMappings(.DataStructure)
     RUnit::checkEquals(1, nrow(sensor_mappings))
     RUnit::checkEquals(3, ncol(sensor_mappings))
@@ -227,7 +235,7 @@ testReplacePlotByURI <- function() {
     plot_list <- getPlotList(.Level2)
     RUnit::checkEquals(1, length(plot_list))
 
-    .ReplacedPlot <- getPlot(.Level2, .URI)
+    .ReplacedPlot <- getObjectByURI(.Level2, .URI)
 	RUnit::checkEquals(.ReplacementPlot, .ReplacedPlot)
 }
 
@@ -239,7 +247,7 @@ testUpdateFilePaths <- function() {
     .Logger_URI <- Level2URI("TestPlot/TestSubPlot/DeltaT")
     .Level2 <- .initializeL2Object(.Logger_URI, path = tempdir())
     .Level2 <- updateFilePaths(.Level2)
-    .TestLogger <- getDataStructure(.Level2, .Logger_URI)
+    .TestLogger <- getObjectByURI(.Level2, .Logger_URI)
     test_source_file <- getSourceFileTable(.TestLogger)
 
     RUnit::checkTrue(nrow(test_source_file) == 1)
@@ -266,7 +274,7 @@ testResetPlot <- function() {
     .Level2 <- updateFilePaths(.Level2)
     .Level2 <- resetToInitialization(.Level2)
 
-    .TestLogger <- getDataStructure(.Level2, .Logger_URI)
+    .TestLogger <- getObjectByURI(.Level2, .Logger_URI)
     test_source_file <- getSourceFileTable(.TestLogger)
     RUnit::checkEquals(0, nrow(test_source_file))
 }

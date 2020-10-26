@@ -1,85 +1,84 @@
 ########################################################################################################################
 createMMFiles <- function(xlsx.file) {
     # Import "Gesamt" tables for all sub plots
-    table_list <- list()
-    for (sub_plot in c("Fichte", "Buche", "Freiland")) {
-        table_list[[sub_plot]] <- MyUtilities::importAggregateExcelSheet(xlsx.file, sub_plot)
-    }
-    full.table <- data.table::rbindlist(table_list)
+    full_table <- c("Fichte", "Buche", "Freiland") %>%
+        purrr::map(~ {
+            MyUtilities::importAggregateExcelSheet(xlsx.file, .x) %>%
+                mutate(SubPlot = .x)
+            }) %>%
+        purrr::map(~ tidyr::pivot_longer(.x, cols = !(Datum | SubPlot), names_to = "variable")) %>%
+        bind_rows() %>%
+        mutate(across(SubPlot, as.factor))
 
+    plot.name <- xlsx.file %>%
+        basename() %>%
+        stringr::str_match(pattern = "^[[:alpha:]]*(?=_)") %>%
+        as.character()
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
-    meo.table <- full.table[stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]"),
-        separate(.SD,
-            col = "variable",
-            into = c("vertical_position", "variable", "profile_pit"),
-            sep = "(?<!T)_(?!mV)",
-            extra = "drop",
-            fill = "left")]
-    meo.table[, vertical_position := as.factor(as.numeric(vertical_position) / -100)]
-    mappings <- data.table(
-        pattern = c("^T_PF$", "^PF$", "^FDR$"),
-        replacement = c("ST", "MP", "WC"))
-    for (pattern.index in mappings[, pattern]) {
-        replacement = mappings[pattern == pattern.index, replacement]
-        meo.table[, variable := MyUtilities::remapLevels(variable,
-                pattern = pattern.index,
-                replacement = replacement)]
-    }
+    meo_table <- full_table %>%
+        filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
+        tidyr::separate(col = "variable",
+                        into = c("vertical_position", "variable", "profile_pit"),
+                        sep = "(?<!T)_(?!mV)",
+                        extra = "drop",
+                        fill = "left") %>%
+        mutate(vertical_position = as.numeric(vertical_position) / -100) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^T_PF$", replacement = "ST")) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^PF$", replacement = "MP")) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^FDR$", replacement = "WC")) %>%
+        mutate(value = if_else(variable == "MP", true = value / 10, false = value)) %>%
+        nest_by(SubPlot) %>%
+        mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
+        tidyr::unnest(cols = data) %>%
+        mutate(across(!(Datum | value), as.factor))
 
-    # Converting hPa to kPa
-    meo.table[variable == "MP", value := value / 10]
-
-    plot.name <- stringr::str_match(basename(xlsx.file), pattern = "^[[:alpha:]]*(?=_)")
-    buche.id <- getEuPlotId(plot.name, "Buche")
-    fichte.id <- getEuPlotId(plot.name, "Fichte")
-    meo.table[SubPlot == "Fichte", plot := factor(fichte.id)]
-    meo.table[SubPlot == "Buche", plot := factor(buche.id)]
-
-    mem.table <- full.table[variable %in% c("AT", "RH", "WS", "WD", "SR", "PR")]
-    mem.fi.table <- copy(mem.table)
-    mem.fi.table[, plot := factor(fichte.id)]
-    mem.bu.table <- copy(mem.table)
-    mem.bu.table[, plot := factor(buche.id)]
-    mem.double.table <- rbindlist(list(mem.bu.table, mem.fi.table))
-    rm(mem.table, mem.bu.table, mem.fi.table)
+    mem_base_table <- full_table %>%
+        filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
+    mem_fi_table <- mem_base_table %>%
+        mutate(plot = getEuPlotId(plot.name, "Fichte"))
+    mem_table <- mem_base_table %>%
+        mutate(plot = getEuPlotId(plot.name, "Buche")) %>%
+        bind_rows(mem_fi_table)
+    rm(mem_base_table, mem_fi_table)
 
     # Import template for consistent instrument numbers
     template_file <- system.file("extdata",
                                  "042013_template.PLM",
                                  package = "S4Level2",
                                  mustWork = TRUE)
-    instrument.template <- as.data.table(
-        read_fwf(template_file,
-            col_positions = fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
-            col_types = cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
-            skip = 1))
-    template.col.names <- unlist(
-        read_delim(template_file,
+    template_col_names <- template_file %>%
+        readr::read_delim(
             delim = ",",
             col_names = FALSE,
-            col_types = cols(),
+            col_types = readr::cols(),
             trim_ws = TRUE,
             n_max = 1,
-            guess_max = 1))
-    setnames(instrument.template, template.col.names)
-    setnames(instrument.template,
-        old = c("!Sequence", "instrument"),
-        new = c("Sequence", "instrument_seq_nr"))
-    instrument.template[, ":=" (
-            SW_pit = profile_pit,
-            profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))]
+            guess_max = 1) %>%
+        unlist()
+    template_col_names[1] <- "Sequence"
+    template_col_names[4] <- "instrument_seq_nr"
+    instrument_template <- template_file %>%
+        readr::read_fwf(
+            col_positions = readr::fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
+            col_types = readr::cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
+            skip = 1)
+    names(instrument_template) <- template_col_names
+
+    instrument_template <- instrument_template %>%
+        mutate(SW_pit = profile_pit) %>%
+        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))
 
     # Join data with instrument id tables
     full.meo.join <- merge(
-        x = meo.table,
-        y = instrument.template,
+        x = meo_table,
+        y = instrument_template,
         by = c("plot", "variable", "vertical_position", "profile_pit"))
     full.mem.join <- merge(
-        x = mem.double.table,
-        y = instrument.template,
+        x = mem_table,
+        y = instrument_template,
         by = c("plot", "variable"))
     final.full.join <- rbindlist(list(full.meo.join, full.mem.join), use.names = TRUE, fill = TRUE)
-    rm(instrument.template, full.meo.join, full.mem.join)
+    rm(instrument_template, full.meo.join, full.mem.join)
     setkey(final.full.join, SubPlot, variable, vertical_position, profile_pit)
 
     # Base table with all columns for mem and plm accumulated with completeness calculation of values
@@ -200,7 +199,7 @@ createMMFiles <- function(xlsx.file) {
         old = "Sequence",
         new = "!Sequence")
 
-    output.file.path <- file.path("Data", "output", plot.name)
+    output.file.path <- file.path("data", "output", plot.name)
     dir.create(output.file.path, showWarnings = FALSE)
     mem.file <- file.path(output.file.path, paste0(plot.name, "_", data.year, ".MEM"))
     write.table(mem.final.table,
@@ -248,13 +247,13 @@ createMMFiles <- function(xlsx.file) {
                                              "Koordinaten_Stand_2019_05.csv",
                                              package = "S4Level2",
                                              mustWork = TRUE)
-    new_location_data <- read_csv2(
+    new_location_data <- readr::read_csv2(
         file = file.path(corrected_coordinate_file),
-        col_types = cols_only(
-            plot = col_character(),
-            latitude = col_character(),
-            longitude = col_character(),
-            altitude = col_double()))
+        col_types = readr::cols_only(
+            plot = readr::col_character(),
+            latitude = readr::col_character(),
+            longitude = readr::col_character(),
+            altitude = readr::col_double()))
     plm.final.table <- plm.final.table %>%
         select(-latitude, -longitude, -altitude)
     plm_fixed_location_final <- merge(

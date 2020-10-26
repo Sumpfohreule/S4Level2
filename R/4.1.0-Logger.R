@@ -77,11 +77,12 @@ setMethod("updateFilePaths", signature = "Logger", definition = function(.Object
   new_table <- .Object %>%
     getSourcePaths() %>%
     dir(full.names = TRUE, recursive = TRUE) %>%
-    purrr::map_df(function(x) return(data.frame(file = basename(x), path = dirname(x)))) %>%
+    purrr::map_df(~ list(file = basename(.x), path = dirname(.x))) %>%
+    data.frame() %>%
     filter(stringr::str_detect(file, pattern = getSourceFilePattern(.Object))) %>%
     full_join(current_table, by = c("path", "file")) %>%
     mutate_at(vars(imported, skip), function(x) if_else(is.na(x), FALSE, x)) %>%
-    arrange(file, path)
+    arrange(path, file)
   .Object@SourceFiles <- new_table
   .Object
 })
@@ -150,8 +151,6 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
       stop("Date column was not imported correctly (Only NA's)")
     }
     return(new.data)
-    #if (stringr::str_detect(names(new.data)[2], "^X[.][0-9]{1,2}")) {
-    #  source.files[index, skip := TRUE]
   },
   error = function(err) return(geterrmessage()),
   warning = function(w) return(w[["message"]]))

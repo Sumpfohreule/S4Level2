@@ -4,6 +4,7 @@ calculatePRTable <- function(long.l2.table) {
     pr_sum_table <- long.l2.table %>%
         filter(stringr::str_detect(variable, "PR_?[XYZ]?|Pluvio_mm|Niederschlag\\.Casella")) %>%
         filter(!is.na(value)) %>%
+        mutate(variable = paste0(variable, "_SUM")) %>%
         group_by(Plot, SubPlot, variable) %>%
         group_modify(~ {
             output = data.frame(Datum = .x$Datum, value = cumsum(.x$value))

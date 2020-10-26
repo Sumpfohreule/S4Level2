@@ -6,7 +6,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
 
     level2 <- createAndAddPlot(level2, plot_name, screened_data_path)
     plot_dir <- level2 %>%
-        getPlot(Level2URI(plot_name)) %>%
+        getObjectByURI(Level2URI(plot_name)) %>%
         getLocalDirectory()
     dir.create(plot_dir, showWarnings = FALSE)
     logger_nodes <- xml2::xml_children(xml_root)
@@ -18,7 +18,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
         sub_plot_uri <- Level2URI(plot_name, sub_plot_name)
         level2 <- createAndAddSubPlot(level2, sub_plot_name, sub_plot_uri)
         sub_plot_dir <- level2 %>%
-            getSubPlot(sub_plot_uri) %>%
+            getObjectByURI(sub_plot_uri) %>%
             getLocalDirectory()
         dir.create(sub_plot_dir, showWarnings = FALSE)
     }
@@ -49,7 +49,7 @@ addCompletePlotFromXml <- function(level2, xml_path) {
                                          .URI = logger_uri)
         }
         logger_dir <- level2 %>%
-            getDataStructure(logger_uri) %>%
+            getObjectByURI(logger_uri) %>%
             getLocalDirectory()
         dir.create(logger_dir, showWarnings = FALSE)
 

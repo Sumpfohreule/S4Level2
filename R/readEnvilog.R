@@ -33,7 +33,6 @@ readEnvilog <- function(path) {
         data[, (col.name) := stringr::str_replace(get(col.name), ",", ".")]
         data[, (col.name) := as.numeric(get(col.name))]
     }
-    five.minutes = 5 * 60 # = 300 seconds for rounding times to
-    data[, Datum := MyUtilities::roundPOSIXct(Datum, five.minutes)]
+    data[, Datum := lubridate::round_date(Datum, "5 mins")]
     return(data)
 }

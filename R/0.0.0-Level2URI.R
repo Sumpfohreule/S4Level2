@@ -10,7 +10,9 @@ setClass(Class = "Level2URI", slots = c(
 Level2URI <- function(...) {
     uri_elements <- list(...) %>%
         unlist() %>%
-        purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x))) { stop("Some element is not of type character or Level2URI")}) %>%
+        purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x) || is.factor(.x))) {
+            stop("Some element is not of type character or Level2URI")
+            }) %>%
         purrr::map(~ as.character(.x)) %>%
         purrr::map(~ stringr::str_split(.x, pattern = "/")) %>%
         unlist()
@@ -51,6 +53,32 @@ setMethod("getDataStructureName", signature = "Level2URI", definition = function
         stop("DataStructureName seems to be missing from this Level2URI")
     }
     return(.Object@URI_Split[3])
+})
+
+#' @include getPlotURI.R
+setMethod("getPlotURI", signature = "Level2URI", definition = function(.Object) {
+    plot_uri <- .Object %>%
+        getPlotName() %>%
+        Level2URI()
+    return(plot_uri)
+})
+
+#' @include getSubPlotURI.R
+setMethod("getSubPlotURI", signature = "Level2URI", definition = function(.Object) {
+    plot_uri <- getPlotName(.Object)
+    sub_plot_uri <- .Object %>%
+        getSubPlotName() %>%
+        Level2URI(plot_uri, .)
+    return(sub_plot_uri)
+})
+
+#' @include getDataStructureURI.R
+setMethod("getDataStructureURI", signature = "Level2URI", definition = function(.Object) {
+    sub_plot_uri <- getSubPlotURI(.Object)
+    data_structure_uri <- .Object %>%
+        getDataStructureName() %>%
+        Level2URI(sub_plot_uri, .)
+    return(data_structure_uri)
 })
 
 #' S3 Method for converting a Level2URI into a character string

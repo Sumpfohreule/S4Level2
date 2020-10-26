@@ -75,7 +75,10 @@ setMethod("replaceObjectByURI", signature = "Plot", definition = function(.Objec
         .ChangedSubPlot <- .ReplacementObject
     } else {
         # Replacement target is deeper within the hierarchy
-        .ChangedSubPlot <- getSubPlot(.Object, .TargetURI)
+        sub_plot_uri <- .TargetURI %>%
+            getSubPlotName() %>%
+            Level2URI(getName(.Object), .)
+        .ChangedSubPlot <- getObjectByURI(.Object, sub_plot_uri)
         .ChangedSubPlot <- replaceObjectByURI(.ChangedSubPlot, .ReplacementObject)
     }
     .Object <- replaceListObject(.Object, .ChangedSubPlot)
@@ -121,22 +124,6 @@ setMethod("getURI", signature = "Plot", definition = function(.Object) {
     .Object@Level2URI
 })
 
-#' @include getSubPlot.R
-setMethod("getSubPlot", signature = "Plot", definition = function(.Object, .URI) {
-    sub_plot_name <- getSubPlotName(.URI)
-    .SubPlot <- getSubPlotList(.Object)[[sub_plot_name]]
-    .SubPlot
-})
-
-#' @include getDataStructure.R
-setMethod("getDataStructure", signature = "Plot", definition = function(.Object, .Level2URI) {
-    sub.plot = getSubPlotName(.Level2URI)
-    if (!sub.plot %in% names(.Object@SubPlots))
-        stop(sprintf("Subplot '%s' is not contained within Plot '%s'", sub.plot, getName(.Object)))
-    data <- getDataStructure(.Object@SubPlots[[sub.plot]], .Level2URI = .Level2URI)
-    return(data)
-})
-
 #' @include getLocalDirectory.R
 setMethod("getLocalDirectory", signature = "Plot", definition = function(.Object) {
     saved_local_directory <- .Object@LocalDirectory
@@ -164,13 +151,18 @@ setMethod("getSubPlotList", signature = "Plot", definition = function(.Object) {
 #' @include getObjectByURI.R
 setMethod("getObjectByURI", signature = "Plot", definition = function(.Object, level2_uri) {
     level2_uri <- Level2URI(level2_uri)
-    objects <- list()
-    if (getURI_Depth(level2_uri) == 1 && getPlotName(level2_uri) == getName(.Object)) {
-        return(.Object)
+    uri_depth <- getURI_Depth(level2_uri)
+    if (uri_depth < 1) {
+        stop("Provided level2_uri has a depth of less than 1, so it can't be contained in a Plot or below.\nURI: ", level2_uri)
+    } else if (uri_depth > 1) {
+        sub_plot_name <- getSubPlotName(level2_uri)
+        selected_sub_plot <- getSubPlotList(.Object)[[sub_plot_name]]
+        lower_object <- getObjectByURI(.Object = selected_sub_plot, level2_uri)
+        return(lower_object)
+    } else if (getPlotName(level2_uri) != getName(.Object)) {
+        stop("Can't get this Object of type Plot (Depth = 1) with the given URI because of different names.\nURI: ", level2_uri)
     } else {
-        other_object <- getSubPlot(.Object, level2_uri) %>%
-            getObjectByURI(level2_uri)
-        return(other_object)
+        return(.Object)
     }
 })
 
@@ -219,61 +211,48 @@ setMethod("getData", signature = "Plot", definition = function(
 })
 
 #' Load the data of corrected files from predefined folders of this plot
-#' @param sheet.name String to determine which kind of SubPlot should be loaded from each file
+#' @param sheet_names String vector to determine which kind of SubPlot should be loaded from each file
 #' @param years Numeric vector of years to load from the plot corrected files
 #' @return A data.table with all the data combined
 #' @include loadCorrectedData.R
 #' @export
-setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet.name, years) {
-    data.path <- getCorrectedAggregatePath(.Object)
-    year.folders <- dir(data.path)
-    year.folders <- year.folders[stringr::str_detect(year.folders, "^[0-9]{4}([-_][0-9]{4})?$")]
-    if (!is.null(years)) {
-        years <- as.character(years)
-        year.folders <- intersect(year.folders, years)
-    }
-    data.list <- list()
-    for (year in year.folders) {
-        latest.file <- MyUtilities::getLastModifiedFile(
-            folder = file.path(data.path, year),
-            pattern = "\\.xlsx$",
-            recursive = TRUE)
-        tryCatch( {
-            data <- data.table::data.table(openxlsx::read.xlsx(latest.file, sheet = sheet.name))[-1]
-            col.names <- names(data)
-            date.col <- na.omit(stringr::str_match(col.names, "^.*?[Dd]atum.*?$"))
-            data <- suppressWarnings(data.table::melt(data, id.var = date.col))
-            data.table::setnames(data, date.col, "Datum")
-            data[, Datum := as.POSIXct(as.numeric(Datum) * 60 * 60 * 24, tz = "UTC", origin = "1899-12-30")]
-            data[, value := MyUtilities::as.numericTryCatch(value)]
-            data.list[[year]] <- data
-        }, error = function(e) {
-            if (stringr::str_detect(geterrmessage(), pattern = "Cannot find sheet named")) {
-                cat("\nFile '", latest.file, "'",
-                    "\nhas been ignored because it does not contain a sheet with name '", sheet.name, "'",
-                    sep = "")
-            } else if (stringr::str_detect(geterrmessage(),
-                                           pattern = "NAs introduced by coercion \\(See previous table\\)")) {
-                stop("Error in file \n'",
-                     latest.file,
-                     "'\non sheet '", sheet.name, "'\n", e)
-            } else {
-                stop(e)
-            }
-        }
-        )
-    }
-    if (length(data.list) != 0) {
-        full.data <- data.table::rbindlist(data.list)
-        full.data[, ":=" (
-            Plot = factor(getName(.Object)),
-            SubPlot = factor(sheet.name))]
-        data.table::setkey(full.data, Plot, SubPlot, variable, Datum)
-        return(full.data)
-    } else {
-        print(paste0("Skipped plot '", getName(.Object), "' for sheet '", sheet.name, "' as it was empty"))
-        return(NULL)
-    }
+setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet_names, years) {
+    full_data <- .Object %>%
+        getCorrectedAggregatePath() %>%
+        dir(full.names = TRUE) %>%
+        purrr::keep(~ is.null(years) || (TRUE %in% (basename(.x) %in% as.character(years)))) %>%
+        purrr::map(~ {
+            path <- .x
+            sheet_names %>%
+                purrr::map(~ c(path, .x))
+            }) %>%
+        purrr::flatten() %>%
+        purrr::map(~ {
+            tryCatch({
+                path <- .x[1]
+                sheet <- .x[2]
+                wide_import <- MyUtilities::getLastModifiedFile(
+                    folder = path,
+                    pattern = "\\.xlsx$",
+                    recursive = TRUE) %>%
+                    MyUtilities::importAggregateExcelSheet(sheet)
+                wide_import %>%
+                    data.table::setnames(make.unique(names(wide_import))) %>%
+                    tidyr::pivot_longer(cols = -Datum, names_to = "variable") %>%
+                    mutate(SubPlot = sheet)
+            }, error = function(e) {
+                if (stringr::str_detect(as.character(e), "Values from 'sheet' are not contained in")) {
+                    cat("Skipped file '", basename(.x), "' for sheet '", sheet_names, "' as it was missing.\n", sep = "")
+                } else {
+                    stop(e)
+                }
+            })
+        }) %>%
+        bind_rows() %>%
+        mutate_at(vars(SubPlot), as.factor) %>%
+        arrange(SubPlot, variable, Datum) %>%
+        select(SubPlot, Datum, variable, value)
+    return(full_data)
 })
 
 #' @include updateFilePaths.R
@@ -301,6 +280,8 @@ setMethod("updateData", signature = "Plot", definition = function(.Object, sub.p
 setMethod("createDirectoryStructure", signature = "Plot", definition = function(.Object) {
     plot.dir <- getLocalDirectory(.Object)
     dir.create(plot.dir, showWarnings = FALSE)
+    output_directory <- getOutputDirectory(.Object)
+    dir.create(output_directory)
 
     applyToList(.Object, createDirectoryStructure)
     invisible(return(.Object))
@@ -327,55 +308,6 @@ setMethod("applyToList", signature = "Plot", definition = function(.Object, appl
         .Object <- replaceListObject(.Object, .Updated_Plot)
     }
     .Object
-})
-
-#' @include createAggregateExcel.R
-setMethod("createAggregateExcel", signature = "Plot", definition = function(
-    .Object,
-    year,
-    round.times,
-    empty.column.table) {
-
-    out.file <- paste0(getName(.Object), "_Gesamt_", year, ".xlsx")
-    if (file.exists(paste0(getOutputDirectory(.Object), "/~$", out.file)))
-        stop(sprintf("Achtung die Datei '%s' ist bereits geöffnet und muss vorher geschlossen werden.",
-                     out.file))
-
-    data <- getDataForYear(.Object, year) %>%
-        select(-Logger)
-    if (round.times) {
-        data[, Datum := MyUtilities::roundPOSIXct(Datum), by = .(SubPlot, variable)]
-        if (data[, TRUE %in% duplicated(data, by = c("SubPlot", "variable", "Datum"))])
-            print("Duplicated values after rounding of date times to the interval have been removed!")
-        data <- unique(data, by = c("SubPlot", "variable", "Datum"))
-    }
-    additional.table.list <- calculatePFTable(data)
-    additional.table.list[["pr_table"]] <- calculatePRTable(data)
-    additional.table.list[["original"]] <- data
-    full.table <- data.table::rbindlist(additional.table.list, use.names = TRUE)
-    rm(data, additional.table.list)
-
-    template_file_name <- paste0("/_", getName(.Object), "_Gesamt_Template.xlsx")
-    template.file <- system.file("extdata", template_file_name, package = "S4Level2", mustWork = TRUE)
-    template.workbook <- openxlsx::loadWorkbook(template.file)
-    for (sheet.name in full.table[, unique(SubPlot)]) {
-        sub.plot.table <- data.table::dcast(full.table[SubPlot == sheet.name], Datum ~ variable)
-        missing.columns <- empty.column.table[sheet == sheet.name, columns]
-        if (length(missing.columns) > 0)
-            sub.plot.table[, (missing.columns) := NA]
-        dates <- sub.plot.table[, Datum]
-        dates <- MyUtilities::addYearStartEnd(dates)
-        dates <- MyUtilities::fillDateGaps(dates)
-        out.table <- merge(data.table::data.table(Datum = dates), sub.plot.table, all.x = TRUE, by = "Datum")
-
-        template.workbook <- addToWorkbookWithTemplate(
-            out.table = out.table,
-            workbook = template.workbook,
-            sheet = sheet.name)
-    }
-    output_file_path <- file.path(getOutputDirectory(.Object), out.file)
-    openxlsx::saveWorkbook(template.workbook, file = output_file_path, overwrite = TRUE)
-    print(paste0("Saved file in path '", output_file_path, "'"))
 })
 
 #' @include getSourceFileTable.R

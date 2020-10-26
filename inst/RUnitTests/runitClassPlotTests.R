@@ -40,7 +40,7 @@ testGetURI <- function() {
     .URI <- Level2URI(file.path(plot_name))
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
-    .Test_Plot <- getPlot(.Level2, .URI)
+    .Test_Plot <- getObjectByURI(.Level2, .URI)
     RUnit::checkEquals(.URI, getURI(.Test_Plot))
 }
 
@@ -103,13 +103,13 @@ testReplaceSubPlotByURI <- function() {
         uri = .URI,
         local_directory = file.path(tempdir(), "somewhere_else"))
 
-    .TestPlot <- getPlot(.Level2, .URI)
+    .TestPlot <- getObjectByURI(.Level2, getPlotURI(.URI))
     .TestPlot <- replaceObjectByURI(.TestPlot, .ReplacementSubPlot)
 
     sub_plot_list <- getSubPlotList(.TestPlot)
     RUnit::checkEquals(1, length(sub_plot_list))
 
-    .ReplacedSubPlot <- getSubPlot(.TestPlot, .URI)
+    .ReplacedSubPlot <- getObjectByURI(.TestPlot, .URI)
     RUnit::checkEquals(.ReplacementSubPlot, .ReplacedSubPlot)
 }
 

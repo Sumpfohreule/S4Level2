@@ -52,7 +52,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = fun
     .PlotURI,
     sub_plot_names) {
 
-    .TargetPlot <- getPlot(.Object, .PlotURI)
+    .TargetPlot <- getObjectByURI(.Object, .PlotURI)
     .TargetPlot <- createAndAddMultipleSubPlots(.TargetPlot, sub_plot_names = sub_plot_names)
     .Object <- replaceObjectByURI(.Object, .TargetPlot)
 
@@ -103,7 +103,11 @@ setMethod("createAndAddLogger", signature = "Level2", definition = function(
                   local_directory = logger_directory,
                   paths = source_paths)
 
-    .Object <- addDataStructure(.Object, .DataStructure = .Logger, .URI)
+    parent_uri <- Level2URI(dirname(as.character(.URI)))
+    .Object <- addDataStructure(
+        .Object,
+        .DataStructure = .Logger,
+        .URI = parent_uri)
     .Object
 })
 
@@ -137,7 +141,13 @@ setMethod("addDataStructure", signature = "Level2", definition = function(.Objec
     if (!is.DataStructure(.DataStructure)) {
         stop("Passed paramter .DataStructure is not of class Logger")
     }
-    .SubPlot <- getSubPlot(.Object, .URI)
+    sub_plot_uri <- .URI %>%
+        as.character() %>%
+        dirname() %>%
+        Level2URI()
+    .SubPlot <- getObjectByURI(
+        .Object,
+        level2_uri = sub_plot_uri)
     .SubPlot <- addDataStructure(.SubPlot, .DataStructure = .DataStructure, .URI = .URI)
     .Object <- replaceObjectByURI(.Object, .SubPlot)
     .Object
@@ -154,10 +164,9 @@ setMethod("addSensorMapping", signature = "Level2", definition = function(
     if (getURI_Depth(.URI) < 3) {
         stop("URI needs to contain a DataStructure to add a Sensor Mapping to")
     }
-    .DataStructure <- getDataStructure(.Object, .URI)
+    .DataStructure <- getObjectByURI(.Object, .URI)
     .DataStructure <- addSensorMapping(.DataStructure, pattern = pattern, replacement = replacement)
-
-    .Object <- replaceObjectByURI(.Object, .DataStructure)
+    .Object <- replaceObjectByURI(.Object, .ReplacementObject = .DataStructure)
     .Object
 })
 
@@ -166,14 +175,16 @@ setMethod("replaceObjectByURI", signature = "Level2", definition = function(.Obj
     .TargetURI <- getURI(.ReplacementObject)
     target_uri_level <- getURI_Depth(.TargetURI)
     if (target_uri_level == 0) {
-        stop("Replacing Level2 by itself is not implemented yet")
+        stop("Replacing Level2 by itself is not implemented")
     } else if (target_uri_level == 1) {
         # Replacement target is a Plot which is immediate part of Level2
         .ChangedPlot <- .ReplacementObject
     } else {
         # Replacement target is deeper within the hierarchy
-        .ChangedPlot <- getPlot(.Object, .TargetURI)
-        .ChangedPlot <- replaceObjectByURI(.ChangedPlot, .ReplacementObject)
+        plot_uri <- getPlotName(.TargetURI) %>%
+            Level2URI()
+        .ChangedPlot <- getObjectByURI(.Object, plot_uri)
+        .ChangedPlot <- replaceObjectByURI(.Object = .ChangedPlot, .ReplacementObject)
     }
     .Object <- replaceListObject(.Object, .ChangedPlot)
     .Object
@@ -199,23 +210,6 @@ setMethod("getName", signature = "Level2", definition = function(.Object) {
     as.character(class(.Object))
 })
 
-#' Returns the Plot contained within this object by name or Level2URI
-#' @param .Object Level2 object
-#' @param .URI An Level2URI object or character string with the plot name
-#' @return An object of type Plot
-#' @include getPlot.R
-#' @export
-setMethod("getPlot", signature = "Level2", definition = function(.Object, .Level2URI) {
-    assertthat::assert_that(assertthat::is.string(.Level2URI) || is.Level2URI(.Level2URI))
-    if (class(.Level2URI) == "Level2URI") {
-        plot_name <- getPlotName(.Level2URI)
-    } else {
-        plot_name <- .Level2URI
-    }
-    .Plot <- getPlotList(.Object)[[plot_name]]
-    .Plot
-})
-
 #' Return the list of Plots from an Level2 object
 #'
 #' @param .Object An Level2 object
@@ -224,27 +218,6 @@ setMethod("getPlot", signature = "Level2", definition = function(.Object, .Level
 #' @export
 setMethod("getPlotList", signature = "Level2", definition = function(.Object) {
     return(.Object@Plots)
-})
-
-#' @include getSubPlot.R
-setMethod("getSubPlot", signature = "Level2", definition = function(.Object, .URI) {
-    .Plot <- getPlot(.Object, .URI)
-    .SubPlot <- getSubPlot(.Plot, .URI)
-    .SubPlot
-})
-
-#' @include getDataStructure.R
-setMethod("getDataStructure", signature = "Level2", definition = function(.Object, .Level2URI) {
-    assertthat::assert_that(is.Level2URI(.Level2URI) || "character" %in% class(.Level2URI))
-    if (!is.Level2URI(.Level2URI)) {
-        .Level2URI <- Level2URI(.Level2URI)
-    }
-    Plots <- getPlotList(.Object)
-    plot = getPlotName(.Level2URI)
-    if (!plot %in% names(Plots))
-        stop(sprintf("Plot '%s' is not contained within the Level2 Object", plot))
-    data <- getDataStructure(Plots[[plot]], .Level2URI = .Level2URI)
-    return(data)
 })
 
 #' @include getLocalDirectory.R
@@ -265,13 +238,13 @@ setMethod("getOutputDirectory", signature = "Level2", definition = function(.Obj
 #' @include getObjectByURI.R
 setMethod("getObjectByURI", signature = "Level2", definition = function(.Object, level2_uri) {
     level2_uri <- Level2URI(level2_uri)
-    objects <- list()
     if (getURI_Depth(level2_uri) == 0) {
         return(.Object)
     } else {
-        other_object <- getPlot(.Object, level2_uri) %>%
-            getObjectByURI(level2_uri)
-        return(other_object)
+        plot_name <- getPlotName(level2_uri)
+        plot <- getPlotList(.Object)[[plot_name]]
+        lower_object <- getObjectByURI(.Object = plot, level2_uri)
+        return(lower_object)
     }
 })
 
@@ -344,9 +317,7 @@ setMethod("updateData", signature = "Level2", definition = function(.Object, plo
 
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "Level2", definition = function(.Object) {
-    .Plots <- getPlotList(.Object)
     .Object <- applyToList(.Object, resetToInitialization)
-    .Object@Plots <- list()
     .Object
 })
 
@@ -369,8 +340,6 @@ setMethod("applyToList", signature = "Level2", definition = function(.Object, ap
 
 #' @include saveL2Object.R
 setMethod("saveL2Object", signature = "Level2", definition = function(.Object) {
-    createDirectoryStructure(.Object)
-
     plot.dir <- getLocalDirectory(.Object)
     file.name <- getOutputFile(.Object)
     saveRDS(.Object, file = file.path(plot.dir, file.name))

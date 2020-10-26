@@ -1,5 +1,5 @@
 ########################################################################################################################
-setGeneric("loadCorrectedData", def = function(.Object, sheet.name, years = NULL) {
+setGeneric("loadCorrectedData", def = function(.Object, sheet_names, years = NULL) {
         standardGeneric("loadCorrectedData")
     }
 )
