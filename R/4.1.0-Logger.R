@@ -36,6 +36,15 @@ setMethod("getSourceFileTable", signature = "Logger", definition = function(.Obj
 })
 
 ########################################################################################################################
+setGeneric("setSourceFileTable", def = function(.Object, new_table) {
+  standardGeneric("setSourceFileTable")
+})
+
+setMethod("setSourceFileTable", signature = "Logger", definition = function(.Object, new_table) {
+  .Object@SourceFiles <- new_table
+  .Object
+})
+
 #' @include saveData.R
 setMethod("saveData", signature = "Logger", definition = function(.Object, data) {
   out.dir <- getLocalDirectory(.Object)
@@ -155,6 +164,15 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
   error = function(err) return(geterrmessage()),
   warning = function(w) return(w[["message"]]))
 }
+
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "Logger", definition = function(.Object) {
+  .Object <- getSourceFileTable(.Object) %>%
+    mutate(skip = FALSE) %>%
+    mutate(comment = "") %>%
+    setSourceFileTable(.Object, .)
+  .Object
+})
 
 #' resetToInitialization.R
 setMethod("resetToInitialization", signature = "Logger", definition = function(.Object) {

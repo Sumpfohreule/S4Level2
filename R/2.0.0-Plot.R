@@ -287,6 +287,12 @@ setMethod("createDirectoryStructure", signature = "Plot", definition = function(
     invisible(return(.Object))
 })
 
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "Plot", definition = function(.Object) {
+    .Object <- applyToList(.Object, resetFailedImports)
+    .Object
+})
+
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "Plot", definition = function(.Object) {
     .Object <- applyToList(.Object, apply_function = resetToInitialization)

@@ -186,6 +186,12 @@ setMethod("updateData", signature = "SubPlot", definition = function(.Object) {
     .Object
 })
 
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "SubPlot", definition = function(.Object) {
+    .Object <- applyToList(.Object, resetFailedImports)
+    .Object
+})
+
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "SubPlot", definition = function(.Object) {
     for(logger.name in names(.Object@Loggers)) {

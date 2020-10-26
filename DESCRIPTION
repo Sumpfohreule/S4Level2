@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 1.4.0
+Version: 1.5.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -32,6 +32,7 @@ Collate:
     'saveL2Object.R'
     'applyToList.R'
     'resetToInitialization.R'
+    'resetFailedImports.R'
     'updateData.R'
     'updateFilePaths.R'
     'getData.R'

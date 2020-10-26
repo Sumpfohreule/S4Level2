@@ -96,6 +96,12 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
   .Object
 })
 
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "AccessDB", definition = function(.Object) {
+  # Nothing to change so just return the unchanged object
+  .Object
+})
+
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "AccessDB", definition = function(.Object) {
   .Object <- callNextMethod(.Object)

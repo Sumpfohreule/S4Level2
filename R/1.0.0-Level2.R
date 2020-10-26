@@ -315,6 +315,12 @@ setMethod("updateData", signature = "Level2", definition = function(.Object, plo
     .Object
 })
 
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "Level2", definition = function(.Object) {
+    .Object <- applyToList(.Object, resetFailedImports)
+    .Object
+})
+
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "Level2", definition = function(.Object) {
     .Object <- applyToList(.Object, resetToInitialization)

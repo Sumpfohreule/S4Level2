@@ -7,11 +7,14 @@ level2 <- loadL2Object(data_location)
 
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
+level2 <- resetFailedImports(level2)
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
 output_path <- "/home/polarfalke/Data/Nextcloud_FVA"
+
+
 # TODO: create a summary function to give an overview over the objects
 # TODO: convert RUnit Tests to testthat
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
@@ -36,7 +39,6 @@ output_path <- "/home/polarfalke/Data/Nextcloud_FVA"
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Test where over providing data for getDataForYear was necessary and solve problem
-# TODO: make an update with only error-files possible
 
 
 ########################################################################################################################
