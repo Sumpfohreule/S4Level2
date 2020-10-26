@@ -1,5 +1,5 @@
-data_location <- "/home/polarfalke/Data/Temp/level2_0"
-# data_location <- "w:/level2"
+# data_location <- "/home/polarfalke/Data/Temp/level2_0"
+data_location <- "w:/level2"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
