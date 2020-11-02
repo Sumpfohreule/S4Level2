@@ -1,7 +1,7 @@
 ########################################################################################################################
-createMMFiles <- function(xlsx.file) {
+createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) {
     # Import "Gesamt" tables for all sub plots
-    full_table <- c("Fichte", "Buche", "Freiland") %>%
+    full_table <- sheets %>%
         purrr::map(~ {
             MyUtilities::importAggregateExcelSheet(xlsx.file, .x) %>%
                 mutate(SubPlot = .x)

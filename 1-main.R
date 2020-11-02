@@ -1,5 +1,5 @@
-# data_location <- "/home/polarfalke/Data/Temp/level2_0"
-data_location <- "w:/level2"
+data_location <- "/home/polarfalke/Data/Temp/level2_0"
+# data_location <- "w:/level2"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
@@ -7,12 +7,13 @@ level2 <- loadL2Object(data_location)
 
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
-level2 <- resetFailedImports(level2)
+# level2 <- resetFailedImports(level2)
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
 
 output_path <- "/home/polarfalke/Data/Nextcloud_FVA"
+# output_path <- "W:/Nextcloud"
 
 
 # TODO: create a summary function to give an overview over the objects
