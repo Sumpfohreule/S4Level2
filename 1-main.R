@@ -46,14 +46,14 @@ output_path <- "/home/polarfalke/Data/Nextcloud_FVA"
 # Altensteig
 at_data <- level2 %>%
     getObjectByURI(Level2URI("Altensteig")) %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     as.data.table()
 
 at_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 at_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Altensteig")) %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     createAggregateExcel(out_path = output_path)
 
 
@@ -61,14 +61,14 @@ level2 %>% getObjectByURI(Level2URI("Altensteig")) %>%
 # Conventwald
 co_data <- level2 %>%
     getObjectByURI("Conventwald") %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     as.data.table()
 
 co_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 co_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Conventwald")) %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     createAggregateExcel(out_path = output_path)
 
 

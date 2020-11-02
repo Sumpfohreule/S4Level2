@@ -40,11 +40,11 @@ data_path = "/home/polarfalke/Data/Temp/level2_0"
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles()
 
-.Level2 %>%
+xlsx.file = .Level2 %>%
     getObjectByURI(Level2URI("Rotenfels")) %>%
     getCorrectedAggregatePath() %>%
     file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile(sheets = c("Fichte", "Freiland")) %>%
-    createMMFiles()
+    MyUtilities::getLastModifiedFile() %>%
+    createMMFiles(sheets = c("Fichte", "Freiland"))
 
 accumulateMMFiles(target.year, file.path(getwd(), "Data", "output"))
