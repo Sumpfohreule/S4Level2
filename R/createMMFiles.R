@@ -34,12 +34,14 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
 
     mem_base_table <- full_table %>%
         filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
-    mem_fi_table <- mem_base_table %>%
-        mutate(plot = getEuPlotId(plot.name, "Fichte"))
-    mem_table <- mem_base_table %>%
-        mutate(plot = getEuPlotId(plot.name, "Buche")) %>%
-        bind_rows(mem_fi_table)
-    rm(mem_base_table, mem_fi_table)
+    mem_table <- sheets %>%
+        purrr::discard(~ .x == "Freiland") %>%
+        purrr::map(~ {
+            mem_base_table %>%
+                mutate(plot = getEuPlotId(plot.name, .x))
+        }) %>%
+        bind_rows()
+    rm(mem_base_table)
 
     # Import template for consistent instrument numbers
     template_file <- system.file("extdata",
