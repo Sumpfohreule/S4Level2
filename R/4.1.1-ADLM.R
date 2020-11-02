@@ -21,8 +21,7 @@ setMethod("initialize", signature = "ADLM", definition = function(
 ########################################################################################################################
 #' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "ADLM", definition = function(.Object, path) {
-    data <- readADLM(path)
-    long.table <- melt(data, id.vars = "Datum")
-    data.table::setkey(long.table, variable, Datum)
-    return(long.table)
+    readADLM(path) %>%
+        tidyr::pivot_longer(cols = !Datum, names_to = "variable") %>%
+        arrange(variable, Datum)
 })

@@ -1,4 +1,4 @@
-data_location <- "/home/polarfalke/Data/Temp/level2_2"
+data_location <- "/home/polarfalke/Data/Temp/level2_0"
 # data_location <- "w:/level2"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
@@ -7,9 +7,14 @@ level2 <- loadL2Object(data_location)
 
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
+# level2 <- resetFailedImports(level2)
 level2 <- updateFilePaths(level2)
 level2 <- updateData(level2)
 saveL2Object(level2)
+
+output_path <- "/home/polarfalke/Data/Nextcloud_FVA"
+# output_path <- "W:/Nextcloud"
+
 
 # TODO: create a summary function to give an overview over the objects
 # TODO: convert RUnit Tests to testthat
@@ -35,35 +40,36 @@ saveL2Object(level2)
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data)
 # TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Test where over providing data for getDataForYear was necessary and solve problem
-# TODO: make an update with only error-files possible
 
 
 ########################################################################################################################
 # Altensteig
-at_plot <- level2 %>%
+at_data <- level2 %>%
     getObjectByURI(Level2URI("Altensteig")) %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     as.data.table()
 
-at.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-at.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+at_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Altensteig")) %>%
-    createAggregateExcel(year = 2019)
+    getDataForYear(2020) %>%
+    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
 # Conventwald
 co_data <- level2 %>%
     getObjectByURI("Conventwald") %>%
-    getDataForYear(2019) %>%
+    getDataForYear(2020) %>%
     as.data.table()
 
-co.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-co.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+co_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Conventwald")) %>%
-    createAggregateExcel(year = 2019)
+    getDataForYear(2020) %>%
+    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
@@ -77,55 +83,57 @@ es_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE
 es_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Esslingen")) %>%
-    createAggregateExcel(year = 2019)
+    getDataForYear(2019) %>%
+    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
 # Heidelberg
-hd.data <- level2 %>%
+hd_data <- level2 %>%
     getObjectByURI("Heidelberg") %>%
     getDataForYear(2019) %>%
     as.data.table()
 
-hd.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-hd.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+hd_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+hd_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI("Heidelberg") %>%
-    createAggregateExcel(year = 2019)
+    getDataForYear(2019) %>%
+    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
 # Ochsenhausen
-oc.data <- level2 %>%
+oc_data <- level2 %>%
     getObjectByURI("Ochsenhausen") %>%
     getDataForYear(2019) %>%
     as.data.table()
 
-oc.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-oc.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+oc_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+oc_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 level2 %>% getObjectByURI(Level2URI("Ochsenhausen")) %>%
-    createAggregateExcel(year = 2019)
+    getDataForYear(2019) %>%
+    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
 # Rotenfels
-ro.data <- level2 %>%
+ro_data <- level2 %>%
     getObjectByURI("Rotenfels") %>%
     getDataForYear(2019) %>%
     as.data.table()
-
-ro.data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-ro.data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+ro_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
+ro_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
 # TODO RO Fi DeltaT Daten
 
-level2 %>% getObjectByURI(Level2URI("Rotenfels")) %>%
+aggregate_data <- level2 %>%
+    getObjectByURI(Level2URI("Rotenfels")) %>%
     getDataForYear(2019) %>%
     mutate(value = if_else(
         condition = (variable == "Niederschlag.Casella" &
                          Datum <= as.POSIXct("2019-04-03", tz = "UTC")),
         true = value * 2,
         false = value)) %>%
-    createAggregateExcel(year = 2019,
-                         round.times = FALSE)
+    createAggregateExcel(out_path = output_path)

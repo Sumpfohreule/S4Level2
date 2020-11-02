@@ -3,7 +3,7 @@ devtools::load_all()
 
 ########################################################################################################################
 target.year <- 2019
-data_path = "/home/polarfalke/Data/Temp/level2"
+data_path = "/home/polarfalke/Data/Temp/level2_0"
 .Level2 <- loadL2Object(data_path)
 
 .Level2 %>%
@@ -39,5 +39,12 @@ data_path = "/home/polarfalke/Data/Temp/level2"
     file.path(target.year) %>%
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles()
+
+xlsx.file = .Level2 %>%
+    getObjectByURI(Level2URI("Rotenfels")) %>%
+    getCorrectedAggregatePath() %>%
+    file.path(target.year) %>%
+    MyUtilities::getLastModifiedFile() %>%
+    createMMFiles(sheets = c("Fichte", "Freiland"))
 
 accumulateMMFiles(target.year, file.path(getwd(), "Data", "output"))

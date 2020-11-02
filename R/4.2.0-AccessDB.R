@@ -71,7 +71,8 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
   date.column <- .Object@Date_Column
   MyUtilities::access32BitQuery(db.path,
                                 sql.query = sql.query,
-                                out.file = file.path(out.dir, file.name))
+                                out.file = file.path(out.dir, file.name),
+                                date.col = "Dat_Zeit")
   access.data <- readRDS(file.path(out.dir, file.name))
   access.data[, Proto_Dat := NULL]
   flag.cols <- na.omit(stringr::str_match(names(access.data), "^x_.*"))
@@ -92,6 +93,12 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
 
   saveRDS(access.long, file.path(out.dir, file.name))
   cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
+  .Object
+})
+
+#' @include resetFailedImports.R
+setMethod("resetFailedImports", signature = "AccessDB", definition = function(.Object) {
+  # Nothing to change so just return the unchanged object
   .Object
 })
 
