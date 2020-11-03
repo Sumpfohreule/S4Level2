@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 1.6.0
+Version: 1.6.2
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -55,7 +55,6 @@ Collate:
     'createAndAddPlot.R'
     '1.0.0-Level2.R'
     'getSourceFileTable.R'
-    'loadCorrectedData.R'
     'getDataForYear.R'
     'getSubPlotList.R'
     'getCorrectedAggregatePath.R'
