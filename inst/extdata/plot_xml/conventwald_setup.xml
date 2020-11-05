@@ -19,6 +19,7 @@
     <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/Convent/Convent_Fi_ADLM/csv"/>
     <Mapping pattern="\.Theta\." replacement="_FDR_" origin_date=""/>
     <Mapping pattern="(?&lt;=_FDR_)K$" replacement="X" origin_date=""/>
+    <Mapping pattern="(?&lt;=_FDR_)KR$" replacement="Y" origin_date=""/>
     <Mapping pattern="(?&lt;=_FDR_)L$" replacement="Z" origin_date=""/>
     <Mapping pattern="^Regen" replacement="PR_" origin_date=""/>
   </Logger>
