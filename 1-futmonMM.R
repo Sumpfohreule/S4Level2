@@ -1,7 +1,3 @@
-########################################################################################################################
-devtools::load_all()
-
-########################################################################################################################
 target.year <- 2019
 data_path = "/home/polarfalke/Data/Temp/level2_0"
 .Level2 <- loadL2Object(data_path)
@@ -47,4 +43,4 @@ xlsx.file = .Level2 %>%
     MyUtilities::getLastModifiedFile() %>%
     createMMFiles(sheets = c("Fichte", "Freiland"))
 
-accumulateMMFiles(target.year, file.path(getwd(), "Data", "output"))
+accumulateMMFiles(target.year, output.folder = file.path(getwd(), "data", "output"))
