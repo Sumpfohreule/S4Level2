@@ -44,31 +44,7 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
     rm(mem_base_table)
 
     # Import template for consistent instrument numbers
-    template_file <- system.file("extdata",
-                                 "042013_template.PLM",
-                                 package = "S4Level2",
-                                 mustWork = TRUE)
-    template_col_names <- template_file %>%
-        readr::read_delim(
-            delim = ",",
-            col_names = FALSE,
-            col_types = readr::cols(),
-            trim_ws = TRUE,
-            n_max = 1,
-            guess_max = 1) %>%
-        unlist()
-    template_col_names[1] <- "Sequence"
-    template_col_names[4] <- "instrument_seq_nr"
-    instrument_template <- template_file %>%
-        readr::read_fwf(
-            col_positions = readr::fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
-            col_types = readr::cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
-            skip = 1)
-    names(instrument_template) <- template_col_names
-
-    instrument_template <- instrument_template %>%
-        mutate(SW_pit = profile_pit) %>%
-        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))
+    instrument_template <- .importPlmTemplateFile()
 
     # Join data with instrument id tables
     full.meo.join <- merge(
@@ -286,4 +262,29 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
         na = "",
         fileEncoding = "UTF-8")
     print(paste0("Created ", plm.file))
+}
+
+.importPlmTemplateFile <- function() {
+    template_file <- system.file("extdata", "042013_template.PLM", package = "S4Level2", mustWork = TRUE)
+    template_col_names <- template_file %>%
+        readr::read_delim(
+            delim = ",",
+            col_names = FALSE,
+            col_types = readr::cols(),
+            trim_ws = TRUE,
+            n_max = 1,
+            guess_max = 1) %>%
+        unlist()
+    template_col_names[1] <- "Sequence"
+    template_col_names[4] <- "instrument_seq_nr"
+    instrument_template <- template_file %>%
+        readr::read_fwf(
+            col_positions = readr::fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
+            col_types = readr::cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
+            skip = 1)
+    names(instrument_template) <- template_col_names
+
+    instrument_template %>%
+        mutate(SW_pit = profile_pit) %>%
+        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))
 }
