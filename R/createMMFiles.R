@@ -1,57 +1,20 @@
-########################################################################################################################
-createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) {
+createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), map_function = identity) {
     plot.name <- xlsx.file %>%
         basename() %>%
         stringr::str_match(pattern = "^[[:alpha:]]*(?=_)") %>%
         as.character()
 
     # Import "Gesamt" tables for all sub plots
-    full_table <- sheets %>%
+    final_full_join <- sheets %>%
         purrr::map(~ {
             MyUtilities::importAggregateExcelSheet(xlsx.file, .x) %>%
                 mutate(SubPlot = .x)
             }) %>%
         purrr::map(~ tidyr::pivot_longer(.x, cols = !(Datum | SubPlot), names_to = "variable")) %>%
         bind_rows() %>%
-        mutate(across(SubPlot, as.factor))
-
-    # Import template for cosistent instrument numbers
-    instrument_template <- .importPlmTemplateFile()
-
-    # Separate variable (sensor) names into vertical_position, variable and profile_pit
-    meo_table <- full_table %>%
-        filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
-        tidyr::separate(col = "variable",
-                        into = c("vertical_position", "variable", "profile_pit"),
-                        sep = "(?<!T)_(?!mV)",
-                        extra = "drop",
-                        fill = "left") %>%
-        mutate(vertical_position = as.numeric(vertical_position) / -100) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^T_PF$", replacement = "ST")) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^PF$", replacement = "MP")) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^FDR$", replacement = "WC")) %>%
-        mutate(value = if_else(variable == "MP", true = value / 10, false = value)) %>%
-        nest_by(SubPlot) %>%
-        mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
-        tidyr::unnest(cols = data) %>%
-        mutate(across(!(Datum | value), as.factor)) %>%
-        left_join(instrument_template, c("plot", "variable", "vertical_position", "profile_pit"))
-
-    mem_base_table <- full_table %>%
-        filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
-    final_full_join <- sheets %>%
-        purrr::discard(~ .x == "Freiland") %>%
-        purrr::map(~ {
-            mem_base_table %>%
-                mutate(plot = getEuPlotId(plot.name, .x))
-        }) %>%
-        bind_rows() %>%
-        mutate(plot = as.factor(plot)) %>%
-        left_join(instrument_template, by = c("plot", "variable")) %>%
-        bind_rows(meo_table) %>%
-        data.table()
-    setkey(final_full_join, SubPlot, variable, vertical_position, profile_pit)
-    rm(full_table, mem_base_table, instrument_template, meo_table)
+        mutate(across(SubPlot, as.factor)) %>%
+        map_function() %>%
+        .importMMData(plot.name, sheets)
 
     # Base table with all columns for mem and plm accumulated with completeness calculation of values
     base.table <- final_full_join[, .(
@@ -256,6 +219,46 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
         na = "",
         fileEncoding = "UTF-8")
     print(paste0("Created ", plm.file))
+}
+
+.importMMData <- function(full_table, plot.name, sheets) {
+    # Import template for consistent instrument numbers
+    instrument_template <- .importPlmTemplateFile()
+
+    # Separate variable (sensor) names into vertical_position, variable and profile_pit
+    meo_table <- full_table %>%
+        filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
+        tidyr::separate(col = "variable",
+                        into = c("vertical_position", "variable", "profile_pit"),
+                        sep = "(?<!T)_(?!mV)",
+                        extra = "drop",
+                        fill = "left") %>%
+        mutate(vertical_position = as.numeric(vertical_position) / -100) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^T_PF$", replacement = "ST")) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^PF$", replacement = "MP")) %>%
+        mutate(variable = stringr::str_replace(variable, pattern = "^FDR$", replacement = "WC")) %>%
+        mutate(value = if_else(variable == "MP", true = value / 10, false = value)) %>%
+        nest_by(SubPlot) %>%
+        mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
+        tidyr::unnest(cols = data) %>%
+        mutate(across(!(Datum | value), as.factor)) %>%
+        left_join(instrument_template, c("plot", "variable", "vertical_position", "profile_pit"))
+
+    mem_base_table <- full_table %>%
+        filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
+    final_full_join <- sheets %>%
+        purrr::discard(~ .x == "Freiland") %>%
+        purrr::map(~ {
+            mem_base_table %>%
+                mutate(plot = getEuPlotId(plot.name, .x))
+        }) %>%
+        bind_rows() %>%
+        mutate(plot = as.factor(plot)) %>%
+        left_join(instrument_template, by = c("plot", "variable")) %>%
+        bind_rows(meo_table) %>%
+        data.table()
+    setkey(final_full_join, SubPlot, variable, vertical_position, profile_pit)
+    final_full_join
 }
 
 .importPlmTemplateFile <- function() {
