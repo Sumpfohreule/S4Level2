@@ -1,5 +1,10 @@
 ########################################################################################################################
 createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) {
+    plot.name <- xlsx.file %>%
+        basename() %>%
+        stringr::str_match(pattern = "^[[:alpha:]]*(?=_)") %>%
+        as.character()
+
     # Import "Gesamt" tables for all sub plots
     full_table <- sheets %>%
         purrr::map(~ {
@@ -10,10 +15,9 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
         bind_rows() %>%
         mutate(across(SubPlot, as.factor))
 
-    plot.name <- xlsx.file %>%
-        basename() %>%
-        stringr::str_match(pattern = "^[[:alpha:]]*(?=_)") %>%
-        as.character()
+    # Import template for cosistent instrument numbers
+    instrument_template <- .importPlmTemplateFile()
+
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
     meo_table <- full_table %>%
         filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
@@ -30,37 +34,27 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
         nest_by(SubPlot) %>%
         mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
         tidyr::unnest(cols = data) %>%
-        mutate(across(!(Datum | value), as.factor))
+        mutate(across(!(Datum | value), as.factor)) %>%
+        left_join(instrument_template, c("plot", "variable", "vertical_position", "profile_pit"))
 
     mem_base_table <- full_table %>%
         filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
-    mem_table <- sheets %>%
+    final_full_join <- sheets %>%
         purrr::discard(~ .x == "Freiland") %>%
         purrr::map(~ {
             mem_base_table %>%
                 mutate(plot = getEuPlotId(plot.name, .x))
         }) %>%
-        bind_rows()
-    rm(mem_base_table)
-
-    # Import template for consistent instrument numbers
-    instrument_template <- .importPlmTemplateFile()
-
-    # Join data with instrument id tables
-    full.meo.join <- merge(
-        x = meo_table,
-        y = instrument_template,
-        by = c("plot", "variable", "vertical_position", "profile_pit"))
-    full.mem.join <- merge(
-        x = mem_table,
-        y = instrument_template,
-        by = c("plot", "variable"))
-    final.full.join <- rbindlist(list(full.meo.join, full.mem.join), use.names = TRUE, fill = TRUE)
-    rm(instrument_template, full.meo.join, full.mem.join)
-    setkey(final.full.join, SubPlot, variable, vertical_position, profile_pit)
+        bind_rows() %>%
+        mutate(plot = as.factor(plot)) %>%
+        left_join(instrument_template, by = c("plot", "variable")) %>%
+        bind_rows(meo_table) %>%
+        data.table()
+    setkey(final_full_join, SubPlot, variable, vertical_position, profile_pit)
+    rm(full_table, mem_base_table, instrument_template, meo_table)
 
     # Base table with all columns for mem and plm accumulated with completeness calculation of values
-    base.table <- final.full.join[, .(
+    base.table <- final_full_join[, .(
             Sequence = as.numeric(NA),
             country = unique(country),
             location = unique(location),
@@ -109,12 +103,12 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
 
     # Create sensor specific mean, sum, min and max tables
     inst.mean <- c("AT", "RH", "WS", "SR", "UR", "ST", "MP", "WC")
-    mem.mean.table <- final.full.join[variable %in% inst.mean, .(
+    mem.mean.table <- final_full_join[variable %in% inst.mean, .(
             mean_sum = round(mean(value, na.rm = TRUE), digits = 2)),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
 
     inst.sum <- c("PR" , "TF" , "SF")
-    mem.sum.table <- final.full.join[variable %in% inst.sum, .(
+    mem.sum.table <- final_full_join[variable %in% inst.sum, .(
             mean_sum = round(sum(value, na.rm = TRUE), digits = 2)),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
     mean.sum.table <- rbindlist(list(mem.mean.table, mem.sum.table), use.names = TRUE, fill = FALSE)
@@ -122,13 +116,13 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
     rm(mem.mean.table, mem.sum.table)
 
     inst.min <- c("AT", "RH", "ST", "MP", "WC")
-    mem.min.table <- final.full.join[variable %in% inst.min, .(
+    mem.min.table <- final_full_join[variable %in% inst.min, .(
             min = suppressWarnings(round(min(value, na.rm = TRUE), digits = 2))),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
     mem.min.table[is.infinite(min), min := NA]
 
     inst.max <- c("AT", "RH", "WS", "ST", "MP", "WC")
-    mem.max.table <- final.full.join[variable %in% inst.max, .(
+    mem.max.table <- final_full_join[variable %in% inst.max, .(
             max = suppressWarnings(round(max(value, na.rm = TRUE), digits = 2))),
         by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
     mem.max.table[is.infinite(max), max := NA]
@@ -286,5 +280,6 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland")) 
 
     instrument_template %>%
         mutate(SW_pit = profile_pit) %>%
-        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$"))
+        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$")) %>%
+        mutate(profile_pit = as.factor(profile_pit))
 }
