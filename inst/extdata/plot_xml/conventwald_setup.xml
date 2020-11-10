@@ -11,6 +11,9 @@
     <Mapping pattern="_y$" replacement="_Y" origin_date=""/>
     <Mapping pattern="_z$" replacement="_Z" origin_date=""/>
   </Logger>
+  <Logger name="AccessDB" type="AccessDB" sub_plot="Freiland" db_table_name="DL3_WFI2" date_column="Dat_Zeit">
+    <Source_Path path="O:/PROJEKT/CONVENT/LOGDATEN/DBDAT/Conventwald.mdb"/>
+  </Logger>
   <Logger name="Envilog" type="Envilog" sub_plot="Fichte">
     <Source_Path path="O:/PROJEKT/CONVENT/LOGDATEN/ROHDAT/DL4-WFI4/wfi4_pF_meter_csv"/>
     <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/Convent/Co_Fi_envilog/Rohdata"/>

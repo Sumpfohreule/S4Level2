@@ -16,6 +16,9 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # output_path <- "W:/Nextcloud"
 
 
+# FIXME: melt.data.table warning with new AccessDB (Co Freiland)
+# FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
+# TODO: updateInitialization function for added loggers etc.
 # TODO: create a summary function to give an overview over the objects
 # TODO: convert RUnit Tests to testthat
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
