@@ -47,20 +47,7 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
             plot,
             date_observation = as.Date(Datum))]
 
-    mem.fields <- c(
-        "Sequence",
-        "plot",
-        "instrument_seq_nr",
-        "variable",
-        "date_observation",
-        "mean_sum",
-        "min",
-        "max",
-        "completeness",
-        "origin",
-        "status",
-        "other_observations")
-    non.value.mem.fields <- setdiff(mem.fields, c("mean_sum", "min", "max"))
+    non.value.mem.fields <- setdiff(S4Level2::MEM_FIELDS, c("mean_sum", "min", "max"))
     # Create "base" table with static information and calculated completeness
     mem.base.table <- base.table[, ..non.value.mem.fields]
 
@@ -120,7 +107,7 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         by = .(instrument_seq_nr)][empty == TRUE, instrument_seq_nr]
     mem.final.table <- mem.final.table[!instrument_seq_nr %in% empty.instruments]
     setkey(mem.final.table, plot, instrument_seq_nr, date_observation)
-    setcolorder(mem.final.table, neworder = mem.fields)
+    setcolorder(mem.final.table, neworder = S4Level2::MEM_FIELDS)
     data.year <- mem.final.table[, unique(year(date_observation))]
     plm.date.table <- mem.final.table[!is.na(mean_sum), .(
             date_monitoring_first = min(date_observation, na.rm = TRUE),
@@ -147,27 +134,8 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         fileEncoding = "UTF-8")
     print(paste0("Created ", mem.file))
 
-    plm.fields <- c(
-        "Sequence",
-        "country",
-        "plot",
-        "instrument_seq_nr",
-        "location",
-        "latitude",
-        "longitude",
-        "altitude",
-        "variable",
-        "vertical_position",
-        "code_recording",
-        "scanning",
-        "storing",
-        "SW_pit",
-        "date_monitoring_first",
-        "date_monitoring_last",
-        "measuring_days",
-        "instrument_description",
-        "other_observations")
-    non.date.plm.fields <- setdiff(plm.fields,
+
+    non.date.plm.fields <- setdiff(S4Level2::PLM_FIELDS,
         c("date_monitoring_first", "date_monitoring_last", "measuring_days"))
     plm.base.table <- base.table[, ..non.date.plm.fields]
     plm.base.table <- unique(plm.base.table)
@@ -198,7 +166,7 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         by = c("plot"))
 
     setkey(plm_fixed_location_final, plot, instrument_seq_nr)
-    setcolorder(plm_fixed_location_final, plm.fields)
+    setcolorder(plm_fixed_location_final, S4Level2::PLM_FIELDS)
 
     # Removing plm sensors if no (correct) value was measured the whole year
     plm_fixed_location_final <- plm_fixed_location_final[!is.na(date_monitoring_first)]
