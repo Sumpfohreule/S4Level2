@@ -46,8 +46,6 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         relocate(S4Level2::MEM_FIELDS) %>%
         rename(`!Sequence` = Sequence)
 
-
-
     data_year <- stringr::str_match(xlsx.file, "(?<=/)[0-9]{4}(?=/)") %>%
         as.character()
 
@@ -95,9 +93,6 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
 
 
 .importMMData <- function(full_table, plot.name, sheets) {
-    # Import template for consistent instrument numbers
-    instrument_template <- .importPlmTemplateFile()
-
     # Separate variable (sensor) names into vertical_position, variable and profile_pit
     meo_table <- full_table %>%
         filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
@@ -115,7 +110,7 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
         tidyr::unnest(cols = data) %>%
         mutate(across(!(Datum | value), as.factor)) %>%
-        left_join(instrument_template, c("plot", "variable", "vertical_position", "profile_pit"))
+        left_join(S4Level2::PLM_TEMPLATE, c("plot", "variable", "vertical_position", "profile_pit"))
 
     mem_base_table <- full_table %>%
         filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
@@ -132,30 +127,4 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         data.table()
     setkey(final_full_join, SubPlot, variable, vertical_position, profile_pit)
     final_full_join
-}
-
-.importPlmTemplateFile <- function() {
-    template_file <- system.file("extdata", "042013_template.PLM", package = "S4Level2", mustWork = TRUE)
-    template_col_names <- template_file %>%
-        readr::read_delim(
-            delim = ",",
-            col_names = FALSE,
-            col_types = readr::cols(),
-            trim_ws = TRUE,
-            n_max = 1,
-            guess_max = 1) %>%
-        unlist()
-    template_col_names[1] <- "Sequence"
-    template_col_names[4] <- "instrument_seq_nr"
-    instrument_template <- template_file %>%
-        readr::read_fwf(
-            col_positions = readr::fwf_widths(c(4, 3, 5, 4, 2, 8, 8, 3, 3, 7, 3, 4, 5, 6, 7, 7, 4, 13, NA)),
-            col_types = readr::cols(X2 = "i", X3 = "f", X6 = "c", X7 = "c", X10 = "c"),
-            skip = 1)
-    names(instrument_template) <- template_col_names
-
-    instrument_template %>%
-        mutate(SW_pit = profile_pit) %>%
-        mutate(profile_pit = stringr::str_match(profile_pit, pattern = "[XYZ]$")) %>%
-        mutate(profile_pit = as.factor(profile_pit))
 }
