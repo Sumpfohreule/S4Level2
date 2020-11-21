@@ -30,7 +30,7 @@ setMethod("initialize", signature = "AccessDB", definition = function(
 ########################################################################################################################
 #' @include setLastImportDate.R
 setMethod("setLastImportDate", signature = "AccessDB", definition = function(.Object, posixct_date) {
-  if (!MyUtilities::is.POSIXct(posixct_date)) {
+  if (!lubridate::is.POSIXct(posixct_date)) {
     stop("posixct_date is not of class POSIXct")
   }
   .Object@Last_Import_Date <- posixct_date
