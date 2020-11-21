@@ -9,185 +9,90 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         purrr::map(~ {
             MyUtilities::importAggregateExcelSheet(xlsx.file, .x) %>%
                 mutate(SubPlot = .x)
-            }) %>%
+        }) %>%
         purrr::map(~ tidyr::pivot_longer(.x, cols = !(Datum | SubPlot), names_to = "variable")) %>%
         bind_rows() %>%
         mutate(across(SubPlot, as.factor)) %>%
         map_function() %>%
         .importMMData(plot.name, sheets)
 
-    # Base table with all columns for mem and plm accumulated with completeness calculation of values
-    base.table <- final_full_join[, .(
-            Sequence = as.numeric(NA),
-            country = unique(country),
-            location = unique(location),
-            latitude = unique(latitude),
-            longitude = unique(longitude),
-            altitude = unique(altitude),
-            variable = unique(variable),
-            vertical_position = unique(vertical_position),
-            code_recording = 50,
-            scanning = unique(scanning),
-            storing = unique(storing),
-            SW_pit = unique(SW_pit),
-            date_monitoring_first = NA,
-            date_monitoring_last = NA,
-            measuring_days = NA,
-            instrument_description = unique(instrument_description),
-            other_observations = unique(other_observations),
-            mean_sum = NA,
-            min = NA,
-            max = NA,
-            completeness = round(sum(!is.na(value)) * 100 / length(value), digits = 0),
-            origin = 1,
-            status = 2,
-            other_observations = as.character(NA)),
-        by = .(
-            instrument_seq_nr,
-            plot,
-            date_observation = as.Date(Datum))]
+    mem_final_table <- final_full_join %>%
+        mutate(date_observation = as.Date(Datum)) %>%
+        select(-Datum) %>%
+        group_by(plot, instrument_seq_nr, date_observation) %>%
+        summarise(variable = unique(variable),
+                  min = if_else(variable %in% c("AT", "RH", "ST", "MP", "WC"),
+                                true = MyUtilities::min_with_default(value),
+                                false = as.numeric(NA)),
+                  max = if_else(variable %in% c("AT", "RH", "WS", "ST", "MP", "WC"),
+                                true = MyUtilities::max_with_default(value),
+                                false = as.numeric(NA)),
+                  mean_sum = if_else(variable %in% c("AT", "RH", "WS", "SR", "UR", "ST", "MP", "WC"),
+                                     true = MyUtilities::mean_with_default(value),
+                                     false = MyUtilities::sum_with_default(value)),
+                  completeness = round(sum(!is.na(value)) * 100 / length(value), digits = 0),
+                  origin = 1,
+                  status = 2,
+                  other_observations = unique(other_observations)) %>%
+        filter(any(!is.na(mean_sum))) %>%
+        filter(any(!is.na(instrument_seq_nr))) %>%
+        ungroup() %>%
+        mutate(Sequence = 1:n()) %>%
+        mutate(across(date_observation, ~ format(.x, "%d%m%y"))) %>%
+        mutate(across(origin | status, ~ if_else(completeness == 0,
+                                                 true = 9,
+                                                 false = .x))) %>%
+        mutate(across(mean_sum | min | max, round, digits = 2)) %>%
+        relocate(S4Level2::MEM_FIELDS) %>%
+        rename(`!Sequence` = Sequence)
 
-    non.value.mem.fields <- setdiff(S4Level2::MEM_FIELDS, c("mean_sum", "min", "max"))
-    # Create "base" table with static information and calculated completeness
-    mem.base.table <- base.table[, ..non.value.mem.fields]
 
-    # Create sensor specific mean, sum, min and max tables
-    inst.mean <- c("AT", "RH", "WS", "SR", "UR", "ST", "MP", "WC")
-    mem.mean.table <- final_full_join[variable %in% inst.mean, .(
-            mean_sum = round(mean(value, na.rm = TRUE), digits = 2)),
-        by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
 
-    inst.sum <- c("PR" , "TF" , "SF")
-    mem.sum.table <- final_full_join[variable %in% inst.sum, .(
-            mean_sum = round(sum(value, na.rm = TRUE), digits = 2)),
-        by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
-    mean.sum.table <- rbindlist(list(mem.mean.table, mem.sum.table), use.names = TRUE, fill = FALSE)
-    mean.sum.table[is.nan(mean_sum), mean_sum := NA]
-    rm(mem.mean.table, mem.sum.table)
-
-    inst.min <- c("AT", "RH", "ST", "MP", "WC")
-    mem.min.table <- final_full_join[variable %in% inst.min, .(
-            min = suppressWarnings(round(min(value, na.rm = TRUE), digits = 2))),
-        by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
-    mem.min.table[is.infinite(min), min := NA]
-
-    inst.max <- c("AT", "RH", "WS", "ST", "MP", "WC")
-    mem.max.table <- final_full_join[variable %in% inst.max, .(
-            max = suppressWarnings(round(max(value, na.rm = TRUE), digits = 2))),
-        by = .(instrument_seq_nr, plot, date_observation = as.Date(Datum))]
-    mem.max.table[is.infinite(max), max := NA]
-
-    mm.key.columns <- c("plot", "instrument_seq_nr", "date_observation")
-    min.max.table <- merge(
-        x = mem.min.table,
-        y = mem.max.table,
-        all = TRUE,
-        by = mm.key.columns)
-    rm(mem.min.table, mem.max.table)
-
-    mem.final.table <- merge(
-        x = merge(
-            x = mem.base.table,
-            y = mean.sum.table,
-            by = mm.key.columns),
-        y = min.max.table,
-        all = TRUE,
-        by = mm.key.columns)
-    # Setting origin and status to 9 (no data) if completeness is 0.
-    # setting mean_sum to NA because sum(NA, na.rm = TRUE) equals 0 and not NA
-    mem.final.table[completeness == 0, ":=" (
-            mean_sum = NA,
-            min = NA,
-            max = NA,
-            origin = 9,
-            status = 9)]
-
-    empty.instruments <- mem.final.table[,
-        .(empty = sum(completeness) == 0),
-        by = .(instrument_seq_nr)][empty == TRUE, instrument_seq_nr]
-    mem.final.table <- mem.final.table[!instrument_seq_nr %in% empty.instruments]
-    setkey(mem.final.table, plot, instrument_seq_nr, date_observation)
-    setcolorder(mem.final.table, neworder = S4Level2::MEM_FIELDS)
-    data.year <- mem.final.table[, unique(year(date_observation))]
-    plm.date.table <- mem.final.table[!is.na(mean_sum), .(
-            date_monitoring_first = min(date_observation, na.rm = TRUE),
-            date_monitoring_last = max(date_observation, na.rm = TRUE)),
-        by = c("plot", "instrument_seq_nr")]
-    plm.date.table[, measuring_days := as.numeric(date_monitoring_last - date_monitoring_first + 1)]
-
-    mem.final.table[, date_observation := format(date_observation, "%d%m%y")]
-    mem.final.table[, Sequence := 1:.N]
-    setnames(mem.final.table,
-        old = "Sequence",
-        new = "!Sequence")
+    data_year <- stringr::str_match(xlsx.file, "(?<=/)[0-9]{4}(?=/)") %>%
+        as.character()
 
     output.file.path <- file.path("data", "output", plot.name)
     dir.create(output.file.path, showWarnings = FALSE)
-    mem.file <- file.path(output.file.path, paste0(plot.name, "_", data.year, ".MEM"))
-    write.table(mem.final.table,
-        file = mem.file,
-        quote = FALSE,
-        sep = ";",
-        dec = ".",
-        row.names = FALSE,
-        na = "",
-        fileEncoding = "UTF-8")
+    mem.file <- file.path(output.file.path, paste0(plot.name, "_", data_year, ".MEM"))
+    write.table(mem_final_table,
+                file = mem.file,
+                quote = FALSE,
+                sep = ";",
+                dec = ".",
+                row.names = FALSE,
+                na = "",
+                fileEncoding = "UTF-8")
     print(paste0("Created ", mem.file))
 
+    plm_final_table <- mem_final_table %>%
+        filter(!is.na(mean_sum)) %>%
+        group_by(plot, instrument_seq_nr, variable) %>%
+        mutate(across(date_observation, lubridate::dmy)) %>%
+        summarise(
+            date_monitoring_first = min(date_observation),
+            date_monitoring_last = max(date_observation)) %>%
+        mutate(measuring_days = date_monitoring_last - date_monitoring_first + 1) %>%
+        mutate(across(date_monitoring_first | date_monitoring_last, ~ format(.x, "%d%m%y"))) %>%
+        mutate(across(measuring_days, as.numeric)) %>%
+        inner_join(S4Level2::PLM_TEMPLATE, by = c("plot", "instrument_seq_nr", "variable")) %>%
+        filter(!is.na(date_monitoring_first)) %>%
+        ungroup() %>%
+        mutate(Sequence = 1:n()) %>%
+        relocate(S4Level2::PLM_FIELDS) %>%
+        rename(`!Sequence` = Sequence)
 
-    non.date.plm.fields <- setdiff(S4Level2::PLM_FIELDS,
-        c("date_monitoring_first", "date_monitoring_last", "measuring_days"))
-    plm.base.table <- base.table[, ..non.date.plm.fields]
-    plm.base.table <- unique(plm.base.table)
-    plm.final.table <- merge(
-        x = plm.base.table,
-        y = plm.date.table,
-        all.x = TRUE,
-        by = c("plot", "instrument_seq_nr"))
-
-    # Replacing location information (Coordinates, height slope etc.) with updated data for all years
-    corrected_coordinate_file <- system.file("extdata",
-                                             "Koordinaten_Stand_2019_05.csv",
-                                             package = "S4Level2",
-                                             mustWork = TRUE)
-    new_location_data <- readr::read_csv2(
-        file = file.path(corrected_coordinate_file),
-        col_types = readr::cols_only(
-            plot = readr::col_character(),
-            latitude = readr::col_character(),
-            longitude = readr::col_character(),
-            altitude = readr::col_double()))
-    plm.final.table <- plm.final.table %>%
-        select(-latitude, -longitude, -altitude)
-    plm_fixed_location_final <- merge(
-        x = plm.final.table,
-        y = new_location_data,
-        all.x = TRUE,
-        by = c("plot"))
-
-    setkey(plm_fixed_location_final, plot, instrument_seq_nr)
-    setcolorder(plm_fixed_location_final, S4Level2::PLM_FIELDS)
-
-    # Removing plm sensors if no (correct) value was measured the whole year
-    plm_fixed_location_final <- plm_fixed_location_final[!is.na(date_monitoring_first)]
-    plm_fixed_location_final[, ":=" (
-            date_monitoring_first = format(date_monitoring_first, "%d%m%y"),
-            date_monitoring_last = format(date_monitoring_last, "%d%m%y"))]
-    plm_fixed_location_final[,  Sequence := 1:.N]
-    setnames(plm_fixed_location_final,
-        old = "Sequence",
-        new = "!Sequence")
-    plm.file <- file.path(output.file.path, paste0(plot.name, "_", data.year, ".PLM"))
-    write.table(plm_fixed_location_final,
-        file = plm.file,
-        quote = FALSE,
-        sep = ";",
-        dec = ".",
-        row.names = FALSE,
-        na = "",
-        fileEncoding = "UTF-8")
+    plm.file <- file.path(output.file.path, paste0(plot.name, "_", data_year, ".PLM"))
+    write.table(plm_final_table,
+                file = plm.file,
+                quote = FALSE,
+                sep = ";",
+                dec = ".",
+                row.names = FALSE,
+                na = "",
+                fileEncoding = "UTF-8")
     print(paste0("Created ", plm.file))
 }
+
 
 .importMMData <- function(full_table, plot.name, sheets) {
     # Import template for consistent instrument numbers
