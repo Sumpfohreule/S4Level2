@@ -1,42 +1,91 @@
-createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), map_function = identity) {
-    plot.name <- xlsx.file %>%
+createMMFiles <- function(level2_object, plot_name, selected_year, output_path, sheets = c("Fichte", "Buche", "Freiland")) {
+    level2_object %>% getMMSourcePath(plot_name, selected_year) %>%
+        createMemBaseTable(sheets = sheets) %>%
+        aggregateMemTable() %>%
+        writeMMFile(file_path = sprintf("%s/%s_%d.MEM", output_path, plot_name, selected_year), return = TRUE) %>%
+        createPlmTable() %>%
+        writeMMFile(sprintf("%s/%s_%d.PLM", output_path, plot_name, selected_year))
+}
+
+getMMSourcePath <- function(level2_object, plot_name, selected_year) {
+    level2_object %>%
+        getObjectByURI(Level2URI(plot_name)) %>%
+        getCorrectedAggregatePath() %>%
+        file.path(selected_year) %>%
+        MyUtilities::getLastModifiedFile()
+}
+
+createMemBaseTable <- function(mem_source_path, sheets = c("Buche", "Fichte", "Freiland")) {
+    plot_name <- mem_source_path %>%
         basename() %>%
-        stringr::str_match(pattern = "^[[:alpha:]]*(?=_)") %>%
+        stringr::str_match(pattern = "^[[:alpha:]]+") %>%
         as.character()
-
-    # Import "Gesamt" tables for all sub plots
-    final_full_join <- sheets %>%
-        purrr::map(~ {
-            MyUtilities::importAggregateExcelSheet(xlsx.file, .x) %>%
-                mutate(SubPlot = .x)
-        }) %>%
+    # Import raw data
+    mem_source_data <- sheets %>%
+        purrr::map(~ MyUtilities::importAggregateExcelSheet(mem_source_path, .x) %>%
+                       mutate(SubPlot = .x)) %>%
         purrr::map(~ tidyr::pivot_longer(.x, cols = !(Datum | SubPlot), names_to = "variable")) %>%
-        bind_rows() %>%
-        mutate(across(SubPlot, as.factor)) %>%
-        map_function() %>%
-        .importMMData(plot.name, sheets)
+        bind_rows()
 
-    mem_final_table <- final_full_join %>%
+    # Create MEM base table
+    old_meo_converted <- mem_source_data %>%
+        filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
+        tidyr::separate(col = "variable",
+                        into = c("vertical_position", "variable", "profile_pit"),
+                        sep = "(?<!T)_(?!mV)",
+                        extra = "drop",
+                        fill = "left") %>%
+        mutate(vertical_position = as.numeric(vertical_position) / -100) %>%
+        mutate(across(vertical_position | variable | profile_pit, as.factor)) %>%
+        mutate(variable = recode_factor(variable, T_PF = "ST", PF = "MP", FDR = "WC")) %>%
+        mutate(value = if_else(variable == "MP", true = value / 10, false = value)) %>%
+        nest_by(SubPlot) %>%
+        mutate(plot = getEuPlotId(plot_name, SubPlot)) %>%
+        tidyr::unnest(cols = data) %>%
+        ungroup() %>%
+        mutate(across(SubPlot | plot, as.factor)) %>%
+        inner_join(S4Level2::PLM_TEMPLATE %>% mutate(profile_pit = as.character(stringr::str_match(SW_pit,"[XYZ]$"))),
+                   by = c("plot", "variable", "profile_pit", "vertical_position"))
+    mem_converted <- mem_source_data %>%
+        filter(variable %in% MEM_SENSORS)
+    output_table <- sheets %>%
+        purrr::discard(~ .x == "Freiland") %>%
+        purrr::map(~ {
+            mem_converted %>%
+                mutate(plot = getEuPlotId(plot_name, .x))
+        }) %>%
+        bind_rows() %>%
+        mutate(plot = as.factor(plot)) %>%
+        inner_join(S4Level2::PLM_TEMPLATE, by = c("plot", "variable")) %>%
+        bind_rows(old_meo_converted) %>%
+        arrange(plot, SubPlot, variable, profile_pit, -as.numeric(vertical_position), Datum)
+    return(output_table)
+}
+
+# Aggregate MEM base table and join missing columns
+aggregateMemTable <- function(mem_base_table) {
+    output_table <- mem_base_table %>%
         mutate(date_observation = as.Date(Datum)) %>%
         select(-Datum) %>%
-        group_by(plot, instrument_seq_nr, date_observation) %>%
+        group_by(plot, variable, instrument_seq_nr, date_observation) %>%
+        # group_by(plot, variable, profile_pit, vertical_position, date_observation) %>%
         summarise(variable = unique(variable),
-                  min = if_else(variable %in% c("AT", "RH", "ST", "MP", "WC"),
+                  min = if_else(variable %in% S4Level2::MM_MIN_SENSORS,
                                 true = MyUtilities::min_with_default(value),
                                 false = as.numeric(NA)),
-                  max = if_else(variable %in% c("AT", "RH", "WS", "ST", "MP", "WC"),
+                  max = if_else(variable %in% S4Level2::MM_MAX_SENSORS,
                                 true = MyUtilities::max_with_default(value),
                                 false = as.numeric(NA)),
-                  mean_sum = if_else(variable %in% c("AT", "RH", "WS", "SR", "UR", "ST", "MP", "WC"),
+                  mean_sum = if_else(variable %in% S4Level2::MM_MEAN_SENSORS,
                                      true = MyUtilities::mean_with_default(value),
                                      false = MyUtilities::sum_with_default(value)),
                   completeness = round(sum(!is.na(value)) * 100 / length(value), digits = 0),
                   origin = 1,
                   status = 2,
                   other_observations = unique(other_observations)) %>%
-        filter(any(!is.na(mean_sum))) %>%
-        filter(any(!is.na(instrument_seq_nr))) %>%
+        filter(!all(is.na(mean_sum))) %>%
         ungroup() %>%
+        arrange(plot, instrument_seq_nr, variable, date_observation) %>%
         mutate(Sequence = 1:n()) %>%
         mutate(across(date_observation, ~ format(.x, "%d%m%y"))) %>%
         mutate(across(origin | status, ~ if_else(completeness == 0,
@@ -45,24 +94,27 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         mutate(across(mean_sum | min | max, round, digits = 2)) %>%
         relocate(S4Level2::MEM_FIELDS) %>%
         rename(`!Sequence` = Sequence)
+}
 
-    data_year <- stringr::str_match(xlsx.file, "(?<=/)[0-9]{4}(?=/)") %>%
-        as.character()
-
-    output.file.path <- file.path("data", "output", plot.name)
-    dir.create(output.file.path, showWarnings = FALSE)
-    mem.file <- file.path(output.file.path, paste0(plot.name, "_", data_year, ".MEM"))
-    write.table(mem_final_table,
-                file = mem.file,
+# Save
+writeMMFile <- function(mm_data, file_path, return = FALSE) {
+    dir.create(dirname(file_path), showWarnings = FALSE)
+    write.table(mm_data,
+                file = file_path,
                 quote = FALSE,
                 sep = ";",
                 dec = ".",
                 row.names = FALSE,
                 na = "",
                 fileEncoding = "UTF-8")
-    print(paste0("Created ", mem.file))
+    print(paste0("Created ", file_path))
+    if (isTRUE(return)) {
+        return(mm_data)
+    }
+}
 
-    plm_final_table <- mem_final_table %>%
+createPlmTable <- function(mem_table) {
+    plm_output_table <- mem_table %>%
         filter(!is.na(mean_sum)) %>%
         group_by(plot, instrument_seq_nr, variable) %>%
         mutate(across(date_observation, lubridate::dmy)) %>%
@@ -78,53 +130,5 @@ createMMFiles <- function(xlsx.file, sheets = c("Fichte", "Buche", "Freiland"), 
         mutate(Sequence = 1:n()) %>%
         relocate(S4Level2::PLM_FIELDS) %>%
         rename(`!Sequence` = Sequence)
-
-    plm.file <- file.path(output.file.path, paste0(plot.name, "_", data_year, ".PLM"))
-    write.table(plm_final_table,
-                file = plm.file,
-                quote = FALSE,
-                sep = ";",
-                dec = ".",
-                row.names = FALSE,
-                na = "",
-                fileEncoding = "UTF-8")
-    print(paste0("Created ", plm.file))
-}
-
-
-.importMMData <- function(full_table, plot.name, sheets) {
-    # Separate variable (sensor) names into vertical_position, variable and profile_pit
-    meo_table <- full_table %>%
-        filter(stringr::str_detect(variable, "[0-9]{2}_(PF|FDR|T_PF)_[XYZ]")) %>%
-        tidyr::separate(col = "variable",
-                        into = c("vertical_position", "variable", "profile_pit"),
-                        sep = "(?<!T)_(?!mV)",
-                        extra = "drop",
-                        fill = "left") %>%
-        mutate(vertical_position = as.numeric(vertical_position) / -100) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^T_PF$", replacement = "ST")) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^PF$", replacement = "MP")) %>%
-        mutate(variable = stringr::str_replace(variable, pattern = "^FDR$", replacement = "WC")) %>%
-        mutate(value = if_else(variable == "MP", true = value / 10, false = value)) %>%
-        nest_by(SubPlot) %>%
-        mutate(plot = getEuPlotId(plot.name, SubPlot)) %>%
-        tidyr::unnest(cols = data) %>%
-        mutate(across(!(Datum | value), as.factor)) %>%
-        left_join(S4Level2::PLM_TEMPLATE, c("plot", "variable", "vertical_position", "profile_pit"))
-
-    mem_base_table <- full_table %>%
-        filter(variable %in% c("AT", "RH", "WS", "WD", "SR", "PR"))
-    final_full_join <- sheets %>%
-        purrr::discard(~ .x == "Freiland") %>%
-        purrr::map(~ {
-            mem_base_table %>%
-                mutate(plot = getEuPlotId(plot.name, .x))
-        }) %>%
-        bind_rows() %>%
-        mutate(plot = as.factor(plot)) %>%
-        left_join(instrument_template, by = c("plot", "variable")) %>%
-        bind_rows(meo_table) %>%
-        data.table()
-    setkey(final_full_join, SubPlot, variable, vertical_position, profile_pit)
-    final_full_join
+    return(plm_output_table)
 }

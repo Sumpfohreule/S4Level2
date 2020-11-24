@@ -1,48 +1,39 @@
-target.year <- 2019
-data_path = "/home/polarfalke/Data/Temp/level2_0"
-.Level2 <- loadL2Object(data_path)
-no_sr_below_0 <- function(x) x %>% mutate(value = if_else(variable == "SR" & value < 0, true = 0, false = value))
+selected_year <- 2019
+# output_path <- "/home/polarfalke/Data/Nextcloud_FVA/ICP-Forests/MM/"
+output_path <- file.path("W:/Nextcloud/ICP-Forests/MM", selected_year)
 
-.Level2 %>%
-    getObjectByURI(Level2URI("Altensteig")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles()
+createMMFiles(level2, "Altensteig", selected_year, output_path)
+level2 %>% getMMSourcePath("Conventwald", selected_year) %>%
+    createMemBaseTable() %>%
+    mutate(value = if_else(variable == "SR" & value < 0, true = 0, false = value)) %>%
+    aggregateMemTable() %>%
+    mutate(other_observations = if_else(variable == "WS" & mean_sum == 0, true = "Sensor is probably frozen", false = "")) %>%
+    writeMMFile(file_path = sprintf("%s/%s_%d.MEM", output_path, "Conventwald", selected_year), return = TRUE) %>%
+    createPlmTable() %>%
+    writeMMFile(sprintf("%s/%s_%d.PLM", output_path, "Conventwald", selected_year))
+createMMFiles(level2, "Esslingen", selected_year, output_path)
+createMMFiles(level2, "Heidelberg", selected_year, output_path)
+createMMFiles(level2, "Ochsenhausen", selected_year,output_path)
+createMMFiles(level2, "Rotenfels", selected_year, output_path, sheets = c("Fichte", "Freiland"))
 
-.Level2 %>%
-    getObjectByURI(Level2URI("Conventwald")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles(map_function = no_sr_below_0)
+accumulateMMFiles(output_path)
 
-.Level2 %>%
-    getObjectByURI(Level2URI("Esslingen")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles()
 
-.Level2 %>%
-    getObjectByURI(Level2URI("Heidelberg")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles()
+mem_source_path <- getMMSourcePath(level2_object, plot_name, selected_year)
 
-.Level2 %>%
-    getObjectByURI(Level2URI("Ochsenhausen")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles()
 
-xlsx.file = .Level2 %>%
-    getObjectByURI(Level2URI("Rotenfels")) %>%
-    getCorrectedAggregatePath() %>%
-    file.path(target.year) %>%
-    MyUtilities::getLastModifiedFile() %>%
-    createMMFiles(sheets = c("Fichte", "Freiland"))
 
-accumulateMMFiles(target.year, output.folder = file.path(getwd(), "data", "output"))
+
+
+
+
+
+dt <- readr::read_delim("/home/polarfalke/Data/Nextcloud_FVA/Projekte/R/S4Level2/data/output/Esslingen/Esslingen_2019 (copy 1).MEM",
+                  delim = ";",
+                  na = "")
+dt %>%
+    arrange(plot, instrument_seq_nr, variable, lubridate::dmy(date_observation)) %>%
+    mutate(`!Sequence` = 1:n()) %>%
+    readr::write_delim("/home/polarfalke/Data/Nextcloud_FVA/Projekte/R/S4Level2/data/output/Esslingen/Esslingen_2019 (copy 2).MEM",
+                       delim = ";",
+                       na = "")
