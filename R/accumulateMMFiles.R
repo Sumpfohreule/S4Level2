@@ -32,7 +32,9 @@ accumulateMMFiles <- function(output_folder) {
         purrr::map(~ readr::read_delim(
             file = .x,
             delim = ";",
-            col_types = readr::cols())) %>%
+            col_types = readr::cols(
+                other_observations = "c"
+            ))) %>%
         bind_rows() %>%
         arrange(plot, instrument_seq_nr) %>%
         mutate(`!Sequence` = 1:n()) %>%
