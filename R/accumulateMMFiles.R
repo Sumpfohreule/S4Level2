@@ -1,10 +1,10 @@
 ########################################################################################################################
-accumulateMMFiles <- function(target.year, output.folder) {
-    mm_files <- target.year %>%
+accumulateMMFiles <- function(output_folder) {
+    target_year <- basename(output_folder)
+    mm_files <- target_year %>%
         paste0("^[[:alpha:]/]+_", .) %>%
-        dir("data", pattern = ., full.names = TRUE, recursive = TRUE)
+        dir(output_folder, pattern = ., full.names = TRUE, recursive = TRUE)
     assertthat::assert_that(assertthat::not_empty(mm_files))
-
     column_types <- readr::cols(
         latitude = "c",
         longitude = "c",
@@ -21,11 +21,11 @@ accumulateMMFiles <- function(target.year, output.folder) {
         arrange(plot, instrument_seq_nr) %>%
         mutate(`!Sequence` = 1:n()) %>%
         readr::write_delim(
-            path =file.path(output.folder, paste0("04", target.year, ".PLM")),
+            path =file.path(output_folder, paste0("04", target_year, ".PLM")),
             delim = ";",
             na = "",
             quote_escape = FALSE)
-    print(sprintf("Created PLM file in '%s'", output.folder))
+    print(sprintf("Created PLM file in '%s'", output_folder))
 
     mm_files %>%
         purrr::keep(~ stringr::str_detect(.x, pattern = "\\.MEM")) %>%
@@ -37,8 +37,8 @@ accumulateMMFiles <- function(target.year, output.folder) {
         arrange(plot, instrument_seq_nr) %>%
         mutate(`!Sequence` = 1:n()) %>%
         readr::write_delim(
-            path = file.path(output.folder, paste0("04", target.year, ".MEM")),
+            path = file.path(output_folder, paste0("04", target_year, ".MEM")),
             delim = ";",
             na = "")
-    print(sprintf("Created MEM file in '%s'", output.folder))
+    print(sprintf("Created MEM file in '%s'", output_folder))
 }
