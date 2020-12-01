@@ -68,32 +68,34 @@ aggregateMemTable <- function(mem_base_table) {
         mutate(date_observation = as.Date(Datum)) %>%
         select(-Datum) %>%
         group_by(plot, variable, instrument_seq_nr, date_observation) %>%
-        # group_by(plot, variable, profile_pit, vertical_position, date_observation) %>%
-        summarise(variable = unique(variable),
-                  min = if_else(variable %in% S4Level2::MM_MIN_SENSORS,
-                                true = MyUtilities::min_with_default(value),
-                                false = as.numeric(NA)),
-                  max = if_else(variable %in% S4Level2::MM_MAX_SENSORS,
-                                true = MyUtilities::max_with_default(value),
-                                false = as.numeric(NA)),
-                  mean_sum = if_else(variable %in% S4Level2::MM_MEAN_SENSORS,
-                                     true = MyUtilities::mean_with_default(value),
-                                     false = MyUtilities::sum_with_default(value)),
-                  completeness = round(sum(!is.na(value)) * 100 / length(value), digits = 0),
-                  origin = 1,
-                  status = 2,
-                  other_observations = unique(other_observations)) %>%
+        summarise(
+            min = unique(if_else(variable %in% S4Level2::MM_MIN_SENSORS,
+                          true = MyUtilities::min_with_default(value),
+                          false = as.numeric(NA))),
+            max = unique(if_else(variable %in% S4Level2::MM_MAX_SENSORS,
+                          true = MyUtilities::max_with_default(value),
+                          false = as.numeric(NA))),
+            mean_sum = unique(case_when(
+                variable == "WD" ~ .categorizeWDs(value),
+                variable %in% S4Level2::MM_MEAN_SENSORS ~ MyUtilities::mean_with_default(value),
+                variable %in% S4Level2::MM_SUM_SENSORS ~ MyUtilities::sum_with_default(value))),
+            completeness = round(sum(!is.na(value)) * 100 / length(value), digits = 0),
+            origin = 1,
+            status = 2,
+            other_observations = unique(other_observations)) %>%
         filter(!all(is.na(mean_sum))) %>%
         ungroup() %>%
         arrange(plot, instrument_seq_nr, variable, date_observation) %>%
         mutate(Sequence = 1:n()) %>%
         mutate(across(date_observation, ~ format(.x, "%d%m%y"))) %>%
-        mutate(across(origin | status, ~ if_else(completeness == 0,
-                                                 true = 9,
-                                                 false = .x))) %>%
+        mutate(across(origin | status, ~ if_else(
+            completeness == 0,
+            true = 9,
+            false = .x))) %>%
         mutate(across(mean_sum | min | max, round, digits = 2)) %>%
         relocate(S4Level2::MEM_FIELDS) %>%
         rename(`!Sequence` = Sequence)
+    return(output_table)
 }
 
 # Save

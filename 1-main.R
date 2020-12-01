@@ -1,5 +1,5 @@
 data_location <- "/home/polarfalke/Data/Temp/level2_0"
-# data_location <- "w:/level2"
+# data_location <- "w:/level2_Test"
 # initializeDataLocation(data_location)
 level2 <- loadL2Object(data_location)
 # level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
@@ -22,7 +22,6 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: Use saved constants instead loading data or "Magic Numbers"
 # TODO: Use any and all instead of "TRUE %in% (... %in% ...)" checks
-# TODO: Implement units for data contained and especially for conversions!
 # TODO: create function to add data to an already aggregated excel where files where missing before (don't overwrite manual changes)
 # TODO: Make use of AccessDB LastImportDate or remove it and its setter
 # TODO: updateInitialization function for added loggers etc.

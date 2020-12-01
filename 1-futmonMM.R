@@ -19,21 +19,3 @@ createMMFiles(level2, "Rotenfels", selected_year, output_path, sheets = c("Ficht
 accumulateMMFiles(output_path)
 
 
-mem_source_path <- getMMSourcePath(level2_object, plot_name, selected_year)
-
-
-
-
-
-
-
-
-dt <- readr::read_delim("/home/polarfalke/Data/Nextcloud_FVA/Projekte/R/S4Level2/data/output/Esslingen/Esslingen_2019 (copy 1).MEM",
-                  delim = ";",
-                  na = "")
-dt %>%
-    arrange(plot, instrument_seq_nr, variable, lubridate::dmy(date_observation)) %>%
-    mutate(`!Sequence` = 1:n()) %>%
-    readr::write_delim("/home/polarfalke/Data/Nextcloud_FVA/Projekte/R/S4Level2/data/output/Esslingen/Esslingen_2019 (copy 2).MEM",
-                       delim = ";",
-                       na = "")

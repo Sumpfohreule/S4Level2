@@ -21,7 +21,7 @@ accumulateMMFiles <- function(output_folder) {
         arrange(plot, instrument_seq_nr) %>%
         mutate(`!Sequence` = 1:n()) %>%
         readr::write_delim(
-            path =file.path(output_folder, paste0("04", target_year, ".PLM")),
+            path = file.path(output_folder, paste0("04", target_year, ".PLM")),
             delim = ";",
             na = "",
             quote_escape = FALSE)
