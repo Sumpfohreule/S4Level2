@@ -134,3 +134,30 @@ createPlmTable <- function(mem_table) {
         rename(`!Sequence` = Sequence)
     return(plm_output_table)
 }
+
+.categorizeWDs <- function(wds) {
+    grouped_wds <- case_when(
+        (wds >= 0 & wds < 15) | (wds >= 345 & wds < 360) ~ 330,
+        wds >= 15 & wds < 45 ~ 30,
+        wds >= 45 & wds < 75 ~ 60,
+        wds >= 75 & wds < 105 ~ 90,
+        wds >= 105 & wds < 135 ~ 120,
+        wds >= 135 & wds < 165 ~ 150,
+        wds >= 165 & wds < 195 ~ 180,
+        wds >= 195 & wds < 225 ~ 210,
+        wds >= 225 & wds < 255 ~ 240,
+        wds >= 255 & wds < 285 ~ 270,
+        wds >= 285 & wds < 315 ~ 300,
+        wds >= 315 & wds < 345 ~ 330,
+    )
+    output_wd <- grouped_wds %>%
+        table() %>%
+        which.max() %>%
+        names() %>%
+        as.numeric()
+    if (assertthat::not_empty(output_wd)) {
+        return(output_wd)
+    } else {
+        return(NA_real_)
+    }
+}
