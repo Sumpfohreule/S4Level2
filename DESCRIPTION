@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 2.0.1
+Version: 3.0.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -85,7 +85,8 @@ Collate:
     '4.1.4-TinyTag.R'
     'setLastImportDate.R'
     '4.2.0-AccessDB.R'
-    'accumulateMMFiles.R'
+    'accumulateMemData.R'
+    'accumulatePlmData.R'
     'addCompletePlotFromXml.R'
     'addToWorkbookWithTemplate.R'
     'calculateDendroSum.R'
