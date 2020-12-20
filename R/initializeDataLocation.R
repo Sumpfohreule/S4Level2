@@ -13,14 +13,13 @@ initializeDataLocation <- function(data_path) {
     dir.create(structure_path, showWarnings = FALSE, recursive = TRUE)
     level2 <- Level2(structure_path)
 
-    #
     is_MyUtilities_missing <- installed.packages() %>%
         data.frame() %>%
         filter(Package == "MyUtilities") %>%
         ( function(x) { nrow(x) == 0 } )
     if (is_MyUtilities_missing) {
         install.packages(
-            system.file("extdata", "MyUtilities_1.2.1.tar.gz", package = "S4Level2"),
+            system.file("extdata", "MyUtilities_4.1.1.tar.gz", package = "S4Level2"),
             repos = NULL)
     }
 
