@@ -1,3 +1,10 @@
+#' Initializes location to use for data storage
+#'
+#' Enough storage space is needed at the provided location. An additional (local) package "MyUtilities" is installed if not existing
+#'
+#' @param data_path A path to the storage location. Attention: Because imported data is saved here the location needs to have enough storage space!
+#' @export
+#'
 initializeDataLocation <- function(data_path) {
     parent_path <- dirname(data_path)
     if (!dir.exists(parent_path)) {
