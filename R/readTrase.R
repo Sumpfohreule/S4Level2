@@ -48,7 +48,7 @@ readTrase <- function(path) {
   small.table <- data[, .(Datum, Instruments, Values, Error)]
   wide.table <- dcast(small.table, Datum ~ Instruments,
       value.var = c("Values", "Error"))
-  setkey(wide.table, Datum)
+  data.table::setkey(wide.table, Datum)
   col.names <- names(wide.table)
   order.by <- stringr::str_replace(col.names, "([[:alpha:]]+_?[[:alpha:]]*_?)([0-9]?)",
       "\\2_\\1")

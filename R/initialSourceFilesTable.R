@@ -6,6 +6,6 @@ initialSourceFilesTable <- function() {
         imported = logical(),
         skip = logical(),
         comment = character())
-    setkey(source.files.table, path, file)
+    data.table::setkey(source.files.table, path, file)
     return(source.files.table)
 }
