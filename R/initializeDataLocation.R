@@ -29,6 +29,7 @@ initializeDataLocation <- function(data_path) {
             system.file("extdata", "MyUtilities_4.1.1.tar.gz", package = "S4Level2"),
             repos = NULL)
     }
-
+    dir.create("data/output", recursive = TRUE, showWarnings = FALSE)
+    saveRDS(data_path, "data/output/data_location_path.rds")
     saveL2Object(level2)
 }

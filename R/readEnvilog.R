@@ -1,7 +1,7 @@
 ########################################################################################################################
 readEnvilog <- function(path) {
     path <- iconv(path, to = "latin1")
-    data <- as.data.table(
+    data <- data.table::as.data.table(
         tryCatch(read.csv(path, skip = 1, fileEncoding = "cp1258"),
                  error = function(e) read.csv2(path, skip = 1, fileEncoding = "cp1258")))
     data[, No := NULL]

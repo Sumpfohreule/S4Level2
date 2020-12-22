@@ -5,9 +5,9 @@ readTrase <- function(path) {
   months <- factor(month.short, levels = month.short, ordered = TRUE)
   test.string <- readLines(path, n = 1L)
   if (stringr::str_detect(test.string, "\\t")) {
-    data <- as.data.table(read.delim(path, header = FALSE))
+    data <- data.table::as.data.table(read.delim(path, header = FALSE))
   } else {
-    data <- as.data.table(read.csv(path, header = FALSE))
+    data <- data.table::as.data.table(read.csv(path, header = FALSE))
   }
   if (ncol(data) == 11){
     date.col = "V8"

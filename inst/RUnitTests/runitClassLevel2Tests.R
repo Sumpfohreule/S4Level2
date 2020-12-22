@@ -23,6 +23,7 @@
     if (dir.exists(file.path(path, "internal_structure"))) {
         resetDataLocation(path)
     } else {
+        stop("Before using these tests again make sure the path in data/output is not overwritten completely!")
         initializeDataLocation(path)
     }
     Level2 <- loadL2Object(path)

@@ -47,7 +47,7 @@ testDontAddDuplicateMapping <- function() {
 }
 
 .returnEmptySensorMappingComparisonTable <- function() {
-    empty_sensor_mapping_table <- data.table(
+    empty_sensor_mapping_table <- data.table::data.table(
         patterns = character(),
         replacements = character(),
         origin.date = MyUtilities::POSIXct())

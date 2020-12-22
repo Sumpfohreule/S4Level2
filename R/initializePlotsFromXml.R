@@ -10,5 +10,5 @@ initializePlotsFromXml <- function(level2, xml_parent_dir) {
         plot <- level2 %>%
             getObjectByURI(Level2URI(plot_name))
     }
-    return(level2)
+    saveL2Object(level2)
 }

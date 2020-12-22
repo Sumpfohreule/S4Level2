@@ -2,7 +2,7 @@
 calculateDendroSum <- function(ohm_values, temp_values, sensor_id) {
     if (length(ohm_values) != length(temp_values))
         stop("Two vectors of differing lengths!")
-    conversion_table <- data.table(mu_absolute = calculateAbsoluteMicrometerValue(
+    conversion_table <- data.table::data.table(mu_absolute = calculateAbsoluteMicrometerValue(
             ohm.value = ohm_values,
             temperature = temp_values,
             sensor.id = sensor_id))

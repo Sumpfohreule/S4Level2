@@ -1,6 +1,6 @@
 ########################################################################################################################
 initialSourceFilesTable <- function() {
-    source.files.table <- data.table(
+    source.files.table <- data.table::data.table(
         file = character(),
         path = factor(),
         imported = logical(),
