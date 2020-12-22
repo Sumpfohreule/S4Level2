@@ -1,8 +1,6 @@
 ########################################################################################################################
 #' @include 0.0.0-Level2URI.R
 #' @include data.table_setOldClass.R
-#' @export DataStructure
-#' @exportClass DataStructure
 DataStructure <- setClass("DataStructure", slots = c(
   UniqueName = "character",
   Level2URI = "Level2URI",

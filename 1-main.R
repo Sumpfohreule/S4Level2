@@ -19,6 +19,8 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # FIXME: melt.data.table warning with new AccessDB (Co Freiland)
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
 
+# TODO: remove loadDeltaTFullYear?!
+# TODO: Think about what functionalities could be better split up from this package
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: Use saved constants instead loading data or "Magic Numbers"
 # TODO: Use any and all instead of "TRUE %in% (... %in% ...)" checks
@@ -33,18 +35,23 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # TODO: split variable columns into sensor, position and vertical!
 # TODO: make updateFilePaths print some info about added files
 # TODO: change Name attribute for all classes to more informative names!
-# TODO: remove tryCatch and related stuff from createAggregateExcel and replace with summary/message of missing columns
-# TODO: make it possible to exempt loggers from createAggregateExcel
 # TODO: make it possible to exclude single files or time frames from a logger with a comment (with subsequent Data removal)
-# TODO: Start specifying public interface for this package
 # TODO: remove date_time rounding at import and reimplement on data export where needed!
-# TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: replace generic methods like applyToList with more specific once (applyToPlotList, applyToSubPlotList)
 # to remove strange initial values by null (Error prone!)
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data) -> database
-# TODO: stop throwing error for missing columns in createAggregateExcel -> print a "report" instead
 # TODO: Test where over providing data for getDataForYear was necessary and solve problem
 
+
+# TODO: Save path variable within data/output to not load it every time
+# TODO: change getData and getDataForYear to only internally use Level2 object
+# TODO: export Excel-Template functionality to its own package and import afterwards
+# TODO: remove createAggregateExcel
+# TODO: remove functions used for cumsum columns which are exported to new package
+# - connectLocation -> include in initialization function?
+# - getData
+# - getDataForYear
+# - updateData
 
 ########################################################################################################################
 # Altensteig

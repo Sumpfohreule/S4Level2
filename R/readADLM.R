@@ -1,7 +1,6 @@
 ########################################################################################################################
 #' Reads data from an ADLM xlsx file
 #' @param path Path to the ADLM file to read
-#' @export
 readADLM <- function(path) {
     path %>%
         openxlsx::read.xlsx() %>%

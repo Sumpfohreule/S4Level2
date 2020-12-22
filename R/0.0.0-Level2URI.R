@@ -6,7 +6,6 @@ setClass(Class = "Level2URI", slots = c(
 
 #' Constructor for Level2URI
 #' @param ... URI like path consisting of 0-3 strings (Plot, SubPlot, Logger)
-#' @export
 Level2URI <- function(...) {
     uri_elements <- list(...) %>%
         unlist() %>%
@@ -84,7 +83,6 @@ setMethod("getDataStructureURI", signature = "Level2URI", definition = function(
 #' S3 Method for converting a Level2URI into a character string
 #'
 #' @param .Object An Object of type Level2URI
-#' @export
 as.character.Level2URI <- function(.Object) {
     uri_string <- paste(.Object@URI_Split, collapse = "/")
     return(uri_string)

@@ -218,7 +218,6 @@ setGeneric("loadCorrectedData", def = function(.Object, sheet_names, years = NUL
 #' @param sheet_names String vector to determine which kind of SubPlot should be loaded from each file
 #' @param years Numeric vector of years to load from the plot corrected files
 #' @return A data.table with all the data combined
-#' @export
 setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet_names, years) {
     full_data <- .Object %>%
         getCorrectedAggregatePath() %>%

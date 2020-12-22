@@ -1,5 +1,4 @@
 ########################################################################################################################
-#' @export Level2
 setClass(Class = "Level2",
          slots = c(
              LocalDirectory = "character",
@@ -215,7 +214,6 @@ setMethod("getName", signature = "Level2", definition = function(.Object) {
 #' @param .Object An Level2 object
 #' @return A list of Plot objects
 #' @include getPlotList.R
-#' @export
 setMethod("getPlotList", signature = "Level2", definition = function(.Object) {
     return(.Object@Plots)
 })
@@ -286,7 +284,6 @@ setMethod("getData", signature = "Level2", definition = function(
 })
 
 #' @include updateFilePaths.R
-#' @export
 setMethod("updateFilePaths", signature = "Level2", definition = function(.Object) {
     .Object <- applyToList(.Object, updateFilePaths)
     .Object
