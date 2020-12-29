@@ -1,20 +1,11 @@
 connectToExistingDataLocation("/home/polarfalke/Data/Temp/level2")
-# data_location <- "w:/level2_Test"
-# initializeDataLocation(data_location)
 level2 <- loadL2Object()
-# level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
-# level2 <- initializeDefaultPlots(level2)
-
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
 # level2 <- resetFailedImports(level2)
-level2 <- updateFilePaths(level2)
-level2 <- updateData(level2)
-saveL2Object(level2)
 
 output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/"
 # output_path <- "W:/Nextcloud"
-
 
 # FIXME: melt.data.table warning with new AccessDB (Co Freiland)
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
@@ -64,10 +55,6 @@ at_data <- level2 %>%
 at_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 at_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-level2 %>% getObjectByURI(Level2URI("Altensteig")) %>%
-    getDataForYear(2020) %>%
-    createAggregateExcel(out_path = output_path)
-
 
 ########################################################################################################################
 # Conventwald
@@ -78,10 +65,6 @@ co_data <- level2 %>%
 
 co_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 co_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-
-level2 %>% getObjectByURI(Level2URI("Conventwald")) %>%
-    getDataForYear(2019) %>%
-    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
@@ -94,10 +77,6 @@ es_data <- level2 %>%
 es_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 es_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-level2 %>% getObjectByURI(Level2URI("Esslingen")) %>%
-    getDataForYear(2020) %>%
-    createAggregateExcel(out_path = output_path)
-
 
 ########################################################################################################################
 # Heidelberg
@@ -108,10 +87,6 @@ hd_data <- level2 %>%
 
 hd_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 hd_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
-
-level2 %>% getObjectByURI("Heidelberg") %>%
-    getDataForYear(2020) %>%
-    createAggregateExcel(out_path = output_path)
 
 
 ########################################################################################################################
@@ -124,10 +99,6 @@ oc_data <- level2 %>%
 oc_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 oc_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-level2 %>% getObjectByURI(Level2URI("Ochsenhausen")) %>%
-    getDataForYear(2020) %>%
-    createAggregateExcel(out_path = output_path)
-
 
 ########################################################################################################################
 # Rotenfels
@@ -138,14 +109,4 @@ ro_data <- level2 %>%
 ro_data[, MyUtilities::analyzeDateGaps(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 ro_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.year = TRUE), by = .(Plot, SubPlot, Logger)]
 
-# TODO RO Fi DeltaT Daten
 
-aggregate_data <- level2 %>%
-    getObjectByURI(Level2URI("Rotenfels")) %>%
-    getDataForYear(2020) %>%
-    mutate(value = if_else(
-        condition = (variable == "Niederschlag.Casella" &
-                         Datum <= as.POSIXct("2019-04-03", tz = "UTC")),
-        true = value * 2,
-        false = value)) %>%
-    createAggregateExcel(out_path = output_path)
