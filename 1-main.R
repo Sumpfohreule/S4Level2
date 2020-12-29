@@ -10,7 +10,6 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # FIXME: melt.data.table warning with new AccessDB (Co Freiland)
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
 
-# TODO: remove loadDeltaTFullYear?!
 # TODO: consider adding selection on updateDatabase or remove it from updateData
 # TODO: Think about what functionalities could be better split up from this package
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
