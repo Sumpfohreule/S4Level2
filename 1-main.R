@@ -1,7 +1,7 @@
-data_location <- "/home/polarfalke/Data/Temp/level2_0"
+connectToExistingDataLocation("/home/polarfalke/Data/Temp/level2")
 # data_location <- "w:/level2_Test"
 # initializeDataLocation(data_location)
-level2 <- loadL2Object(data_location)
+level2 <- loadL2Object()
 # level2 <- initializePlotsFromXml(level2, system.file("extdata", "plot_xml", "linux", package = "S4Level2"))
 # level2 <- initializeDefaultPlots(level2)
 
@@ -20,6 +20,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
 
 # TODO: remove loadDeltaTFullYear?!
+# TODO: consider adding selection on updateDatabase or remove it from updateData
 # TODO: Think about what functionalities could be better split up from this package
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
 # TODO: Use saved constants instead loading data or "Magic Numbers"
@@ -48,7 +49,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: remove createAggregateExcel
 # TODO: remove functions used for cumsum columns which are exported to new package
-# - connectLocation -> include in initialization function?
+# - deleteDataLocation -> Only data.location files (if others print) and remove path variable
 # - getData
 # - getDataForYear
 # - updateData
