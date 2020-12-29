@@ -297,7 +297,6 @@ setMethod("updateFilePaths", signature = "Level2", definition = function(.Object
 #' @param .Object An S4 Object of type Level2
 #' @param plot An optional string containing a plot name which is part of the .Object to only update this
 #' @param sub.plot An optional string containing a sub.plot name to only update it. Needs \code{plot} to be defined
-#' @export
 setMethod("updateData", signature = "Level2", definition = function(.Object, plot, sub.plot) {
     .Plots <- getPlotList(.Object)
     if (is.null(plot)) {
