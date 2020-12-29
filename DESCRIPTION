@@ -7,7 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "lars.isenberg@forst.bwl.de")
 Description: This package was created to better find new raw data files and aggregate the data.
-Imports: stringr,
+Imports: purrr,
+         stringr,
          openxlsx,
          RODBC,
          XML,
@@ -114,6 +115,7 @@ Collate:
     'readTinyTag.R'
     'readTrase.R'
     'resetDataLocation.R'
+    'updateDatabase.R'
     'xml_addSensorMapping.R'
     'xml_createLogger.R'
     'xml_createPlot.R'

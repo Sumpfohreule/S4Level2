@@ -3,4 +3,5 @@
 export()
 export(initializeDataLocation)
 export(initializeWithPresetPlots)
+export(updateDatabase)
 exportMethods(updateData)
