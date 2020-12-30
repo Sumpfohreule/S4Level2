@@ -127,26 +127,25 @@ setMethod("createDirectoryStructure", signature = "DataStructure", definition = 
 
 #' @include remapSensorNames.R
 setMethod("remapSensorNames", signature = "DataStructure", definition = function(.Object, long.l2.table) {
-  mappings <- getSensorMappings(.Object)
-  if (nrow(mappings) > 0) {
-    for (mapping.index in 1 : nrow(mappings)) {
-      min.date <- mappings[mapping.index, origin.date]
-      if (min.date == as.POSIXct("1900-01-01", tz = "UTC")) {
-        long.l2.table[,
-                      variable := MyUtilities::remapLevels(variable,
-                                                           pattern = mappings[mapping.index, patterns],
-                                                           replacement = mappings[mapping.index, replacements])]
-      } else {
-        long.l2.table[Datum >= min.date,
-                      variable := MyUtilities::remapLevels(variable,
-                                                           pattern = mappings[mapping.index, patterns],
-                                                           replacement = mappings[mapping.index, replacements])]
-        long.l2.table[, variable := factor(as.character(variable))]
-      }
-    }
+  long.l2.table <- long.l2.table %>% mutate(across(variable, as.factor))
+  variable <- long.l2.table$variable
+  datum <- long.l2.table$Datum
+  sensor_mappings <- getSensorMappings(.Object)
+  for (index in 1:nrow(sensor_mappings)) {
+    pattern = sensor_mappings[index, patterns]
+    origin_date = sensor_mappings[index, origin.date]
+    replacement = sensor_mappings[index, replacements]
+    selection = which((datum > origin_date & stringr::str_detect(as.character(variable), pattern)))
+    data.table::set(long.l2.table, i = selection, j = "variable",
+                    value = MyUtilities::remapLevels(long.l2.table$variable[selection],
+                                                     pattern = pattern,
+                                                     replacement = replacement,
+                                                     keep_levels = TRUE))
   }
   return(long.l2.table)
 })
+
+
 
 #' @include resetToInitialization.R
 setMethod("resetToInitialization", signature = "DataStructure", definition = function(.Object) {

@@ -23,5 +23,4 @@ connectToExistingDataLocation <- function(data_path) {
             system.file("extdata", "MyUtilities_4.1.1.tar.gz", package = "S4Level2"),
             repos = NULL)
     }
-
 }
