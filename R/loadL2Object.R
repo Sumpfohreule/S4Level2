@@ -1,6 +1,5 @@
 ########################################################################################################################
 #' Load the top level Level2 Object
-#' @param data_path A string with the path to the package top level data location
 #' @return An Object of class Level2
 loadL2Object <- function() {
     data_path <- readRDS("data/output/data_location_path.rds")
