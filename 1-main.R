@@ -37,10 +37,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # TODO: keep data and source file information consistent! (e.g re-initializing plots but not resetting data) -> database
 # TODO: Test where over providing data for getDataForYear was necessary and solve problem
 
-
-# TODO: Save path variable within data/output to not load it every time
 # TODO: change getData and getDataForYear to only internally use Level2 object
-# TODO: export Excel-Template functionality to its own package and import afterwards
 # TODO: remove createAggregateExcel
 # TODO: remove functions used for cumsum columns which are exported to new package
 # - deleteDataLocation -> Only data.location files (if others print) and remove path variable

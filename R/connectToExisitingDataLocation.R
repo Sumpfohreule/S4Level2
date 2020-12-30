@@ -11,8 +11,8 @@ connectToExistingDataLocation <- function(data_path) {
     if (length(dir(data_path, pattern = "^Level2\\.rds$", recursive = TRUE)) == 0) {
         stop("Given path does not seem to be initialized. Use initializeDataLocation instead")
     }
-    dir.create("data/output", recursive = TRUE, showWarnings = FALSE)
-    saveRDS(data_path, "data/output/data_location_path.rds")
+    dir.create(dirname(DATA_PATH_FILE_LOCATION), recursive = TRUE, showWarnings = FALSE)
+    saveRDS(data_path, DATA_PATH_FILE_LOCATION)
 
     is_MyUtilities_missing <- installed.packages() %>%
         data.frame() %>%

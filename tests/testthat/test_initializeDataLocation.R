@@ -1,4 +1,3 @@
-context("Initialization of S4Level2 Project structure")
 test_that("Root folder is correctly initialized in an existing directory", {
     MyUtilities::.clear_tempdir()
     test_directory <- tempdir()
