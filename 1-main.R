@@ -1,5 +1,5 @@
-connectToExistingDataLocation("/home/polarfalke/Data/Temp/level2")
-level2 <- loadL2Object()
+# connectToExistingDataLocation("/home/polarfalke/Data/Temp/level2")
+updateDatabase()
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
 # level2 <- resetFailedImports(level2)
@@ -9,7 +9,11 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 
 # FIXME: melt.data.table warning with new AccessDB (Co Freiland)
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
+# FIXME: Check why variable is not of type factor before SensorMapping!
 
+# TODO: Find slow parts in code and consider replacing with data.table
+#   TODO: Probably better to replace regex for remapping with literal replacements
+# TODO: summary of all source/target variables for each subplot
 # TODO: consider adding selection on updateDatabase or remove it from updateData
 # TODO: Think about what functionalities could be better split up from this package
 # TODO: Try to replace calculated columns with (protected) excel-formulas (PR SUM and PF values)
@@ -46,7 +50,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 
 ########################################################################################################################
 # Altensteig
-at_data <- level2 %>%
+at_data <- loadL2Object() %>%
     getObjectByURI(Level2URI("Altensteig")) %>%
     getDataForYear(2020) %>%
     as.data.table()
@@ -57,7 +61,7 @@ at_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.y
 
 ########################################################################################################################
 # Conventwald
-co_data <- level2 %>%
+co_data <- loadL2Object() %>%
     getObjectByURI("Conventwald") %>%
     getDataForYear(2019) %>%
     as.data.table()
@@ -68,7 +72,7 @@ co_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.y
 
 ########################################################################################################################
 # Esslingen
-es_data <- level2 %>%
+es_data <- loadL2Object() %>%
     getObjectByURI("Esslingen") %>%
     getDataForYear(2020) %>%
     as.data.table()
@@ -79,7 +83,7 @@ es_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.y
 
 ########################################################################################################################
 # Heidelberg
-hd_data <- level2 %>%
+hd_data <- loadL2Object() %>%
     getObjectByURI("Heidelberg") %>%
     getDataForYear(2020) %>%
     as.data.table()
@@ -90,7 +94,7 @@ hd_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.y
 
 ########################################################################################################################
 # Ochsenhausen
-oc_data <- level2 %>%
+oc_data <- loadL2Object() %>%
     getObjectByURI("Ochsenhausen") %>%
     getDataForYear(2020) %>%
     as.data.table()
@@ -101,7 +105,7 @@ oc_data[, MyUtilities::calculateDateCompleteness(unique(Datum), extend.to.full.y
 
 ########################################################################################################################
 # Rotenfels
-ro_data <- level2 %>%
+ro_data <- loadL2Object() %>%
     getObjectByURI("Rotenfels") %>%
     getDataForYear(2020) %>%
     as.data.table()
