@@ -12,8 +12,9 @@ initializeDataLocation <- function(data_path) {
     }
 
     pre_initialized_locations <- dir(data_path, pattern = "Level2.rds$", recursive = TRUE)
-    if (length(pre_initialized_locations) > 0) {
+    if (length(pre_initialized_locations) == 0) {
         structure_path <- file.path(data_path, "internal_structure")
+        dir.create(structure_path, showWarnings = FALSE)
         level2 <- Level2(structure_path)
         saveL2Object(level2)
     }
