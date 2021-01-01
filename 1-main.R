@@ -3,6 +3,14 @@ updateDatabase()
 # resetDataLocation(data_location)
 # level2 <- resetToInitialization(level2)
 # level2 <- resetFailedImports(level2)
+getLevel2Data(plot_URIs = c("Altensteig/Fichte/ADLM",
+                            "Altensteig/Freiland/ADLM"),
+              start_date = "2020-01-01",
+              end_date = "2021-01-01")
+
+getDataForYear(plot_URIs = c("Altensteig/Fichte/ADLM",
+                            "Altensteig/Freiland/ADLM"),
+              target_year = 2020)
 
 output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/"
 # output_path <- "W:/Nextcloud"
@@ -10,6 +18,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # FIXME: melt.data.table warning with new AccessDB (Co Freiland)
 # FIXME: Combining two loggers (Conventwald Freiland ADLM + AccessDB) breaks Datetimes!
 # FIXME: Check why variable is not of type factor before SensorMapping!
+
 
 # TODO: Find slow parts in code and consider replacing with data.table
 #   TODO: Probably better to replace regex for remapping with literal replacements
@@ -40,6 +49,7 @@ output_path <- "/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logg
 # TODO: change getData and getDataForYear to only internally use Level2 object
 # TODO: remove createAggregateExcel
 # TODO: remove functions used for cumsum columns which are exported to new package
+# TODO: Add functions that summarize important values (plot names, date ranges, last update, etc.)
 # - deleteDataLocation -> Only data.location files (if others print) and remove path variable
 # - getData
 # - getDataForYear
