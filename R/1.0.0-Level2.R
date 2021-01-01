@@ -246,6 +246,13 @@ setMethod("getObjectByURI", signature = "Level2", definition = function(.Object,
     }
 })
 
+#' @include getChildURIs.R
+setMethod("getChildURIs", signature = "Level2", definition = function(.Object) {
+    getPlotList(.Object) %>%
+        purrr::map(~ getChildURIs(.x)) %>%
+        purrr::flatten()
+})
+
 
 ########################################################################################################################
 #' @include updateFilePaths.R

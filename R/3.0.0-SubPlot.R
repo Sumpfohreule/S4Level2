@@ -136,6 +136,12 @@ setMethod("getObjectByURI", signature = "SubPlot", definition = function(.Object
     }
 })
 
+#' @include getChildURIs.R
+setMethod("getChildURIs", signature = "SubPlot", definition = function(.Object) {
+    getDataStructureList(.Object) %>%
+        purrr::map(~ getURI(.x))
+})
+
 ########################################################################################################################
 #' @include createDirectoryStructure.R
 setMethod("createDirectoryStructure", signature = "SubPlot", definition = function(.Object) {

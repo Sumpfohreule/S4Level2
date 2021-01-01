@@ -166,6 +166,15 @@ setMethod("getObjectByURI", signature = "Plot", definition = function(.Object, l
     }
 })
 
+#' @include getChildURIs.R
+setMethod("getChildURIs", signature = "Plot", definition = function(.Object) {
+    getSubPlotList(.Object) %>%
+        purrr::map(~ getChildURIs(.x)) %>%
+        purrr::flatten()
+})
+
+
+
 
 ########################################################################################################################
 setGeneric("loadCorrectedData", def = function(.Object, sheet_names, years = NULL) {
