@@ -2,6 +2,7 @@
 
 export()
 export(connectToExistingDataLocation)
+export(getDataForYear)
 export(initializeDataLocation)
 export(initializeWithPresetPlots)
 export(updateDatabase)
