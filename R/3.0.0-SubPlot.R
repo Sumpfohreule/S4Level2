@@ -146,30 +146,6 @@ setMethod("createDirectoryStructure", signature = "SubPlot", definition = functi
     invisible(return(.Object))
 })
 
-#' @include getData.R
-setMethod("getData", signature = "SubPlot", definition = function(.Object, start.date, end.date, logger.name) {
-    if (length(.Object@Loggers) > 0) {
-        list <- list()
-        Loggers <- .Object@Loggers
-        if (!is.null(logger.name)) {
-            Loggers <- Loggers[logger.name]
-        }
-        for (.Logger in Loggers) {
-            list[[getName(.Logger)]] <- getData(
-                .Object = .Logger,
-                start.date = start.date,
-                end.date = end.date)
-        }
-        data <- data.table::rbindlist(list, use.names = TRUE, fill = FALSE)
-        rm(list)
-        if (ncol(data) > 0) {
-            data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
-            return(data)
-        }
-    }
-    return(NULL)
-})
-
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "SubPlot", definition = function(.Object) {
     for(logger.name in names(.Object@Loggers)) {

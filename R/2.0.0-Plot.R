@@ -168,48 +168,6 @@ setMethod("getObjectByURI", signature = "Plot", definition = function(.Object, l
 
 
 ########################################################################################################################
-#' @include getDataForYear.R
-setMethod("getDataForYear", signature = "Plot", definition = function(.Object, target_year) {
-    start.date <- paste0(target_year - 1, "-12-01")
-    end.date <- paste0(target_year + 1, "-02-01")
-    target_data <- getData(.Object, start.date = start.date, end.date = end.date) %>%
-        filter(data.table::year(Datum) == target_year)
-    return(target_data)
-})
-
-#' @include getData.R
-setMethod("getData", signature = "Plot", definition = function(
-    .Object,
-    start.date,
-    end.date,
-    sub.plot,
-    logger.name,
-    as.wide.table) {
-    if (length(.Object@SubPlots) > 0) {
-        list <- list()
-        SubPlots <- .Object@SubPlots
-        if (!is.null(sub.plot)) {
-            SubPlots <- SubPlots[sub.plot]
-        }
-        for (.SubPlot in SubPlots) {
-            list[[getName(.SubPlot)]] <- getData(
-                .Object = .SubPlot,
-                start.date = start.date,
-                end.date = end.date,
-                logger.name = logger.name)
-        }
-        data <- data.table::rbindlist(list)
-        rm(list)
-        data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
-        if (as.wide.table) {
-            data <- data.table::dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
-        }
-        return(data)
-    } else {
-        return(NULL)
-    }
-})
-
 setGeneric("loadCorrectedData", def = function(.Object, sheet_names, years = NULL) {
     standardGeneric("loadCorrectedData")
 })

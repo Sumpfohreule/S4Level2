@@ -248,41 +248,6 @@ setMethod("getObjectByURI", signature = "Level2", definition = function(.Object,
 
 
 ########################################################################################################################
-#' @include getData.R
-setMethod("getData", signature = "Level2", definition = function(
-    .Object,
-    start.date,
-    end.date,
-    plot,
-    sub.plot,
-    logger.name,
-    as.wide.table) {
-    Plots <- getPlotList(.Object)
-    if (length(Plots) > 0) {
-        list <- list()
-        if (!is.null(plot)) {
-            Plots <- Plots[plot]
-        }
-        for (.Plot in Plots) {
-            list[[getName(.Plot)]] <- getData(
-                .Object = .Plot,
-                start.date = start.date,
-                end.date = end.date,
-                sub.plot = sub.plot,
-                logger.name = logger.name)
-        }
-        data <- data.table::rbindlist(list)
-        rm(list)
-        data.table::setkey(data, Plot, SubPlot, Logger, variable, Datum)
-        if (as.wide.table) {
-            data <- data.table::dcast(data, Plot + SubPlot + Logger + Datum ~ variable)
-        }
-        return(data)
-    } else {
-        return(NULL)
-    }
-})
-
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Level2", definition = function(.Object) {
     .Object <- applyToList(.Object, updateFilePaths)
