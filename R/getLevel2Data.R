@@ -12,8 +12,12 @@
 #'
 getLevel2Data <- function(
     plot_URIs = c("."),
-    start_date = NULL,
-    end_date = NULL) {
+    start_date = "1900-01-01",
+    end_date = "2100-01-01") {
+
+    if (length(plot_URIs) == 1 && plot_URIs == ".") {
+        plot_URIs <- getChildURIs(loadL2Object())
+    }
 
     plot_URIs %>%
         purrr::map(~ Level2URI(.x)) %>%
