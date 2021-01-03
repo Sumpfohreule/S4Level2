@@ -45,7 +45,7 @@ setMethod("getPlotName", signature = "Level2URI", definition = function(.Object)
 #' @include getSubPlotName.R
 setMethod("getSubPlotName", signature = "Level2URI", definition = function(.Object) {
     if (getURI_Depth(.Object) < 2) {
-        stop("SubPlotName seems to be missing from this Level2URI")
+        return("")
     }
     return(.Object@URI_Split[2])
 })
@@ -53,7 +53,7 @@ setMethod("getSubPlotName", signature = "Level2URI", definition = function(.Obje
 #' @include getDataStructureName.R
 setMethod("getDataStructureName", signature = "Level2URI", definition = function(.Object) {
     if (getURI_Depth(.Object) < 3) {
-        stop("DataStructureName seems to be missing from this Level2URI")
+        return("")
     }
     return(.Object@URI_Split[3])
 })
