@@ -13,3 +13,6 @@ testthat::test_that("getDataStructureURI returns on DataStructureURI", {
     testthat::expect_equal(getDataStructureURI(ds_uri), ds_uri)
 })
 
+test_that("getPlotName returns empty string if not contained", {
+    expect_equal(getPlotName(Level2URI()), "")
+} )

@@ -7,7 +7,11 @@ setClass(Class = "Level2URI", slots = c(
 #' Constructor for Level2URI
 #' @param ... URI like path consisting of 0-3 strings (Plot, SubPlot, Logger)
 Level2URI <- function(...) {
-    uri_elements <- list(...) %>%
+    all_elements <- list(...)
+    if (length(all_elements) == 0) {
+        all_elements <- ""
+    }
+    uri_elements <- all_elements %>%
         unlist() %>%
         purrr::walk(~ if(!(is.character(.x) || is.Level2URI(.x) || is.factor(.x))) {
             stop("Some element is not of type character or Level2URI")
