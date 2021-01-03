@@ -2,8 +2,8 @@
 #'
 #' @param plot_URIs String vector (Optional) with which to select Plots, SubPlots and Loggers.
 #'
-#' @param start_date Date (Optional) from where to begin retrieving data
-#' @param start_date Date (Optional) from where to begin retrieving data
+#' @param start_date Date (Optional) from where to begin retrieving data (inclusive)
+#' @param end_date Date (Optional) from where to begin retrieving data (exclusive)
 #' @details \code{plot_URIs} can be written similar to a folder path with the basic structure: "plot/sub_plot/logger"
 #' If a logger or sub_plot is left out every
 #' "." equals everything
