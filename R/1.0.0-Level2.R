@@ -252,6 +252,57 @@ setMethod("getChildURIs", signature = "Level2", definition = function(.Object) {
         purrr::flatten()
 })
 
+setGeneric(name = "expandURIPlaceholder", def = function(.Object, uri) {
+    standardGeneric("expandURIPlaceholder")
+})
+
+setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.Object, uri) {
+    expand_plot <- getPlotName(uri) == "*"
+    expand_sub_plot <- getSubPlotName(uri) == "*"
+    expand_data_structure <- getDataStructureName(uri) == "*"
+    if (expand_plot) {
+        uri <- getPlotList(.Object) %>%
+            purrr::map(~ {
+                existing_subplots <- getSubPlotList(.x) %>%
+                    names()
+                if (getSubPlotName(uri) %in% existing_subplots) {
+                    .x %>%
+                        names() %>%
+                        Level2URI(getSubPlotName(uri), getDataStructureName(uri))
+                }
+            })
+    }
+    if (expand_sub_plot) {
+        uri <- uri %>%
+            purrr::map(~ {
+                original_uri <- .x
+                .x %>%
+                    getPlotName() %>%
+                    Level2URI() %>%
+                    getObjectByURI(.Object, .) %>%
+                    purrr::map(~ getSubPlotList(.x)) %>%
+                    purrr::flatten() %>%
+                    purrr::map(~ Level2URI(getPlotName(original_uri), getName(.x), getDataStructureName(original_uri)))
+            }) %>%
+            unlist()
+    }
+    if (expand_data_structure) {
+        uri <- uri %>%
+            purrr::map(~ {
+                original_uri <- .x
+                .x %>%
+                    getSubPlotName() %>%
+                    Level2URI(getPlotName(original_uri), .) %>%
+                    getObjectByURI(.Object, .) %>%
+                    purrr::map(~ getDataStructureList(.x)) %>%
+                    purrr::flatten() %>%
+                    purrr::map(~ Level2URI(getPlotName(original_uri), getSubPlotName(original_uri), getName(.x)))
+            }) %>%
+            unlist()
+    }
+    uri %>% list() %>% purrr::discard(~ is.null(.x))
+})
+
 
 ########################################################################################################################
 #' @include updateFilePaths.R
