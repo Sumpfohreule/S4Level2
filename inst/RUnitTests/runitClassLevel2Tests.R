@@ -85,7 +85,7 @@ testGetSubPlot <- function() {
 
     sub_plot_name <- "TestSubPlot"
     .SubPlot_URI <- Level2URI(file.path(plot_name, sub_plot_name))
-    .TestSubPlot <- new("SubPlot",
+    .TestSubPlot <- SubPlot(
         name = sub_plot_name,
         uri = .SubPlot_URI,
         local_directory = file.path(tempdir(), "internal_structure", plot_name, sub_plot_name))
@@ -140,7 +140,7 @@ testAddSubPlot <- function() {
 
     on_adding_local_directory_is_set_to <- file.path(tempdir(), "internal_structure", plot_name, sub_plot_name)
     .SubPlot_URI = Level2URI(file.path(plot_name, sub_plot_name))
-    .SubPlot <- new("SubPlot",
+    .SubPlot <- SubPlot(
         name = sub_plot_name,
         uri = .SubPlot_URI,
         local_directory = on_adding_local_directory_is_set_to)

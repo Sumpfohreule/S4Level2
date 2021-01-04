@@ -83,7 +83,7 @@ testReplaceListObject <- function() {
     .Level2 <- .initializeL2Object(.URI = .Plot_URI, path = tempdir())
 
     .TestPlot <- getPlotList(.Level2)[[plot_name]]
-    .Replacement_SubPlot <- new("SubPlot",
+    .Replacement_SubPlot <- SubPlot(
         name = sub_plot_name,
         uri = Level2URI("PlotName/SubPlotName"),
         local_directory = "c:/")
@@ -98,7 +98,7 @@ testReplaceSubPlotByURI <- function() {
     .URI <- Level2URI(file.path(plot_name, sub_plot_name))
     .Level2 <- .initializeL2Object(.URI, tempdir())
 
-    .ReplacementSubPlot <- new("SubPlot",
+    .ReplacementSubPlot <- SubPlot(
         name = sub_plot_name,
         uri = .URI,
         local_directory = file.path(tempdir(), "somewhere_else"))

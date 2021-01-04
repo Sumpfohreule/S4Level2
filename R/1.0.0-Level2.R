@@ -61,8 +61,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = fun
 #' @include createAndAddSubPlot.R
 setMethod("createAndAddSubPlot", signature = "Level2", definition = function(.Object, sub_plot_name, .URI) {
     sub_plot_directory <- file.path(getLocalDirectory(.Object), sub_plot_name)
-    .SubPlot <- new("SubPlot",
-                    name = sub_plot_name,
+    .SubPlot <- SubPlot(name = sub_plot_name,
                     uri = .URI,
                     local_directory = sub_plot_directory)
 

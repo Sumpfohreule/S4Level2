@@ -43,7 +43,7 @@ setMethod("createAndAddMultipleSubPlots", signature = "Plot", definition = funct
     for (sub_plot_name in sub_plot_names) {
         sub_plot_uri <- Level2URI(file.path(plot_name, sub_plot_name))
         sub_plot_directory = file.path(plot_directory, sub_plot_name)
-        .SubPlot <- new("SubPlot", name = sub_plot_name, uri = sub_plot_uri, local_directory = sub_plot_directory)
+        .SubPlot <- SubPlot(name = sub_plot_name, uri = sub_plot_uri, local_directory = sub_plot_directory)
         .Object <- addSubPlot(.Object, .SubPlot)
     }
     .Object
@@ -172,8 +172,6 @@ setMethod("getChildURIs", signature = "Plot", definition = function(.Object) {
         purrr::map(~ getChildURIs(.x)) %>%
         purrr::flatten()
 })
-
-
 
 
 ########################################################################################################################

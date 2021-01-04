@@ -7,17 +7,13 @@ setClass("SubPlot", slots = c(
     Loggers = "list"
 ))
 
-setMethod("initialize", signature = "SubPlot", definition = function(
-    .Object,
-    name,
-    uri,
-    local_directory) {
-
+SubPlot <- function(name, uri, local_directory) {
+    .Object <- new("SubPlot")
     .Object@Name <- name
     .Object@Level2URI = Level2URI(getPlotName(uri), getSubPlotName(uri))
     .Object@LocalDirectory <- local_directory
     .Object
-})
+}
 
 
 ########################################################################################################################
