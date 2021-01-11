@@ -91,3 +91,12 @@ as.character.Level2URI <- function(.Object) {
     uri_string <- paste(.Object@URI_Split, collapse = "/")
     return(uri_string)
 }
+
+#' Converts multiple strings to multiple URIs
+#'
+#' Works different from Level2URI(...) because here the elements are not combined into one URI
+#' @param uri_strings Vector of strings which represent Level2 Objects (e.g. c("Altensteig/Fichte", "Conventwald/Freiland/ADLM"))
+as.Level2URI <- function(uri_strings) {
+    uri_strings %>%
+        purrr::map(~ Level2URI(.x))
+}
