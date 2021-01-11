@@ -24,3 +24,7 @@ test_that("getSubPlotName returns empty string if not contained", {
 test_that("getDataStructureName returns empty string if not contained", {
     expect_equal(getDataStructureName(Level2URI()), "")
 })
+
+test_that("An empty element is ignored if it is at logger level", {
+    expect_equal(Level2URI("x", "y", ""), Level2URI("x", "y"))
+})

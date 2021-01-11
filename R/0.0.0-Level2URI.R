@@ -23,6 +23,10 @@ Level2URI <- function(...) {
         elements <- unlist(uri_elements)
         stop("Can't convert the following elements to a Level2URI as its length would be > 3\n", paste(elements, collapse = "/"))
     }
+    if (length(uri_elements) > 1) {
+        uri_elements <- uri_elements %>%
+            purrr::discard(~ .x == "")
+    }
     .Object <- new("Level2URI")
     .Object@URI_Split <- uri_elements
     .Object@Depth <- length(uri_elements)
