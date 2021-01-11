@@ -28,3 +28,11 @@ test_that("getDataStructureName returns empty string if not contained", {
 test_that("An empty element is ignored if it is at logger level", {
     expect_equal(Level2URI("x", "y", ""), Level2URI("x", "y"))
 })
+
+test_that("An empty element is ignored if it is at logger and sub_plot level", {
+    expect_equal(Level2URI("x", "", ""), Level2URI("x"))
+})
+
+test_that("An empty string for sub_plot gives an error if a logger is present", {
+    expect_error(Level2URI("x", "", "y"))
+})

@@ -22,6 +22,8 @@ Level2URI <- function(...) {
     if (length(uri_elements) > 3) {
         elements <- unlist(uri_elements)
         stop("Can't convert the following elements to a Level2URI as its length would be > 3\n", paste(elements, collapse = "/"))
+    } else if (length(uri_elements) == 3) {
+        assertthat::assert_that(uri_elements[2] != "" || uri_elements[3] == "")
     }
     if (length(uri_elements) > 1) {
         uri_elements <- uri_elements %>%
