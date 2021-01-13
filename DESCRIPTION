@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 4.2.1
+Version: 4.2.2
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -38,7 +38,6 @@ Collate:
     'resetFailedImports.R'
     'updateData.R'
     'updateFilePaths.R'
-    'expandURIPlaceholder.R'
     'getChildURIs.R'
     'getObjectByURI.R'
     'getOutputDirectory.R'
@@ -96,6 +95,7 @@ Collate:
     'calculatePFTable.R'
     'connectToExisitingDataLocation.R'
     'createAggregateExcel.R'
+    'createDummyLevel2ObjectStructure.R'
     'createMMFiles.R'
     'getDataForYear.R'
     'getEuPlotId.R'

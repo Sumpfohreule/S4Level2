@@ -7,7 +7,10 @@
             getPlotList() %>%
             names()
         if (!(split_uri[1] %in% existing_plots)) {
-            base@Plots[[split_uri[1]]] <- new("Plot")
+            plot <- new("Plot")
+            plot@Name <- split_uri[1]
+            plot@Level2URI <- Level2URI(split_uri[1])
+            base@Plots[[split_uri[1]]] <- plot
         }
 
         existing_sub_plots <- base %>%
@@ -29,8 +32,8 @@
             base@Plots[[split_uri[1]]]@SubPlots[[split_uri[2]]]@Loggers[[split_uri[3]]] <- new(
                 "ADLM",
                 uri = Level2URI(path),
-                local_directory = "~/",
-                paths = "~/")
+                local_directory = tempdir(),
+                paths = tempdir())
         }
     }
     base

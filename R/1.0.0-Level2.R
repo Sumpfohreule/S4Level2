@@ -265,9 +265,9 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             purrr::map(~ {
                 existing_subplots <- getSubPlotList(.x) %>%
                     names()
-                if (getSubPlotName(uri) %in% existing_subplots) {
+                if (getSubPlotName(uri) %in% c("", existing_subplots)) {
                     .x %>%
-                        names() %>%
+                        getName() %>%
                         Level2URI(getSubPlotName(uri), getDataStructureName(uri))
                 }
             })
@@ -300,9 +300,15 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             }) %>%
             unlist()
     }
-    uri %>% list() %>% purrr::discard(~ is.null(.x))
+    if (length(uri) == 1) {
+        uri %>%
+            list()
+    } else {
+        uri %>%
+            unname() %>%
+            purrr::discard(~ is.null(.x))
+    }
 })
-
 
 ########################################################################################################################
 #' @include updateFilePaths.R
