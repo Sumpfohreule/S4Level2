@@ -4,7 +4,9 @@
 #' @param plot_URIs String (Optional) of a plot name, for which to retrieve data for
 #' @export
 getDataForYear <- function(target_year, plot_URIs) {
-    plot_URIs %>%
+    as.Level2URI(plot_URIs) %>%
+        purrr::map(~ expandURIPlaceholder(loadL2Object(), .x)) %>%
+        purrr::flatten() %>%
         purrr::map(~ {
             loadL2Object() %>%
                 getObjectByURI(.x)
