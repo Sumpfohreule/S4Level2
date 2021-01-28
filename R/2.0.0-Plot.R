@@ -248,7 +248,7 @@ setMethod("createDirectoryStructure", signature = "Plot", definition = function(
     plot.dir <- getLocalDirectory(.Object)
     dir.create(plot.dir, showWarnings = FALSE)
     output_directory <- getOutputDirectory(.Object)
-    dir.create(output_directory)
+    dir.create(output_directory, showWarnings = FALSE)
 
     applyToList(.Object, createDirectoryStructure)
     invisible(return(.Object))
