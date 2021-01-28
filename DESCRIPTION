@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 4.3.0
+Version: 4.3.1
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -112,11 +112,6 @@ Collate:
     'is.Plot.R'
     'is.SubPlot.R'
     'loadL2Object.R'
-    'readADLM.R'
-    'readDeltaT.R'
-    'readEnvilog.R'
-    'readTinyTag.R'
-    'readTrase.R'
     'resetDataLocation.R'
     'updateDatabase.R'
     'xml_addSensorMapping.R'

@@ -22,7 +22,7 @@ setMethod("initialize", signature = "Envilog", definition = function(
 ########################################################################################################################
 #' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "Envilog", definition = function(.Object, path) {
-    data <- readEnvilog(path)
+    data <- LoggerImports::readEnvilog(path)
     long.table <- data.table::melt(data, id.vars = "Datum")
     data.table::setkey(long.table, variable, Datum)
     return(long.table)

@@ -22,7 +22,7 @@ setMethod("initialize", signature = "TinyTag", definition = function(
 ########################################################################################################################
 #' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "TinyTag", definition = function(.Object, path) {
-    data <- readTinyTag(path)
+    data <- LoggerImports::readTinyTag(path)
     long.table <- data.table::melt(data, id.vars = "Datum")
     data.table::setkey(long.table, variable, Datum)
     return(long.table)
