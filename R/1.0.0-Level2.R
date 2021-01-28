@@ -235,14 +235,8 @@ setMethod("getOutputDirectory", signature = "Level2", definition = function(.Obj
 #' @include getObjectByURI.R
 setMethod("getObjectByURI", signature = "Level2", definition = function(.Object, level2_uri) {
     level2_uri <- Level2URI(level2_uri)
-    if (getURI_Depth(level2_uri) == 0) {
-        return(.Object)
-    } else {
-        plot_name <- getPlotName(level2_uri)
-        plot <- getPlotList(.Object)[[plot_name]]
-        lower_object <- getObjectByURI(.Object = plot, level2_uri)
-        return(lower_object)
-    }
+    getPlotList(.Object)[[getPlotName(level2_uri)]] %>%
+        getObjectByURI(level2_uri)
 })
 
 #' @include getChildURIs.R
