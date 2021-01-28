@@ -23,7 +23,7 @@ setMethod("initialize", signature = "DeltaT", definition = function(
 ########################################################################################################################
 #' @include importRawLoggerFile.R
 setMethod("importRawLoggerFile", signature = "DeltaT", definition = function(.Object, path) {
-    data <- readDeltaT(path)
+    data <- LoggerImports::readDeltaT(path)
     data <- data.table::as.data.table(data)
     long.table <- data.table::melt(data, id.vars = "Datum")
     data.table::setkey(long.table, variable, Datum)

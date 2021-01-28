@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Plot name="Conventwald" screened_data_path="O:/PROJEKT/NIEDER/LOGGER/Convent/Conventwald_gesamt_Korrektur">
+<Plot name="Conventwald" screened_data_path="/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/Convent/Conventwald_gesamt_Korrektur">
   <Logger name="Envilog" type="Envilog" sub_plot="Fichte">
-    <Source_Path path="O:/PROJEKT/CONVENT/LOGDATEN/ROHDAT/DL4-WFI4/wfi4_pF_meter_csv"/>
-    <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/Convent/Co_Fi_envilog/Rohdata"/>
+    <Source_Path path="/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/Conventwald/wfi4_pF_meter_csv"/>
+    <Source_Path path="/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/Convent/Co_Fi_envilog/Rohdata"/>
   </Logger>
   <Logger name="ADLM" type="ADLM" sub_plot="Fichte">
-    <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/Convent/Convent_Fi_ADLM/csv"/>
+    <Source_Path path="/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/Convent/Convent_Fi_ADLM/csv"/>
     <Mapping pattern="\.Theta\." replacement="_FDR_" origin_date=""/>
     <Mapping pattern="(?&lt;=_FDR_)K$" replacement="X" origin_date=""/>
     <Mapping pattern="(?&lt;=_FDR_)KR$" replacement="Y" origin_date=""/>
@@ -13,7 +13,7 @@
     <Mapping pattern="^Regen" replacement="PR_" origin_date=""/>
   </Logger>
   <Logger name="ADLM" type="ADLM" sub_plot="Freiland">
-    <Source_Path path="O:/PROJEKT/NIEDER/LOGGER/Convent/Convent_ADLM_Turm/csv"/>
+    <Source_Path path="/home/polarfalke/Data/Nextcloud/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/Convent/Convent_ADLM_Turm/csv/"/>
     <Mapping pattern="^Hygro\.S3\.Temperatur$" replacement="AT" origin_date=""/>
     <Mapping pattern="^Hygro\.S3\.r\.Feuchte$" replacement="RH" origin_date=""/>
     <Mapping pattern="^Niederschlag$" replacement="PR" origin_date=""/>

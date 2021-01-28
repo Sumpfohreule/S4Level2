@@ -12,7 +12,8 @@ Imports: purrr,
          openxlsx,
          RODBC,
          XML,
-         MyUtilities (>= 3.7.2)
+         MyUtilities (>= 3.7.2),
+         LoggerImports
 Depends: 
     data.table,
     dplyr,
