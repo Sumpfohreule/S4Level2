@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plot name="Heidelberg" screened_data_path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG/Heidelberg_ges_Korrektur">
+  <Logger name="DeltaT" type="DeltaT" sub_plot="Buche">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG/Heidelberg_Bu_Delta_T/Backup.dat"/>
+    <Mapping pattern="Regen" replacement="PR_" origin_date=""/>
+    <Mapping pattern="x$" replacement="X" origin_date=""/>
+    <Mapping pattern="y$" replacement="Y" origin_date=""/>
+    <Mapping pattern="z$" replacement="Z" origin_date=""/>
+    <Mapping pattern="(FDR|PF)([0-9]{2})([XYZ])" replacement="\2_\1_\3" origin_date=""/>
+    <Mapping pattern="_PF_" replacement="_PF_mV_" origin_date=""/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Buche">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG/Heidelberg_Bu_ADL/csv"/>
+    <Mapping pattern="Regen" replacement="PR_" origin_date=""/>
+    <Mapping pattern="^Stammab(fluss)*$" replacement="Stammabfluss" origin_date=""/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Fichte">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG/Heidelberg_Fi/CSV"/>
+    <Mapping pattern="Regen" replacement="PR_" origin_date=""/>
+    <Mapping pattern="^Se" replacement="SE" origin_date=""/>
+    <Mapping pattern="^([0-9]{2})([LK]R?)\.HD.Fi\.TDR$" replacement="\1_FDR_\2" origin_date=""/>
+    <Mapping pattern="^PF_\.?HD_Fi_([0-9]{2})\.([LK]R?)$" replacement="\1_MP_\2" origin_date=""/>
+    <Mapping pattern="^PF_HD_Fi_([0-9]{2})([LK]R?)\.Te$" replacement="\1_T_PF_\2" origin_date=""/>
+    <Mapping pattern="_K$" replacement="_X" origin_date=""/>
+    <Mapping pattern="_KR$" replacement="_Y" origin_date=""/>
+    <Mapping pattern="_L$" replacement="_Z" origin_date=""/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Freiland">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/HEIDELBG/Heidelberg_Freiland/csv"/>
+    <Mapping pattern="^Hygro\.S3\.Temperatur$" replacement="AT" origin_date=""/>
+    <Mapping pattern="^Hygro\.S3\.r\.Feuchte$" replacement="RH" origin_date=""/>
+    <Mapping pattern="^Niederschlag$" replacement="PR" origin_date=""/>
+    <Mapping pattern="^SP\.Lite2?\.Pyranometer$" replacement="SR" origin_date=""/>
+    <Mapping pattern="^Windgeschwindigkeit$" replacement="WS" origin_date=""/>
+    <Mapping pattern="^Windrichtung" replacement="WD" origin_date=""/>
+  </Logger>
+</Plot>

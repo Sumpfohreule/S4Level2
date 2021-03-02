@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plot name="Ochsenhausen" screened_data_path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochsenhausen_gesamt_Korrektur">
+  <Logger name="DeltaT" type="DeltaT" sub_plot="Buche">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochsenhausen_Buche_Delta_T/Backup.dat"/>
+    <Mapping pattern="^FDR([0-9]{2})([xyz])$" replacement="\1_FDR_\2" origin_date=""/>
+    <Mapping pattern="^PF([0-9]{2})([xyz])$" replacement="\1_PF_mV_\2" origin_date=""/>
+    <Mapping pattern="_x$" replacement="_X" origin_date=""/>
+    <Mapping pattern="_y$" replacement="_Y" origin_date=""/>
+    <Mapping pattern="_z$" replacement="_Z" origin_date=""/>
+    <Mapping pattern="^Regen" replacement="PR_" origin_date=""/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Buche">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochsenhausen_Bu_ADLM/CSV"/>
+    <Mapping pattern="Regen" replacement="PR_" origin_date=""/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Fichte">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochs_PF_Meter_1/CSV"/>
+    <Mapping pattern="^Regen" replacement="PR_" origin_date=""/>
+    <Mapping pattern="^([0-9]{2})([KL]R?)\.OC\.FI\.TDR$" replacement="\1_FDR_\2" origin_date=""/>
+    <Mapping pattern="_K$" replacement="_X" origin_date=""/>
+    <Mapping pattern="_KR$" replacement="_Y" origin_date=""/>
+    <Mapping pattern="_L$" replacement="_Z" origin_date=""/>
+  </Logger>
+  <Logger name="Envilog" type="Envilog" sub_plot="Fichte">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochsenhausen_Fichte_ungedüngt_envilog"/>
+  </Logger>
+  <Logger name="ADLM" type="ADLM" sub_plot="Freiland">
+    <Source_Path path="/home/polarfalke/Data/NC_FVA/Arbeit/FVA/O/PROJEKT/NIEDER/Logger/OCHS/Ochsenhausen_1/CSV"/>
+    <Mapping pattern="^Niederschlag$" replacement="PR" origin_date=""/>
+    <Mapping pattern="^LT$" replacement="AT" origin_date=""/>
+    <Mapping pattern="^Hygro\.S3\.Temperatur$" replacement="AT" origin_date=""/>
+    <Mapping pattern="^LF$" replacement="RH" origin_date=""/>
+    <Mapping pattern="^Hygro\.S3\.r\.Feuchte$" replacement="RH" origin_date=""/>
+    <Mapping pattern="^GBL$" replacement="SR" origin_date=""/>
+    <Mapping pattern="^SP\.Lite2\.Pyranometer$" replacement="SR" origin_date=""/>
+    <Mapping pattern="^WG$" replacement="WS" origin_date=""/>
+    <Mapping pattern="^Windgeschwindigkeit$" replacement="WS" origin_date=""/>
+    <Mapping pattern="^WR$" replacement="WD" origin_date=""/>
+    <Mapping pattern="^Windrichtung" replacement="WD" origin_date=""/>
+  </Logger>
+</Plot>
