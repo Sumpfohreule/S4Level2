@@ -274,9 +274,9 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
                     getPlotName() %>%
                     Level2URI() %>%
                     getObjectByURI(.Object, .) %>%
-                    purrr::map(~ getSubPlotList(.x)) %>%
-                    purrr::flatten() %>%
-                    purrr::map(~ Level2URI(getPlotName(original_uri), getName(.x), getDataStructureName(original_uri)))
+                    getSubPlotList() %>%
+                    names() %>%
+                    purrr::map(~ Level2URI(getPlotName(original_uri), .x, getDataStructureName(original_uri)))
             }) %>%
             unlist()
     }
