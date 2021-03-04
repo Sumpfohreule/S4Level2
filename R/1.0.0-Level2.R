@@ -246,28 +246,28 @@ setMethod("getChildURIs", signature = "Level2", definition = function(.Object) {
         purrr::flatten()
 })
 
-setGeneric(name = "expandURIPlaceholder", def = function(.Object, uri) {
+setGeneric(name = "expandURIPlaceholder", def = function(.Object, URIs) {
     standardGeneric("expandURIPlaceholder")
 })
 
-setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.Object, uri) {
-    expand_plot <- getPlotName(uri) == "*"
-    expand_sub_plot <- getSubPlotName(uri) == "*"
-    expand_data_structure <- getDataStructureName(uri) == "*"
+setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.Object, URIs) {
+    expand_plot <- getPlotName(URIs) == "*"
+    expand_sub_plot <- getSubPlotName(URIs) == "*"
+    expand_data_structure <- getDataStructureName(URIs) == "*"
     if (expand_plot) {
-        uri <- getPlotList(.Object) %>%
+        URIs <- getPlotList(.Object) %>%
             purrr::map(~ {
                 existing_subplots <- getSubPlotList(.x) %>%
                     names()
-                if (getSubPlotName(uri) %in% c("", existing_subplots)) {
+                if (getSubPlotName(URIs) %in% c("", existing_subplots)) {
                     .x %>%
                         getName() %>%
-                        Level2URI(getSubPlotName(uri), getDataStructureName(uri))
+                        Level2URI(getSubPlotName(URIs), getDataStructureName(URIs))
                 }
             })
     }
     if (expand_sub_plot) {
-        uri <- uri %>%
+        URIs <- list(URIs) %>%
             purrr::map(~ {
                 original_uri <- .x
                 .x %>%
@@ -281,7 +281,7 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             unlist()
     }
     if (expand_data_structure) {
-        uri <- uri %>%
+        URIs <- list(URIs) %>%
             purrr::map(~ {
                 original_uri <- .x
                 .x %>%
@@ -294,11 +294,11 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             }) %>%
             unlist()
     }
-    if (length(uri) == 1) {
-        uri %>%
+    if (length(URIs) == 1) {
+        URIs %>%
             list()
     } else {
-        uri %>%
+        URIs %>%
             unname() %>%
             purrr::discard(~ is.null(.x))
     }
