@@ -1,4 +1,21 @@
-createAggregateExcel <- function(aggregate_data, out_path) {
+#' Creates an excel which contains all data of a given plot with all its
+#' subplots and loggers for a given year
+#'
+#' The data is converted in a way that is used for manual (visual) fixing and contains
+#' graphs for all sensors
+#'
+#' @param plot_name String with the commonly used name of the Plot
+#' (Altensteig, Conventwald, Heidelberg, Esslingen, Ochsenhausen or Rotenfels)
+#' @param year Numeric representation of the year to aggregate
+#' @param out_path String of the output folder (without the file name)
+#' @export
+createAggregateExcel <- function(plot_name, year, out_path) {
+    data <- getDataForYear(year, paste0(plot_name, "/*/*")) %>%
+        .createAggregateExcel(out_path)
+}
+
+
+.createAggregateExcel <- function(aggregate_data, out_path) {
     out_file <- aggregate_data %>%
         select(Datum, Plot) %>%
         mutate(Datum = lubridate::year(Datum)) %>%
