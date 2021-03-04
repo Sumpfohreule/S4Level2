@@ -54,3 +54,21 @@ test_that("Expansion works at the first and third level with the middle beeing f
     uri <- Level2URI("*/Fi/*")
     expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(c("Al/Fi/ADLM", "Co/Fi/ADLM", "Ro/Fi/ADLM")))
 })
+
+test_that("Can expand the first two levels each", {
+    uri_paths <- c("Al/Fi/ADLM", "Al/Bu/ADLM", "Co/Fi/ADLM", "Co/Bu/ADLM", "Co/Bu/DeltaT", "Co/Bu/AccessDB", "Ro/Fi/ADLM")
+    test_struct <- .createDummyLevel2ObjectStructure(uri_paths)
+
+    uri <- Level2URI("*/*")
+    expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(c("Al/Fi", "Al/Bu", "Co/Fi", "Co/Bu", "Ro/Fi")))
+})
+
+test_that("Can expand all three levels each", {
+    uri_paths <- c("Al/Fi/ADLM", "Al/Bu/ADLM", "Co/Fi/ADLM", "Co/Bu/ADLM", "Co/Bu/DeltaT", "Co/Bu/AccessDB", "Ro/Fi/ADLM")
+    test_struct <- .createDummyLevel2ObjectStructure(uri_paths)
+
+    uri <- Level2URI("*/*/*")
+    expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(uri_paths))
+})
+
+

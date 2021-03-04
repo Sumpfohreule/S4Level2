@@ -259,7 +259,7 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             purrr::map(~ {
                 existing_subplots <- getSubPlotList(.x) %>%
                     names()
-                if (getSubPlotName(URIs) %in% c("", existing_subplots)) {
+                if (getSubPlotName(URIs) %in% c("", "*", existing_subplots)) {
                     .x %>%
                         getName() %>%
                         Level2URI(getSubPlotName(URIs), getDataStructureName(URIs))
@@ -267,7 +267,10 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             })
     }
     if (expand_sub_plot) {
-        URIs <- list(URIs) %>%
+        if (length(URIs) == 1) {
+            URIs <- list(URIs)
+        }
+        URIs <- URIs %>%
             purrr::map(~ {
                 original_uri <- .x
                 .x %>%
