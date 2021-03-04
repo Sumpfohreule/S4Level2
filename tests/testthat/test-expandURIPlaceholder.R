@@ -44,7 +44,7 @@ test_that("Expansion works at the third level", {
     test_struct <- .createDummyLevel2ObjectStructure(uri_paths)
 
     uri <- Level2URI("Co/Bu/*")
-    expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(c("Co/Bu/ADLM", "Co/Bu/DeltaT")))
+    expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(c("Co/Bu/ADLM", "Co/Bu/DeltaT", "Co/Bu/AccessDB")))
 })
 
 test_that("Expansion works at the first and third level with the middle beeing fixed", {
