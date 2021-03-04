@@ -284,7 +284,10 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             unlist()
     }
     if (expand_data_structure) {
-        URIs <- list(URIs) %>%
+        if (length(URIs) == 1) {
+            URIs <- list(URIs)
+        }
+        URIs <- URIs %>%
             purrr::map(~ {
                 original_uri <- .x
                 .x %>%
