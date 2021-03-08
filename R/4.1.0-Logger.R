@@ -58,8 +58,9 @@ setMethod("saveData", signature = "Logger", definition = function(.Object, data)
 setMethod("getData", signature = "Logger", definition = function(.Object, start.date, end.date) {
   data <- loadData(.Object)
   if (!is.null(data)) {
-    data <- data[Datum >= as.POSIXct(start.date, tz = "UTC") &
-                   Datum < as.POSIXct(end.date, tz = "UTC")]
+    data <- data %>%
+      filter(Datum >= as.POSIXct(start.date, tz = "UTC")) %>%
+      filter(Datum < as.POSIXct(end.date, tz = "UTC"))
   }
   return(data)
 })
