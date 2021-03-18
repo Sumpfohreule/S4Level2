@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 4.4.2
+Version: 4.5.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -13,7 +13,8 @@ Imports: purrr,
          RODBC,
          XML,
          MyUtilities (>= 3.7.2),
-         LoggerImports
+         LoggerImports,
+         Level2DataAggregation
 Depends: 
     data.table,
     dplyr,
@@ -90,8 +91,8 @@ Collate:
     'accumulateMemData.R'
     'accumulatePlmData.R'
     'addCompletePlotFromXml.R'
-    'addToWorkbookWithTemplate.R'
     'connectToExisitingDataLocation.R'
+    'createAggreagateExcel.R'
     'createDummyLevel2ObjectStructure.R'
     'createMMFiles.R'
     'getDataForYear.R'
