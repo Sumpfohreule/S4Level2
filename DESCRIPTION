@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 4.5.0
+Version: 4.5.1
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -88,13 +88,10 @@ Collate:
     '4.1.4-TinyTag.R'
     'setLastImportDate.R'
     '4.2.0-AccessDB.R'
-    'accumulateMemData.R'
-    'accumulatePlmData.R'
     'addCompletePlotFromXml.R'
     'connectToExisitingDataLocation.R'
     'createAggreagateExcel.R'
     'createDummyLevel2ObjectStructure.R'
-    'createMMFiles.R'
     'getDataForYear.R'
     'getEuPlotId.R'
     'getLevel2Data.R'
