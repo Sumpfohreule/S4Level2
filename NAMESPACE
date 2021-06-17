@@ -2,7 +2,6 @@
 
 export()
 export(connectToExistingDataLocation)
-export(createAggregateExcel)
 export(getDataForYear)
 export(initializeDataLocation)
 export(initializeWithPresetPlots)
