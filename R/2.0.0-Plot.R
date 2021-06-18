@@ -175,16 +175,15 @@ setMethod("getChildURIs", signature = "Plot", definition = function(.Object) {
 
 
 ########################################################################################################################
-setGeneric("loadCorrectedData", def = function(.Object, sheet_names, years = NULL) {
-    standardGeneric("loadCorrectedData")
-})
-
 #' Load the data of corrected files from predefined folders of this plot
+#' @param plot_name String with the name of the plot to retrieve the data for
 #' @param sheet_names String vector to determine which kind of SubPlot should be loaded from each file
 #' @param years Numeric vector of years to load from the plot corrected files
 #' @return A data.table with all the data combined
-setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object, sheet_names, years) {
-    full_data <- .Object %>%
+#' @export
+loadCorrectedData <- function(plot_name, sheet_names, years = NULL) {
+    full_data <- loadL2Object() %>%
+        getObjectByURI(plot_name) %>%
         getCorrectedAggregatePath() %>%
         dir(full.names = TRUE) %>%
         purrr::keep(~ is.null(years) || (TRUE %in% (basename(.x) %in% as.character(years)))) %>%
@@ -192,7 +191,7 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
             path <- .x
             sheet_names %>%
                 purrr::map(~ c(path, .x))
-            }) %>%
+        }) %>%
         purrr::flatten() %>%
         purrr::map(~ {
             tryCatch({
@@ -220,7 +219,7 @@ setMethod("loadCorrectedData", signature = "Plot", definition = function(.Object
         arrange(SubPlot, variable, Datum) %>%
         select(SubPlot, Datum, variable, value)
     return(full_data)
-})
+}
 
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Plot", definition = function(.Object) {
