@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 5.1.0
+Version: 5.2.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -90,6 +90,7 @@ Collate:
     'addCompletePlotFromXml.R'
     'connectToExisitingDataLocation.R'
     'createDummyLevel2ObjectStructure.R'
+    'getData.R'
     'getDataForYear.R'
     'getEuPlotId.R'
     'getLevel2Data.R'
@@ -103,6 +104,7 @@ Collate:
     'is.Logger.R'
     'is.Plot.R'
     'is.SubPlot.R'
+    'loadCorrectedData.R'
     'loadL2Object.R'
     'resetDataLocation.R'
     'updateDatabase.R'
