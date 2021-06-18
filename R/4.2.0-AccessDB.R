@@ -39,8 +39,8 @@ setMethod("setLastImportDate", signature = "AccessDB", definition = function(.Ob
 
 
 ########################################################################################################################
-#' @include getData.R
-setMethod("getData", signature = "AccessDB", definition = function(.Object, start.date, end.date) {
+#' @include getLoggerData.R
+setMethod("getLoggerData", signature = "AccessDB", definition = function(.Object, start.date, end.date) {
   directory <- getLocalDirectory(.Object)
   file.name <- getOutputFile(.Object)
   out.table <- readRDS(file.path(directory, file.name))

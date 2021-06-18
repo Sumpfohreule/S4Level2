@@ -22,6 +22,6 @@ getLevel2Data <- function(
     plot_URIs %>%
         purrr::map(~ Level2URI(.x)) %>%
         purrr::map(~ getObjectByURI(loadL2Object(), .x)) %>%
-        purrr::map(~ getData(.x, start_date, end_date)) %>%
+        purrr::map(~ getLoggerData(.x, start_date, end_date)) %>%
         bind_rows()
 }

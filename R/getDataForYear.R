@@ -11,7 +11,7 @@ getDataForYear <- function(target_year, plot_URIs) {
             loadL2Object() %>%
                 getObjectByURI(.x)
         }) %>%
-        purrr::map(~ getData(.x, start.date = paste0(target_year - 1, "-12-01"), end.date = paste0(target_year + 1, "-02-01"))) %>%
+        purrr::map(~ getLoggerData(.x, start.date = paste0(target_year - 1, "-12-01"), end.date = paste0(target_year + 1, "-02-01"))) %>%
         bind_rows() %>%
         filter(lubridate::year(Datum) == target_year)
 }

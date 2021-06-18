@@ -200,7 +200,7 @@ testAddAndApplySensorMapping <- function() {
     .Level2 <- updateFilePaths(.Level2)
     saveL2Object(.Level2)
     .Level2 <- updateData(.Level2)
-    changed_variable_data <- getData(.Level2)
+    changed_variable_data <- getLoggerData(.Level2)
     current_variable <- unlist(changed_variable_data[1, "variable"])
     attr(current_variable, "names") <- NULL
 	RUnit::checkEquals(as.factor(example_replacement), current_variable)
@@ -262,7 +262,7 @@ testUpdateData <- function() {
     Level2 <- updateFilePaths(Level2)
     Level2 <- updateData(Level2)
 
-    imported_data <- getData(Level2)
+    imported_data <- getLoggerData(Level2)
     RUnit::checkEquals(1, nrow(imported_data))
     RUnit::checkEquals(6, ncol(imported_data))
     current_value <- unlist(imported_data[1, "value"])

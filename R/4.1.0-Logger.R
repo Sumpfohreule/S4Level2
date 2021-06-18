@@ -54,8 +54,8 @@ setMethod("saveData", signature = "Logger", definition = function(.Object, data)
   cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
 })
 
-#' @include getData.R
-setMethod("getData", signature = "Logger", definition = function(.Object, start.date, end.date) {
+#' @include getLoggerData.R
+setMethod("getLoggerData", signature = "Logger", definition = function(.Object, start.date, end.date) {
   data <- loadData(.Object)
   if (!is.null(data)) {
     data <- data %>%
