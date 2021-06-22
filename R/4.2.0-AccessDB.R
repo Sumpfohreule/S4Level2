@@ -85,7 +85,7 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
     mutate(Plot = as.factor(getPlotName(.Object))) %>%
     mutate(SubPlot = as.factor(getSubPlotName(.Object))) %>%
     mutate(Logger = as.factor(getName(.Object)))
-  
+
   key.columns <- c("Plot", "SubPlot", "Logger", "variable", date.column)
   data.table::setcolorder(access.long, key.columns)
   data.table::setkeyv(access.long, key.columns)
