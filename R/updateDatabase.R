@@ -4,8 +4,11 @@
 #' Files are searched for within the setup plot locations.
 #' @export
 updateDatabase <- function() {
-    loadL2Object() %>%
-        updateFilePaths() %>%
-        updateData() %>%
-        saveL2Object()
+    for (path in expandURIPlaceholder(loadL2Object(), Level2URI("*/*/*"))) {
+        updated_paths <- getObjectByURI(loadL2Object(), path) %>%
+            updateFilePaths()
+        updated_data <- updateData(updated_paths)
+        updated_l2 <- replaceObjectByURI(loadL2Object(), updated_data)
+        saveL2Object(updated_l2)
+    }
 }
