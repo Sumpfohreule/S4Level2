@@ -74,17 +74,18 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
                                 out.file = file.path(out.dir, file.name),
                                 date.col = "Dat_Zeit")
   access.data <- readRDS(file.path(out.dir, file.name))
-  access.data[, Proto_Dat := NULL]
+  access.data[, "Proto_Dat"] <- NULL
   flag.cols <- na.omit(stringr::str_match(names(access.data), "^x_.*"))
   value.cols <- setdiff(names(access.data), c(date.column, flag.cols))
   access.long <- data.table::melt(access.data,
                                   id.vars = date.column,
                                   measure.vars = value.cols)
-  access.long <- access.long[!is.na(value)]
-  access.long[, ":=" (
-    Plot = as.factor(getPlotName(.Object)),
-    SubPlot = as.factor(getSubPlotName(.Object)),
-    Logger = as.factor(getName(.Object)))]
+  access.long <- access.long %>%
+    filter(!is.na(value)) %>%
+    mutate(Plot = as.factor(getPlotName(.Object))) %>%
+    mutate(SubPlot = as.factor(getSubPlotName(.Object))) %>%
+    mutate(Logger = as.factor(getName(.Object)))
+  
   key.columns <- c("Plot", "SubPlot", "Logger", "variable", date.column)
   data.table::setcolorder(access.long, key.columns)
   data.table::setkeyv(access.long, key.columns)
