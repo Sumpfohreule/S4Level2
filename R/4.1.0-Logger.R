@@ -83,16 +83,21 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
   current_table <- getSourceFileTable(.Object) %>%
-    mutate(path = as.character(path))
+    dtplyr::lazy_dt(immutable = FALSE) %>%
+    mutate(path = as.character(path)) %>%
+    data.table::as.data.table()
+
   new_table <- .Object %>%
     getSourcePaths() %>%
     dir(full.names = TRUE, recursive = TRUE) %>%
     purrr::map_df(~ list(file = basename(.x), path = dirname(.x))) %>%
-    data.frame() %>%
+    dtplyr::lazy_dt() %>%
     filter(stringr::str_detect(file, pattern = getSourceFilePattern(.Object))) %>%
-    full_join(current_table, by = c("path", "file")) %>%
-    mutate_at(vars(imported, skip), function(x) if_else(is.na(x), FALSE, x)) %>%
-    arrange(path, file)
+    data.table::as.data.table() %>%
+    bind_rows(current_table, .) %>%
+    mutate(across(imported | skip, ~ if_else(is.na(.x), FALSE, .x))) %>%
+    arrange(path, file) %>%
+    data.frame()
   .Object@SourceFiles <- new_table
   .Object
 })
