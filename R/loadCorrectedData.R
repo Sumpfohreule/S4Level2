@@ -8,7 +8,7 @@ loadCorrectedData <- function(plot_name, sheet_names, years = NULL) {
     full_data <- loadL2Object() %>%
         getObjectByURI(plot_name) %>%
         getCorrectedAggregatePath() %>%
-        dir(full.names = TRUE) %>%
+        dir(full.names = TRUE, pattern = "^[0-9]{4}(.*[0-9]{4})?$") %>%
         purrr::keep(~ is.null(years) || (TRUE %in% (basename(.x) %in% as.character(years)))) %>%
         purrr::map(~ {
             path <- .x
