@@ -113,7 +113,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
   if (nrow(new_files) > 0) {
     new.data.list <- list()
     applied_import <- new_files %>%
-      purrr::pmap(~ file.path(..2, ..1)) %>%
+      purrr::pmap(~ with(list(...), file.path(path, file))) %>%
       purrr::map(~ .importOrLogError(.Object, .x))
     error_on_import <- applied_import %>%
       purrr::map_lgl(is.character)
