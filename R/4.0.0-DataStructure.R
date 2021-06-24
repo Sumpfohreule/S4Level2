@@ -139,9 +139,9 @@ setMethod("remapSensorNames", signature = "DataStructure", definition = function
   datum <- long.l2.table$Datum
 
   for (index in 1:nrow(sensor_mappings)) {
-    pattern = sensor_mappings[index, patterns]
-    origin_date = sensor_mappings[index, origin.date]
-    replacement = sensor_mappings[index, replacements]
+    pattern = sensor_mappings[index, "patterns"]
+    origin_date = sensor_mappings[index, "origin.date"]
+    replacement = sensor_mappings[index, "replacements"]
     selection = which((datum > origin_date & stringr::str_detect(as.character(variable), pattern)))
     data.table::set(long.l2.table, i = selection, j = "variable",
                     value = MyUtilities::remapLevels(long.l2.table$variable[selection],
