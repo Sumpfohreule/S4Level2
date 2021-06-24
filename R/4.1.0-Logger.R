@@ -171,8 +171,13 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
     }
     return(new.data)
   },
-  error = function(err) return(geterrmessage()),
-  warning = function(w) return(w[["message"]]))
+  error = function(err) {
+    closeAllConnections()
+    return(geterrmessage())
+  }, warning = function(w) {
+    closeAllConnections()
+    return(w[["message"]])
+  })
 }
 
 #' @include resetFailedImports.R
