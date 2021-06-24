@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 5.2.2
+Version: 5.2.3
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
