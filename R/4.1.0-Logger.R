@@ -83,7 +83,7 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
   current_table <- getSourceFileTable(.Object) %>%
-    dtplyr::lazy_dt(immutable = FALSE) %>%
+    dtplyr::lazy_dt() %>%
     mutate(path = as.character(path)) %>%
     data.table::as.data.table()
 
@@ -94,7 +94,7 @@ setMethod("updateFilePaths", signature = "Logger", definition = function(.Object
     dtplyr::lazy_dt() %>%
     filter(stringr::str_detect(file, pattern = getSourceFilePattern(.Object))) %>%
     data.table::as.data.table() %>%
-    bind_rows(current_table, .) %>%
+    full_join(current_table, ., by = c("path", "file")) %>%
     mutate(across(imported | skip, ~ if_else(is.na(.x), FALSE, .x))) %>%
     arrange(path, file) %>%
     data.frame()
@@ -149,6 +149,7 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
 .importOrLogError <- function(.Object, path) {
   tryCatch({
     new.data <- importRawLoggerFile(.Object, path) %>%
+      dtplyr::lazy_dt() %>%
       mutate_at(vars(-Datum), na_if, y = 9999) %>%
       mutate_at(vars(-Datum), na_if, y = -9999) %>%
       group_by(variable) %>%
@@ -156,7 +157,8 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
       filter_at(vars(-Datum), any_vars(!is.na(.))) %>%
       mutate(Plot = as.factor(getPlotName(.Object))) %>%
       mutate(SubPlot = as.factor(getSubPlotName(.Object))) %>%
-      mutate(Logger = as.factor(getName(.Object)))
+      mutate(Logger = as.factor(getName(.Object))) %>%
+      data.table::as.data.table()
 
     unique_dates <- new.data %>%
       pull(Datum) %>%
