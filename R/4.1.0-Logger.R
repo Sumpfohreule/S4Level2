@@ -83,15 +83,12 @@ setMethod("loadData", signature = "Logger", definition = function(.Object) {
 #' @include updateFilePaths.R
 setMethod("updateFilePaths", signature = "Logger", definition = function(.Object) {
   current_table <- getSourceFileTable(.Object) %>%
-    dtplyr::lazy_dt() %>%
-    mutate(path = as.character(path)) %>%
-    data.table::as.data.table()
+    mutate(path = as.character(path))
 
   new_table <- .Object %>%
     getSourcePaths() %>%
     dir(full.names = TRUE, recursive = TRUE) %>%
     purrr::map_df(~ list(file = basename(.x), path = dirname(.x))) %>%
-    dtplyr::lazy_dt() %>%
     filter(stringr::str_detect(file, pattern = getSourceFilePattern(.Object))) %>%
     data.table::as.data.table() %>%
     full_join(current_table, ., by = c("path", "file")) %>%
@@ -149,7 +146,6 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
 .importOrLogError <- function(.Object, path) {
   tryCatch({
     new.data <- importRawLoggerFile(.Object, path) %>%
-      dtplyr::lazy_dt() %>%
       mutate_at(vars(-Datum), na_if, y = 9999) %>%
       mutate_at(vars(-Datum), na_if, y = -9999) %>%
       group_by(variable) %>%
