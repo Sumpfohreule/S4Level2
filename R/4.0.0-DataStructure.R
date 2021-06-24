@@ -127,10 +127,17 @@ setMethod("createDirectoryStructure", signature = "DataStructure", definition = 
 
 #' @include remapSensorNames.R
 setMethod("remapSensorNames", signature = "DataStructure", definition = function(.Object, long.l2.table) {
-  long.l2.table <- long.l2.table %>% mutate(across(variable, as.factor))
+  sensor_mappings <- getSensorMappings(.Object)
+  if (nrow(sensor_mappings) == 0) {
+    # Nothing to remap so returning early
+    return(long.l2.table)
+  }
+  long.l2.table <- long.l2.table %>%
+    mutate(across(variable, as.factor)) %>%
+    data.table::as.data.table()
   variable <- long.l2.table$variable
   datum <- long.l2.table$Datum
-  sensor_mappings <- getSensorMappings(.Object)
+
   for (index in 1:nrow(sensor_mappings)) {
     pattern = sensor_mappings[index, patterns]
     origin_date = sensor_mappings[index, origin.date]
