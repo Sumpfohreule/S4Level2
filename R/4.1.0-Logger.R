@@ -160,11 +160,13 @@ setMethod("updateData", signature = "Logger", definition = function(.Object) {
       mutate(Logger = as.factor(getName(.Object))) %>%
       data.table::as.data.table()
 
-    unique_dates <- new.data %>%
+    all_dates_na <- new.data %>%
       pull(Datum) %>%
-      unique()
+      unique() %>%
+      is.na() %>%
+      all()
 
-    if (length(unique_dates) == 1 && is.na(unique_dates)) {
+    if (all_dates_na) {
       stop("Date column was not imported correctly (Only NA's)")
     }
     return(new.data)
