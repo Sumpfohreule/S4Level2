@@ -253,7 +253,6 @@ setMethod("getSourceFileTable", signature = "Plot", definition = function(.Objec
 
 #' @include objectExistsAtURI.R
 setMethod("objectExistsAtURI", signature = "Plot", definition = function(.Object, uri) {
-    # browser()
     if (getURI_Depth(uri) == 1) {
         it_exists <- identical(getURI(.Object), uri)
     } else {

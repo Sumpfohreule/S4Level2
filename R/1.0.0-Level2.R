@@ -285,18 +285,18 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
         if (!is.list(URIs) && length(URIs) == 1) {
             URIs <- list(URIs)
         }
+        all_data_structures <- getPlotList(.Object) %>%
+            purrr::map(getSubPlotList) %>%
+            purrr::flatten() %>%
+            purrr::map(getDataStructureList) %>%
+            purrr::flatten() %>%
+            names() %>%
+            unique()
         URIs <- URIs %>%
-            purrr::map(~ {
-                original_uri <- .x
-                .x %>%
-                    getSubPlotName() %>%
-                    Level2URI(getPlotName(original_uri), .) %>%
-                    getObjectByURI(.Object, .) %>%
-                    getDataStructureList() %>%
-                    names() %>%
-                    purrr::map(~ Level2URI(getPlotName(original_uri), getSubPlotName(original_uri), .x))
-            }) %>%
-            unlist()
+            purrr::map(~ file.path(getPlotName(.x), getSubPlotName(.x), all_data_structures)) %>%
+            purrr::flatten() %>%
+            purrr::map(Level2URI) %>%
+            purrr::keep(~ objectExistsAtURI(.Object, .x))
     }
     if (length(URIs) == 1) {
         URIs %>%
@@ -384,7 +384,6 @@ setMethod("createDirectoryStructure", signature = "Level2", definition = functio
 
 #' @include objectExistsAtURI.R
 setMethod("objectExistsAtURI", signature = "Level2", definition = function(.Object, uri) {
-    # browser()
     plot <- getPlotList(.Object) %>%
         purrr::keep(~ getName(.x) == getPlotName(uri)) %>%
         unlist()
