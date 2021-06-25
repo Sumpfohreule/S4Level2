@@ -62,8 +62,8 @@ setMethod("createAndAddMultipleSubPlots", signature = "Level2", definition = fun
 setMethod("createAndAddSubPlot", signature = "Level2", definition = function(.Object, sub_plot_name, .URI) {
     sub_plot_directory <- file.path(getLocalDirectory(.Object), sub_plot_name)
     .SubPlot <- SubPlot(name = sub_plot_name,
-                    uri = .URI,
-                    local_directory = sub_plot_directory)
+                        uri = .URI,
+                        local_directory = sub_plot_directory)
 
     .Object <- addSubPlot(.Object, .SubPlot, .URI = .URI)
     .Object
@@ -268,7 +268,7 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             purrr::discard(~ is.null(.x))
     }
     if (expand_sub_plot) {
-        if (length(URIs) == 1) {
+        if (!is.list(URIs) && length(URIs) == 1) {
             URIs <- list(URIs)
         }
         existing_plots <- getPlotList(.Object) %>%
@@ -288,7 +288,7 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
             unlist()
     }
     if (expand_data_structure) {
-        if (length(URIs) == 1) {
+        if (!is.list(URIs) && length(URIs) == 1) {
             URIs <- list(URIs)
         }
         URIs <- URIs %>%
