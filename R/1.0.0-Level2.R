@@ -256,16 +256,14 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
     expand_data_structure <- getDataStructureName(URIs) == "*"
     if (expand_plot) {
         URIs <- getPlotList(.Object) %>%
-            purrr::map(~ {
-                existing_subplots <- getSubPlotList(.x) %>%
-                    names()
-                if (getSubPlotName(URIs) %in% c("", "*", existing_subplots)) {
-                    .x %>%
-                        getName() %>%
-                        Level2URI(getSubPlotName(URIs), getDataStructureName(URIs))
-                }
-            }) %>%
-            purrr::discard(~ is.null(.x))
+            names() %>%
+            purrr::map(~ file.path(.x, getSubPlotName(URIs), getDataStructureName(URIs))) %>%
+            purrr::map(Level2URI) %>%
+            purrr::keep(~ {
+                sub_plot_uri <- file.path(getPlotName(.x), getSubPlotName(.x)) %>%
+                    Level2URI()
+                objectExistsAtURI(.Object, sub_plot_uri)
+            })
     }
     if (expand_sub_plot) {
         if (!is.list(URIs) && length(URIs) == 1) {
