@@ -387,3 +387,17 @@ setMethod("createDirectoryStructure", signature = "Level2", definition = functio
     applyToList(.Object, createDirectoryStructure)
     invisible(return(.Object))
 })
+
+#' @include objectExistsAtURI.R
+setMethod("objectExistsAtURI", signature = "Level2", definition = function(.Object, uri) {
+    # browser()
+    plot <- getPlotList(.Object) %>%
+        purrr::keep(~ getName(.x) == getPlotName(uri)) %>%
+        unlist()
+    if (is.null(plot)) {
+        it_exists <- FALSE
+    } else {
+        it_exists <- objectExistsAtURI(plot[[1]], uri)
+    }
+    it_exists
+})

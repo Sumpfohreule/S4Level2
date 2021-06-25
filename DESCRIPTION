@@ -32,6 +32,7 @@ Collate:
     'getPlotName.R'
     'getURI_Depth.R'
     '0.0.0-Level2URI.R'
+    'objectExistsAtURI.R'
     'createDirectoryStructure.R'
     'saveL2Object.R'
     'applyToList.R'

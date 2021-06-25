@@ -195,3 +195,15 @@ setMethod("applyToList", signature = "SubPlot", definition = function(.Object, a
     .Object
 })
 
+#' @include objectExistsAtURI.R
+setMethod("objectExistsAtURI", signature = "SubPlot", definition = function(.Object, uri) {
+    # browser()
+    if (getURI_Depth(uri) == 2) {
+        it_exists <- identical(getURI(.Object), uri) || getSubPlotName(uri) == "*"
+    } else {
+        data_structures <- getDataStructureList() %>%
+            names()
+        it_exists <- getDataStructureName(uri) == data_structures
+    }
+    it_exists
+})

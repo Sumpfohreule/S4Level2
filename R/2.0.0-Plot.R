@@ -249,3 +249,24 @@ setMethod("getSourceFileTable", signature = "Plot", definition = function(.Objec
     data.table::setkey(merged.list, sub.plot, logger, path, file)
     return(merged.list)
 })
+
+
+#' @include objectExistsAtURI.R
+setMethod("objectExistsAtURI", signature = "Plot", definition = function(.Object, uri) {
+    # browser()
+    if (getURI_Depth(uri) == 1) {
+        it_exists <- identical(getURI(.Object), uri)
+    } else {
+        sub_plot <- getSubPlotList(.Object) %>%
+            purrr::keep(~ getSubPlotName(uri) == "*" || getName(.x) == getSubPlotName(uri)) %>%
+            unlist()
+        if (is.null(sub_plot)) {
+            it_exists <- FALSE
+        } else {
+            it_exists <- sub_plot %>%
+                purrr::map_lgl(~ objectExistsAtURI(.x, uri)) %>%
+                any()
+        }
+    }
+    it_exists
+})
