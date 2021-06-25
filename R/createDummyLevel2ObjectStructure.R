@@ -24,6 +24,7 @@
         if (!(split_uri[2] %in% existing_sub_plots)) {
             new_subplot <- new("SubPlot")
             new_subplot@Name <- split_uri[2]
+            new_subplot@Level2URI <- Level2URI(split_uri[1], split_uri[2])
             base@Plots[[split_uri[1]]]@SubPlots[[split_uri[2]]] <- new_subplot
         }
         existing_loggers <- base %>%
