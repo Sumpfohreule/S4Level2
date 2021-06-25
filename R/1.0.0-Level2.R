@@ -270,7 +270,10 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
         if (length(URIs) == 1) {
             URIs <- list(URIs)
         }
+        existing_plots <- getPlotList(.Object) %>%
+            names()
         URIs <- URIs %>%
+            purrr::keep(~ getPlotName(.x) %in% existing_plots) %>%
             purrr::map(~ {
                 original_uri <- .x
                 .x %>%

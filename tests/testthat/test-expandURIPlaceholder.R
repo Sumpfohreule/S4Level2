@@ -71,4 +71,11 @@ test_that("Can expand all three levels each", {
     expect_equal(expandURIPlaceholder(test_struct, uri), as.Level2URI(uri_paths))
 })
 
+test_that("If fixed plot does not exist, return nothing for it", {
+    uri_paths <- c("Al/Fi/ADLM")
+    test_struct <- .createDummyLevel2ObjectStructure(uri_paths)
+
+    uri <- Level2URI("Co/*/*")
+    expect_equal(expandURIPlaceholder(test_struct, uri), NULL)
+})
 
