@@ -264,7 +264,8 @@ setMethod("expandURIPlaceholder", signature = "Level2", definition = function(.O
                         getName() %>%
                         Level2URI(getSubPlotName(URIs), getDataStructureName(URIs))
                 }
-            })
+            }) %>%
+            purrr::discard(~ is.null(.x))
     }
     if (expand_sub_plot) {
         if (length(URIs) == 1) {

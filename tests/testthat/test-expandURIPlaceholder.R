@@ -79,3 +79,10 @@ test_that("If fixed plot does not exist, return nothing for it", {
     expect_equal(expandURIPlaceholder(test_struct, uri), NULL)
 })
 
+test_that("If fixed sub_plot does not exist, return nothing for it", {
+    uri_paths <- c("Al/Fi/ADLM")
+    test_struct <- .createDummyLevel2ObjectStructure(uri_paths)
+
+    uri <- Level2URI("*/Bu/*")
+    expect_equal(expandURIPlaceholder(test_struct, uri), NULL)
+})
