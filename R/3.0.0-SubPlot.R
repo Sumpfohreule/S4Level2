@@ -201,9 +201,9 @@ setMethod("objectExistsAtURI", signature = "SubPlot", definition = function(.Obj
     if (getURI_Depth(uri) == 2) {
         it_exists <- identical(getURI(.Object), uri) || getSubPlotName(uri) == "*"
     } else {
-        data_structures <- getDataStructureList() %>%
+        data_structures <- getDataStructureList(.Object) %>%
             names()
-        it_exists <- getDataStructureName(uri) == data_structures
+        it_exists <- getDataStructureName(uri) == "*" || getDataStructureName(uri) %in% data_structures
     }
     it_exists
 })
