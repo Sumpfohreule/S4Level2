@@ -15,7 +15,7 @@ getData <- function(
     sub_plot = "*") {
     assertthat::assert_that(assertthat::is.string(plot))
     assertthat::assert_that(assertthat::is.string(sub_plot))
-    Level2URI(plot_name, sub_plot_name, "*") %>%
+    Level2URI(plot, sub_plot, "*") %>%
         expandURIPlaceholder(loadL2Object(), .) %>%
         purrr::map(~ getObjectByURI(loadL2Object(), .x)) %>%
         purrr::map(~ getLoggerData(.x, start_date, end_date)) %>%
