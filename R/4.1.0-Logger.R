@@ -51,7 +51,6 @@ setMethod("saveData", signature = "Logger", definition = function(.Object, data)
   dir.create(out.dir, showWarnings = FALSE)
   file.name <- getOutputFile(.Object)
   saveRDS(data, file = file.path(out.dir, file.name))
-  cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
 })
 
 #' @include getLoggerData.R

@@ -93,7 +93,6 @@ setMethod("updateData", signature = "AccessDB", definition = function(.Object) {
   access.long <- remapSensorNames(.Object, long.l2.table = access.long)
 
   saveRDS(access.long, file.path(out.dir, file.name))
-  cat("File '", file.name, "' saved in location '", out.dir, "'\n", sep = "")
   .Object
 })
 

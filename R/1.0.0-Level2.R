@@ -371,7 +371,6 @@ setMethod("saveL2Object", signature = "Level2", definition = function(.Object) {
     plot.dir <- getLocalDirectory(.Object)
     file.name <- getOutputFile(.Object)
     saveRDS(.Object, file = file.path(plot.dir, file.name))
-    cat("Object '", file.name, "' created in '", plot.dir, "'\n", sep = "")
 })
 
 #' @include createDirectoryStructure.R

@@ -14,6 +14,7 @@ updateDatabase <- function(plots = "*", sub_plots = "*") {
         unlist()
 
     for (object_path in all_paths) {
+        print(sprintf("Updating %s", as.character(object_path)))
         updated_paths <- getObjectByURI(l2_object, object_path) %>%
             updateFilePaths()
         updated_data <- updateData(updated_paths)
