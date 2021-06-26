@@ -8,7 +8,7 @@
 updateDatabase <- function(plots = "*", sub_plots = "*") {
     l2_object <- loadL2Object()
 
-    all_paths <- file.path(plots, sub_plots, "*") %>%
+    all_paths <- file.path(plots, rep(sub_plots, length(plots)), "*") %>%
         purrr::map(Level2URI) %>%
         purrr::map(~ expandURIPlaceholder(l2_object, .x)) %>%
         purrr::flatten() %>%
