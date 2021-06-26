@@ -48,9 +48,8 @@ setMethod("addSensorMapping", signature = "DataStructure", definition = function
   pattern,
   replacement,
   origin.date) {
-
   stringr::str_replace("", pattern, replacement) # Early testing of for syntax errors
-  new_sensor_mapping <- list(pattern, replacement, as.POSIXct(origin.date, tz = "UTC"))
+  new_sensor_mapping <- list(pattern, replacement, lubridate::as_datetime(origin.date, tz = "UTC"))
   combined_sensor_mapping <- data.table::rbindlist(list(getSensorMappings(.Object), new_sensor_mapping))
   .Object <- setSensorMappings(.Object, unique(combined_sensor_mapping))
   .Object
@@ -127,7 +126,8 @@ setMethod("createDirectoryStructure", signature = "DataStructure", definition = 
 
 #' @include remapSensorNames.R
 setMethod("remapSensorNames", signature = "DataStructure", definition = function(.Object, long.l2.table) {
-  sensor_mappings <- getSensorMappings(.Object)
+  sensor_mappings <- getSensorMappings(.Object) %>%
+    as.data.frame()
   if (nrow(sensor_mappings) == 0) {
     # Nothing to remap so returning early
     return(long.l2.table)
@@ -140,7 +140,9 @@ setMethod("remapSensorNames", signature = "DataStructure", definition = function
 
   for (index in 1:nrow(sensor_mappings)) {
     pattern = sensor_mappings[index, "patterns"]
-    origin_date = sensor_mappings[index, "origin.date"]
+    origin_date = sensor_mappings[index, "origin.date"] %>%
+      as.character() %>%
+      lubridate::as_datetime()
     replacement = sensor_mappings[index, "replacements"]
     selection = which((datum > origin_date & stringr::str_detect(as.character(variable), pattern)))
     data.table::set(long.l2.table, i = selection, j = "variable",
