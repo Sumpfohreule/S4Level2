@@ -45,8 +45,9 @@ setMethod("getLoggerData", signature = "AccessDB", definition = function(.Object
   file.name <- getOutputFile(.Object)
   out.table <- readRDS(file.path(directory, file.name))
   if (!is.null(out.table)) {
-    out.table <- out.table[Datum >= as.POSIXct(start.date, tz = "UTC") &
-                             Datum < as.POSIXct(end.date, tz = "UTC")]
+    out.table <- out.table %>%
+      filter(Datum >= lubridate::as_datetime(start.date)) %>%
+      filter(Datum < lubridate::as_datetime(end.date))
   }
   return(out.table)
 })
