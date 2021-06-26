@@ -18,7 +18,7 @@ updateDatabase <- function(plots = "*", sub_plots = "*") {
         updated_paths <- getObjectByURI(l2_object, object_path) %>%
             updateFilePaths()
         updated_data <- updateData(updated_paths)
-        updated_l2 <- replaceObjectByURI(l2_object, updated_data)
-        saveL2Object(updated_l2)
+        l2_object <- replaceObjectByURI(l2_object, updated_data)
+        saveL2Object(l2_object)
     }
 }
