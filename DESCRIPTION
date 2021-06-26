@@ -1,6 +1,6 @@
 Package: S4Level2
 Title: Aggregates FVA Level2 Raw Data
-Version: 5.3.0
+Version: 6.0.0
 Authors@R: 
     person(given = "Lars",
            family = "Isenberg",
@@ -12,12 +12,12 @@ Imports: purrr,
          openxlsx,
          RODBC,
          XML,
-         MyUtilities (>= 3.7.2),
-         LoggerImports
+         MyUtilities (>= 5.1.0),
+         LoggerImports (>= 0.3.0)
 Depends: 
-    data.table,
     dplyr,
-    R (>= 2.10)
+    R (>= 2.10),
+    data.table
 Suggests: testthat
 License: What license it uses
 Encoding: UTF-8
