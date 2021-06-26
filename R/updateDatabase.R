@@ -11,8 +11,7 @@ updateDatabase <- function(plots = "*", sub_plots = "*") {
     all_paths <- file.path(plots, rep(sub_plots, length(plots)), "*") %>%
         purrr::map(Level2URI) %>%
         purrr::map(~ expandURIPlaceholder(l2_object, .x)) %>%
-        purrr::flatten() %>%
-        purrr::flatten()
+        unlist()
 
     for (object_path in all_paths) {
         updated_paths <- getObjectByURI(l2_object, object_path) %>%
